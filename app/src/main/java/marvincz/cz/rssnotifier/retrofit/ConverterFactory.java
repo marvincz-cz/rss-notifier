@@ -41,7 +41,7 @@ public class ConverterFactory extends Converter.Factory {
                 parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
                 parser.setInput(in, null);
                 parser.nextTag();
-                return Rss.Parser.parse(parser);
+                return new Rss.Parser().parseTag(parser, "rss", null);
             } catch (XmlPullParserException e) {
                 throw new IOException(e);
             }

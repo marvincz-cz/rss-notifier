@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import marvincz.cz.rssnotifier.xml.XmlParser;
+import marvincz.cz.rssnotifier.xml.XmlStringParser;
 
 public class RssChannel {
     public String title;
@@ -19,9 +20,8 @@ public class RssChannel {
     public ZonedDateTime lastBuildDate;
     public List<RssItem> items;
 
-    public static class Parser extends XmlParser {
-        public static RssChannel parse(XmlPullParser parser) throws IOException, XmlPullParserException {
-            parser.require(XmlPullParser.START_TAG, null, "channel");
+    public static class Parser extends XmlParser<RssChannel> {
+        public RssChannel parseBody(XmlPullParser parser) throws IOException, XmlPullParserException {
             RssChannel channel = new RssChannel();
             channel.items = new ArrayList<>();
             while (parser.next() != XmlPullParser.END_TAG) {
@@ -32,19 +32,19 @@ public class RssChannel {
                 // Starts by looking for the entry tag
                 switch (name) {
                     case "title":
-                        channel.title = readText(parser);
+                        channel.title = new XmlStringParser().parseTag(parser, "title", null);
                         break;
                     case "description":
-                        channel.description = readText(parser);
+                        channel.description = new XmlStringParser().parseTag(parser, "description", null);
                         break;
                     case "link":
-                        channel.link = Uri.parse(readText(parser));
+                        channel.link = Uri.parse(new XmlStringParser().parseTag(parser, "link", null));
                         break;
 //                    case "lastBuildDate":
 //                        channel.lastBuildDate = ZonedDateTime.parse(readText(parser));
 //                        break;
                     case "item":
-                        channel.items.add(RssItem.Parser.parse(parser));
+                        channel.items.add(new RssItem.Parser().parseTag(parser, "item", null));
                         break;
                     default:
                         skip(parser);

@@ -10,9 +10,8 @@ import marvincz.cz.rssnotifier.xml.XmlParser;
 public class Rss {
     public RssChannel channel;
 
-    public static class Parser extends XmlParser {
-        public static Rss parse(XmlPullParser parser) throws IOException, XmlPullParserException {
-            parser.require(XmlPullParser.START_TAG, null, "rss");
+    public static class Parser extends XmlParser<Rss> {
+        public Rss parseBody(XmlPullParser parser) throws IOException, XmlPullParserException {
             Rss item = new Rss();
             while (parser.next() != XmlPullParser.END_TAG) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -21,7 +20,7 @@ public class Rss {
                 final String name = parser.getName();
                 // Starts by looking for the entry tag
                 if (name.equals("channel")) {
-                    item.channel = RssChannel.Parser.parse(parser);
+                    item.channel = new RssChannel.Parser().parseTag(parser, "channel", null);
                 } else {
                     skip(parser);
                 }

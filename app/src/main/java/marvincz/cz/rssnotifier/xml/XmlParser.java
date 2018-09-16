@@ -1,21 +1,38 @@
 package marvincz.cz.rssnotifier.xml;
 
+import android.support.annotation.Nullable;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-public abstract class XmlParser {
-    protected static String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
-        String result = "";
-        if (parser.next() == XmlPullParser.TEXT) {
-            result = parser.getText();
-            parser.nextTag();
-        }
+public abstract class XmlParser<T> {
+
+    @Nullable
+    public final T parseTag(XmlPullParser parser, @Nullable String name, @Nullable String namespace) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, namespace, name);
+        T result = parseBody(parser);
+        parser.require(XmlPullParser.END_TAG, namespace, name);
         return result;
     }
 
-    protected static void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
+    @Nullable
+    public final T parseAttribute(XmlPullParser parser, @Nullable String name, @Nullable String namespace) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, null);
+        T result = parseString(parser.getAttributeValue(namespace, name));
+        parser.require(XmlPullParser.END_TAG, namespace, name);
+        return result;
+    }
+
+    protected T parseString(@Nullable String stringValue) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Nullable
+    public abstract T parseBody(XmlPullParser parser) throws IOException, XmlPullParserException;
+
+    protected void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
         }

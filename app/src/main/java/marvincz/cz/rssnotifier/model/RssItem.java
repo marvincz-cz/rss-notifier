@@ -8,15 +8,15 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 
 import marvincz.cz.rssnotifier.xml.XmlParser;
+import marvincz.cz.rssnotifier.xml.XmlStringParser;
 
 public class RssItem {
     public String title;
     public String description;
     public Uri link;
 
-    public static class Parser extends XmlParser {
-        public static RssItem parse(XmlPullParser parser) throws IOException, XmlPullParserException {
-            parser.require(XmlPullParser.START_TAG, null, "item");
+    public static class Parser extends XmlParser<RssItem> {
+        public RssItem parseBody(XmlPullParser parser) throws IOException, XmlPullParserException {
             RssItem item = new RssItem();
             while (parser.next() != XmlPullParser.END_TAG) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -26,13 +26,13 @@ public class RssItem {
                 // Starts by looking for the entry tag
                 switch (name) {
                     case "title":
-                        item.title = readText(parser);
+                        item.title = new XmlStringParser().parseTag(parser, "title", null);
                         break;
                     case "description":
-                        item.description = readText(parser);
+                        item.description = new XmlStringParser().parseTag(parser, "description", null);
                         break;
                     case "link":
-                        item.link = Uri.parse(readText(parser));
+                        item.link = Uri.parse(new XmlStringParser().parseTag(parser, "link", null));
                         break;
                     default:
                         skip(parser);
