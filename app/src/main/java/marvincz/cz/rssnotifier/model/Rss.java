@@ -1,7 +1,5 @@
 package marvincz.cz.rssnotifier.model;
 
-import android.net.Uri;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 

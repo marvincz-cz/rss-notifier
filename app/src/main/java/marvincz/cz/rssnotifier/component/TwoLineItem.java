@@ -6,16 +6,16 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import marvincz.cz.rssnotifier.R;
 
-public class TwoLineItem extends ConstraintLayout {
+public class TwoLineItem extends FrameLayout {
 
     private TextView title;
     private TextView description;
@@ -38,7 +38,7 @@ public class TwoLineItem extends ConstraintLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_two_line, this);
+        View view = inflate(context, R.layout.item_two_line, this);
         title = view.findViewById(R.id.title);
         description = view.findViewById(R.id.description);
         icon = view.findViewById(R.id.icon);

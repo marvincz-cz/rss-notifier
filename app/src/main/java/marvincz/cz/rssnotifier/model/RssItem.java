@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import marvincz.cz.rssnotifier.xml.XmlParser;
 
-class RssItem {
+public class RssItem {
     public String title;
     public String description;
     public Uri link;

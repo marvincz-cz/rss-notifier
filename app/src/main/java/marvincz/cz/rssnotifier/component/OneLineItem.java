@@ -10,16 +10,17 @@ import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import marvincz.cz.rssnotifier.R;
 
-public class OneLineItem extends ConstraintLayout {
+public class OneLineItem extends FrameLayout {
 
-    private TextView title;
-    private ImageView icon;
-    private ImageView actionIcon;
+    protected TextView title;
+    protected ImageView icon;
+    protected ImageView actionIcon;
 
     public OneLineItem(Context context) {
         super(context);
@@ -37,7 +38,7 @@ public class OneLineItem extends ConstraintLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_one_line, this);
+        View view = inflate(context, R.layout.item_one_line, this);
         title = view.findViewById(R.id.title);
         icon = view.findViewById(R.id.icon);
         actionIcon = view.findViewById(R.id.actionIcon);
