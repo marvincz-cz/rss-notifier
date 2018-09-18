@@ -13,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import marvincz.cz.rssnotifier.model.Rss;
+import marvincz.cz.rssnotifier.xml.XmlConverterFactory;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
@@ -26,13 +27,13 @@ public class ConverterFactory extends Converter.Factory {
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
         if (type.equals(Rss.class)) {
-            return RssChannelConverter.INSTANCE;
+            return RssConverter.INSTANCE;
         }
         return null;
     }
 
-    private static class RssChannelConverter implements Converter<ResponseBody, Rss> {
-        static final RssChannelConverter INSTANCE = new RssChannelConverter();
+    private static class RssConverter implements Converter<ResponseBody, Rss> {
+        static final RssConverter INSTANCE = new RssConverter();
 
         @Override
         public Rss convert(@NonNull ResponseBody value) throws IOException {
@@ -41,7 +42,7 @@ public class ConverterFactory extends Converter.Factory {
                 parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
                 parser.setInput(in, null);
                 parser.nextTag();
-                return new Rss.Parser().parseTag(parser, "rss", null);
+                return XmlConverterFactory.convert(Rss.class, parser, "rss", null);
             } catch (XmlPullParserException e) {
                 throw new IOException(e);
             }
