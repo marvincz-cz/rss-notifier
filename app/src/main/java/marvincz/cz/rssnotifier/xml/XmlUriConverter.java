@@ -3,9 +3,13 @@ package marvincz.cz.rssnotifier.xml;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import org.apache.commons.lang3.reflect.TypeLiteral;
+import org.apache.commons.lang3.reflect.Typed;
+
 public class XmlUriConverter extends AbstractXmlStringConverter<Uri> {
-    static {
-        XmlConverterFactory.register(new XmlUriConverter());
+    @Override
+    public Typed<Uri> getType() {
+        return new TypeLiteral<Uri>() {};
     }
 
     @Nullable

@@ -1,32 +1,36 @@
 package marvincz.cz.rssnotifier.xml;
 
+import android.support.annotation.Nullable;
+
+import org.apache.commons.lang3.reflect.TypeLiteral;
+import org.apache.commons.lang3.reflect.Typed;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import marvincz.cz.rssnotifier.model.Rss;
 import marvincz.cz.rssnotifier.model.RssChannel;
 
-public class XmlRssConverter extends XmlConverter<Rss> {
-    static {
-        XmlConverterFactory.register(new XmlRssConverter());
+public class XmlRssConverter extends XmlComplexConverter<Rss> {
+
+
+    @Override
+    public Typed<Rss> getType() {
+        return new TypeLiteral<Rss>() {};
     }
 
-    public Rss convertBody(XmlPullParser parser) throws IOException, XmlPullParserException {
-        Rss item = new Rss();
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            final String name = parser.getName();
-            // Starts by looking for the entry tag
-            if (name.equals("channel")) {
-                item.channel = XmlConverterFactory.convert(RssChannel.class, parser, "channel", null);
-            } else {
-                skip(parser);
-            }
-        }
-        return item;
+    @Nullable
+    @Override
+    protected List<XmlFieldDefinition> getAttributes() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    protected List<XmlFieldDefinition> getTags() {
+        return Collections.singletonList(new XmlFieldDefinition("channel", new TypeLiteral<RssChannel>() {}));
     }
 }

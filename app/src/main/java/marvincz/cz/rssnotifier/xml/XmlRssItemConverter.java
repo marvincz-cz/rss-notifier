@@ -1,41 +1,38 @@
 package marvincz.cz.rssnotifier.xml;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.apache.commons.lang3.reflect.TypeLiteral;
+import org.apache.commons.lang3.reflect.Typed;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import marvincz.cz.rssnotifier.model.RssItem;
 
-public class XmlRssItemConverter extends XmlConverter<RssItem> {
-    static {
-        XmlConverterFactory.register(new XmlRssItemConverter());
+public class XmlRssItemConverter extends XmlComplexConverter<RssItem> {
+    public XmlRssItemConverter() {
+        super(t -> new RssItem());
     }
 
-    public RssItem convertBody(XmlPullParser parser) throws IOException, XmlPullParserException {
-        RssItem item = new RssItem();
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            final String name = parser.getName();
-            // Starts by looking for the entry tag
-            switch (name) {
-                case "title":
-                    item.title = XmlConverterFactory.convert(String.class, parser, "title", null);
-                    break;
-                case "description":
-                    item.description = XmlConverterFactory.convert(String.class, parser, "description", null);
-                    break;
-                case "link":
-                    item.link = XmlConverterFactory.convert(Uri.class, parser, "link", null);
-                    break;
-                default:
-                    skip(parser);
-            }
-        }
-        return item;
+    @Nullable
+    @Override
+    protected List<XmlFieldDefinition> getAttributes() {
+        return null;
+    }
+
+    @Override
+    protected List<XmlFieldDefinition> getTags() {
+        List<XmlFieldDefinition> list = new ArrayList<>();
+        list.add(new XmlFieldDefinition("title", new TypeLiteral<String>(){}));
+        list.add(new XmlFieldDefinition("description", new TypeLiteral<String>(){}));
+        list.add(new XmlFieldDefinition("link", new TypeLiteral<Uri>(){}));
+        return list;
+    }
+
+    @Override
+    public Typed<RssItem> getType() {
+        return new TypeLiteral<RssItem>() {};
     }
 }

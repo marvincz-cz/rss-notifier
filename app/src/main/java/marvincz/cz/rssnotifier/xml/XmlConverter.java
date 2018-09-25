@@ -10,15 +10,17 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 
 public abstract class XmlConverter<T> {
-    public final Typed<T> getType() {
-        return new TypeLiteral<T>(){};
-    }
+    public abstract Typed<T> getType();
+    protected int depth;
 
     @Nullable
     public final T parseTag(XmlPullParser parser, @Nullable String name, @Nullable String namespace) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, namespace, name);
+        depth = parser.getDepth();
         T result = convertBody(parser);
-        parser.require(XmlPullParser.END_TAG, namespace, name);
+        if ((depth > 1) && (parser.getEventType() == XmlPullParser.END_TAG) && (parser.getDepth() == depth)) {
+            parser.next();
+        }
         return result;
     }
 
@@ -34,17 +36,12 @@ public abstract class XmlConverter<T> {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
         }
-        int depth = 1;
-        while (depth != 0) {
-            switch (parser.next()) {
-                case XmlPullParser.END_TAG:
-                    depth--;
-                    break;
-                case XmlPullParser.START_TAG:
-                    depth++;
-                    break;
-            }
-        }
+        final int depth = parser.getDepth();
+        while (parser.next() != XmlPullParser.END_TAG || depth != parser.getDepth());
+        parser.next(); // move past
     }
 
+    protected String defaultNamespace(@Nullable String string) {
+        return (string == null) ? XmlPullParser.NO_NAMESPACE : string;
+    }
 }

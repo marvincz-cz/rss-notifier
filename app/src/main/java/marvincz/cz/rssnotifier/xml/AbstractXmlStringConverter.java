@@ -7,7 +7,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-public class AbstractXmlStringConverter<T> extends XmlConverter<T> {
+public abstract class AbstractXmlStringConverter<T> extends XmlConverter<T> {
     @Override
     @Nullable
     public final T convertBody(XmlPullParser parser) throws IOException, XmlPullParserException {
