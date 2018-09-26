@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.apache.commons.lang3.reflect.Typed;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import marvincz.cz.rssnotifier.model.RssItem;
@@ -18,17 +18,16 @@ public class XmlRssItemConverter extends XmlComplexConverter<RssItem> {
 
     @Nullable
     @Override
-    protected List<XmlFieldDefinition> getAttributes() {
+    protected List<XmlFieldDefinition<RssItem, ?>> getAttributes() {
         return null;
     }
 
     @Override
-    protected List<XmlFieldDefinition> getTags() {
-        List<XmlFieldDefinition> list = new ArrayList<>();
-        list.add(new XmlFieldDefinition("title", new TypeLiteral<String>(){}));
-        list.add(new XmlFieldDefinition("description", new TypeLiteral<String>(){}));
-        list.add(new XmlFieldDefinition("link", new TypeLiteral<Uri>(){}));
-        return list;
+    protected List<XmlFieldDefinition<RssItem, ?>> getTags() {
+        return Arrays.asList(
+                new XmlFieldDefinition<>("title", (i, t) -> i.title = t, new TypeLiteral<String>() {}),
+                new XmlFieldDefinition<>("description", (i, d) -> i.description = d, new TypeLiteral<String>() {}),
+                new XmlFieldDefinition<>("link", (i, l) -> i.link = l, new TypeLiteral<Uri>() {}));
     }
 
     @Override

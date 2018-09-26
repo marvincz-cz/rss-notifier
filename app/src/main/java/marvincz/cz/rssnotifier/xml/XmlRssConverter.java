@@ -24,13 +24,13 @@ public class XmlRssConverter extends XmlComplexConverter<Rss> {
 
     @Nullable
     @Override
-    protected List<XmlFieldDefinition> getAttributes() {
+    protected List<XmlFieldDefinition<Rss, ?>> getAttributes() {
         return null;
     }
 
     @Nullable
     @Override
-    protected List<XmlFieldDefinition> getTags() {
-        return Collections.singletonList(new XmlFieldDefinition("channel", new TypeLiteral<RssChannel>() {}));
+    protected List<XmlFieldDefinition<Rss, ?>> getTags() {
+        return Collections.singletonList(new XmlFieldDefinition<Rss, RssChannel>("channel", (rss, channel) -> rss.channel = channel, new TypeLiteral<RssChannel>() {}));
     }
 }

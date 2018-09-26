@@ -1,29 +1,36 @@
 package marvincz.cz.rssnotifier.xml;
 
 import org.apache.commons.lang3.reflect.Typed;
+import org.xmlpull.v1.XmlPullParser;
 
-public class XmlFieldDefinition {
-    public String name;
-    public String namespace;
-    public String field;
-    public Typed type;
+import java.lang.reflect.Field;
 
-    public XmlFieldDefinition(String name, String namespace, String field, Typed type) {
+public class XmlFieldDefinition<T, V> {
+    public final String name;
+    public final String namespace;
+    public final FieldValueSetter<T, V> setter;
+    public final Typed<V> type;
+
+    public XmlFieldDefinition(String name, String namespace, String fieldName, Typed<V> type) {
+        this(name, namespace, new ReflectiveFieldValueSetter<>(fieldName), type);
+    }
+
+    public XmlFieldDefinition(String fieldName, Typed<V> type) {
+        this(fieldName, fieldName, type);
+    }
+
+    public XmlFieldDefinition(String name, String fieldName, Typed<V> type) {
+        this(name, XmlPullParser.NO_NAMESPACE, fieldName, type);
+    }
+
+    public XmlFieldDefinition(String name, FieldValueSetter<T, V> setter, Typed<V> type) {
+        this(name, XmlPullParser.NO_NAMESPACE, setter, type);
+    }
+
+    public XmlFieldDefinition(String name, String namespace, FieldValueSetter<T, V> setter, Typed<V> type) {
         this.name = name;
         this.namespace = namespace;
-        this.field = field;
-        this.type = type;
-    }
-
-    public XmlFieldDefinition(String field, Typed type) {
-        this.field = field;
-        this.name = field;
-        this.type = type;
-    }
-
-    public XmlFieldDefinition(String name, String field, Typed type) {
-        this.name = name;
-        this.field = field;
+        this.setter = setter;
         this.type = type;
     }
 }
