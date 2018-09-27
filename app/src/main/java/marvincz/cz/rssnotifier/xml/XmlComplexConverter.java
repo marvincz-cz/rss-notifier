@@ -11,10 +11,6 @@ import java.util.List;
 public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
 
     private final InstanceCreator<T> instanceCreator;
-    @Nullable
-    private final List<XmlFieldDefinition<T, ?>> attributes;
-    @Nullable
-    private final List<XmlFieldDefinition<T, ?>> tags;
 
     public XmlComplexConverter() {
         this(new ReflectiveInstanceCreator<>());
@@ -22,8 +18,6 @@ public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
 
     public XmlComplexConverter(InstanceCreator<T> instanceCreator) {
         this.instanceCreator = instanceCreator;
-        attributes = getAttributes();
-        tags = getTags();
     }
 
     @Nullable
@@ -34,6 +28,8 @@ public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
 
     public final T convertBody(XmlPullParser parser) throws IOException, XmlPullParserException {
         T result = instanceCreator.createInstance(getType());
+        final List<XmlFieldDefinition<T, ?>> attributes = getAttributes();
+        final List<XmlFieldDefinition<T, ?>> tags = getTags();
 
         if ((attributes != null) && !attributes.isEmpty()) {
             for (int i = 0; i < parser.getAttributeCount(); i++) {
@@ -65,12 +61,12 @@ public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
     }
 
     private <V> void convertAttribute(String attributeValue, XmlFieldDefinition<T, V> field, T object) throws IOException {
-        V converted = XmlConverterFactory.convertAttribute(field.type, attributeValue);
+        V converted = xmlConverterFactory.convertAttribute(field.type, attributeValue);
         field.setter.set(object, converted);
     }
 
     private <V> void convertField(XmlPullParser parser, String name, String namespace, XmlFieldDefinition<T, V> field, T object) throws IOException, XmlPullParserException {
-        V converted = XmlConverterFactory.convert(field.type, parser, name, namespace);
+        V converted = xmlConverterFactory.convert(field.type, parser, name, namespace);
         field.setter.set(object, converted);
     }
 

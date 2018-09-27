@@ -30,15 +30,16 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.Vector;
 
-public class XmlCollectionConverter<T> extends XmlConverter<T> {
+class XmlCollectionConverter<T> extends XmlConverter<T> {
     private final InstanceCreator<T> instanceCreator;
     private final Type type;
 
-    public XmlCollectionConverter(Type type) {
-        this(new CollectionInstanceCreator<>(), type);
+    XmlCollectionConverter(XmlConverterFactory xmlConverterFactory, Type type) {
+        this(xmlConverterFactory, new CollectionInstanceCreator<>(), type);
     }
 
-    public XmlCollectionConverter(InstanceCreator<T> instanceCreator, Type type) {
+    private XmlCollectionConverter(XmlConverterFactory xmlConverterFactory, InstanceCreator<T> instanceCreator, Type type) {
+        this.xmlConverterFactory = xmlConverterFactory;
         this.instanceCreator = instanceCreator;
         this.type = type;
     }
@@ -70,7 +71,7 @@ public class XmlCollectionConverter<T> extends XmlConverter<T> {
             if ((eventType == XmlPullParser.START_TAG)
                     && name.equals(parser.getName())
                     && defaultNamespace(namespace).equals(defaultNamespace(parser.getNamespace()))) {
-                ((Collection) result).add(XmlConverterFactory.convert(itemType, parser, name, namespace));
+                ((Collection) result).add(xmlConverterFactory.convert(itemType, parser, name, namespace));
             } else {
                 exit = true;
             }

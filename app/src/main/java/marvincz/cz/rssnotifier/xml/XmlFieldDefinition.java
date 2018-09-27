@@ -1,5 +1,6 @@
 package marvincz.cz.rssnotifier.xml;
 
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.commons.lang3.reflect.Typed;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -32,5 +33,9 @@ public class XmlFieldDefinition<T, V> {
         this.namespace = namespace;
         this.setter = setter;
         this.type = type;
+    }
+
+    public XmlFieldDefinition(Field field) {
+        this(field.getName(), TypeUtils.wrap(field.getGenericType()));
     }
 }

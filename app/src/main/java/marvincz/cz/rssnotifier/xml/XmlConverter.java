@@ -12,6 +12,11 @@ import java.io.IOException;
 public abstract class XmlConverter<T> {
     public abstract Typed<T> getType();
     protected int depth;
+    protected XmlConverterFactory xmlConverterFactory;
+
+    void setXmlConverterFactory(XmlConverterFactory xmlConverterFactory) {
+        this.xmlConverterFactory = xmlConverterFactory;
+    }
 
     @Nullable
     public final T parseTag(XmlPullParser parser, @Nullable String name, @Nullable String namespace) throws IOException, XmlPullParserException {
@@ -36,8 +41,8 @@ public abstract class XmlConverter<T> {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
         }
-        final int depth = parser.getDepth();
-        while (parser.next() != XmlPullParser.END_TAG || depth != parser.getDepth());
+        final int skipDepth = parser.getDepth();
+        while (parser.next() != XmlPullParser.END_TAG || skipDepth != parser.getDepth());
         parser.next(); // move past
     }
 

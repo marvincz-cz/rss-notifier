@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.util.Collections;
 
@@ -37,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Client.call("http://www.giantitp.com/comics/").rss().enqueue(new Callback<Rss>() {
+        fab.setOnClickListener(view -> Client.callReflect("http://www.giantitp.com/comics/").rss().enqueue(new Callback<Rss>() {
             @Override
             public void onResponse(Call<Rss> call, Response<Rss> response) {
                 if (response != null && response.body() != null) {
-                    adapter.replaceList(response.body().channel.items);
+                    adapter.replaceList(response.body().channel.item);
                 }
             }
 
