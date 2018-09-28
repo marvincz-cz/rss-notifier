@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -86,7 +86,7 @@ public class XmlConverterFactory extends Converter.Factory {
     }
 
     @SuppressWarnings("unchecked")
-    <T> T convertAttribute(Typed<T> type, String attributeValue) {
+    <T> T convertAttribute(Typed<T> type, String attributeValue) throws IOException {
         XmlConverter converter = converters.get(type.getType());
         if (converter != null) {
             return (T) converter.convertString(attributeValue);
@@ -96,11 +96,12 @@ public class XmlConverterFactory extends Converter.Factory {
     }
 
     public static class Builder {
-        private Set<XmlConverter> converters = new HashSet<>();
+        private Set<XmlConverter> converters = new LinkedHashSet<>();
 
         public Builder() {
             converters.add(new XmlStringConverter());
             converters.add(new XmlUriConverter());
+            converters.add(new XmlDateConverter());
         }
 
         public Builder addConverter(XmlConverter converter) {

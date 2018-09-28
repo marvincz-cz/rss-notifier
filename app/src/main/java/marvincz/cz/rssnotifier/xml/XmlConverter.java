@@ -30,7 +30,7 @@ public abstract class XmlConverter<T> {
     }
 
     @Nullable
-    protected T convertString(@Nullable String stringValue) {
+    protected T convertString(@Nullable String stringValue) throws IOException {
         throw new UnsupportedOperationException();
     }
 
