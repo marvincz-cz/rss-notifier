@@ -35,7 +35,6 @@ public class XmlRssChannelConverter extends XmlComplexConverter<RssChannel> {
                 new XmlFieldDefinition<>("title", (ch, t) -> ch.title = t, new TypeLiteral<String>() {}),
                 new XmlFieldDefinition<>("description", (ch, d) -> ch.description = d, new TypeLiteral<String>() {}),
                 new XmlFieldDefinition<>("link", (ch, l) -> ch.link = l, new TypeLiteral<Uri>() {}),
-//                new XmlFieldDefinition<>("lastBuildDate", (ch, d) -> ch.lastBuildDate = d, new TypeLiteral<ZonedDateTime>(){}),
                 new XmlFieldDefinition<>("item", (ch, i) -> ch.item = i, new TypeLiteral<List<RssItem>>() {}));
     }
 }

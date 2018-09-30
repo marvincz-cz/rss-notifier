@@ -1,7 +1,9 @@
 package marvincz.cz.rssnotifier.xml;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -26,7 +28,7 @@ public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
     @Nullable
     protected abstract List<XmlFieldDefinition<T, ?>> getTags();
 
-    public final T convertBody(XmlPullParser parser) throws IOException, XmlPullParserException {
+    public final T convertBody(XmlPullParser parser, @NonNull String name, @Nullable String namespace) throws IOException, XmlPullParserException {
         T result = instanceCreator.createInstance(getType());
         final List<XmlFieldDefinition<T, ?>> attributes = getAttributes();
         final List<XmlFieldDefinition<T, ?>> tags = getTags();
@@ -47,12 +49,12 @@ public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
                 continue;
             }
             // Starts by looking for the entry tag
-            String name = parser.getName();
-            String namespace = parser.getNamespace();
+            String fieldName = parser.getName();
+            String fieldNamespace = parser.getNamespace();
 
-            XmlFieldDefinition tag = matchingField(tags, name, namespace);
+            XmlFieldDefinition tag = matchingField(tags, fieldName, fieldNamespace);
             if (tag != null) {
-                convertField(parser, name, namespace, tag, result);
+                convertField(parser, tag, result);
             } else {
                 skip(parser);
             }
@@ -65,8 +67,8 @@ public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
         field.setter.set(object, converted);
     }
 
-    private <V> void convertField(XmlPullParser parser, String name, String namespace, XmlFieldDefinition<T, V> field, T object) throws IOException, XmlPullParserException {
-        V converted = xmlConverterFactory.convert(field.type, parser, name, namespace);
+    private <V> void convertField(XmlPullParser parser, XmlFieldDefinition<T, V> field, T object) throws IOException, XmlPullParserException {
+        V converted = xmlConverterFactory.convert(field.type, parser, field.name, field.namespace);
         field.setter.set(object, converted);
     }
 
@@ -74,7 +76,7 @@ public abstract class XmlComplexConverter<T> extends XmlConverter<T> {
     private XmlFieldDefinition matchingField(@Nullable List<XmlFieldDefinition<T, ?>> fields, String name, String namespace) {
         if (fields != null) {
             for (XmlFieldDefinition attribute : fields) {
-                if (name.equals(attribute.name) && defaultNamespace(namespace).equals(defaultNamespace(attribute.namespace))) {
+                if (name.equals(StringUtils.substringBefore(attribute.name, XmlProxyConverter.SEPARATOR)) && defaultNamespace(namespace).equals(defaultNamespace(attribute.namespace))) {
                     return attribute;
                 }
             }

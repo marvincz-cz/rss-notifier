@@ -1,5 +1,6 @@
 package marvincz.cz.rssnotifier.xml;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -22,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
@@ -51,12 +51,9 @@ class XmlCollectionConverter<T> extends XmlConverter<T> {
 
     @Nullable
     @Override
-    public T convertBody(XmlPullParser parser) throws IOException, XmlPullParserException {
+    public T convertBody(XmlPullParser parser, @NonNull String name, @Nullable String namespace) throws IOException, XmlPullParserException {
         T result = instanceCreator.createInstance(getType());
         Type itemType = getCollectionElementType(type);
-
-        final String name = parser.getName();
-        final String namespace = parser.getNamespace();
 
         int eventType;
         boolean exit = false;

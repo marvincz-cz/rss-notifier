@@ -8,6 +8,5 @@ public class RssChannel {
     public String title;
     public String description;
     public Uri link;
-//    public ZonedDateTime lastBuildDate;
     public List<RssItem> item;
 }

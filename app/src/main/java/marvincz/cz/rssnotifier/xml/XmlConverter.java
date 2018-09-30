@@ -1,8 +1,8 @@
 package marvincz.cz.rssnotifier.xml;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.apache.commons.lang3.reflect.Typed;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -19,10 +19,10 @@ public abstract class XmlConverter<T> {
     }
 
     @Nullable
-    public final T parseTag(XmlPullParser parser, @Nullable String name, @Nullable String namespace) throws IOException, XmlPullParserException {
+    public final T parseTag(XmlPullParser parser, @NonNull String name, @Nullable String namespace) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, namespace, name);
         depth = parser.getDepth();
-        T result = convertBody(parser);
+        T result = convertBody(parser, name, namespace);
         if ((depth > 1) && (parser.getEventType() == XmlPullParser.END_TAG) && (parser.getDepth() == depth)) {
             parser.next();
         }
@@ -35,14 +35,14 @@ public abstract class XmlConverter<T> {
     }
 
     @Nullable
-    public abstract T convertBody(XmlPullParser parser) throws IOException, XmlPullParserException;
+    public abstract T convertBody(XmlPullParser parser, @NonNull String name, @Nullable String namespace) throws IOException, XmlPullParserException;
 
     protected final void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
         }
         final int skipDepth = parser.getDepth();
-        while (parser.next() != XmlPullParser.END_TAG || skipDepth != parser.getDepth());
+        while (parser.next() != XmlPullParser.END_TAG || skipDepth != parser.getDepth()) {}
         parser.next(); // move past
     }
 
