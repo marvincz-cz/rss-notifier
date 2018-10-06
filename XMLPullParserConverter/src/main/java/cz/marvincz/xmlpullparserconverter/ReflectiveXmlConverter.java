@@ -12,6 +12,9 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import cz.marvincz.xmlpullparserconverter.annotation.XmlAttribute;
+import cz.marvincz.xmlpullparserconverter.annotation.XmlElement;
+
 public class ReflectiveXmlConverter<T> extends XmlComplexConverter<T> {
     @Nonnull
     private final Class<T> clazz;
@@ -23,7 +26,27 @@ public class ReflectiveXmlConverter<T> extends XmlComplexConverter<T> {
     @Nullable
     @Override
     protected List<XmlFieldDefinition<T, ?>> getAttributes() {
-        return null;
+        List<Field> fields = FieldUtils.getFieldsListWithAnnotation(clazz, XmlAttribute.class);
+
+        if (fields.isEmpty()) {
+            return null;
+        }
+
+        List<XmlFieldDefinition<T, ?>> list = new ArrayList<>();
+        for (Field field : fields) {
+            int modifiers = field.getModifiers();
+            if (Modifier.isPublic(modifiers) && !Modifier.isTransient(modifiers)
+                    && !Modifier.isStatic(modifiers)
+                    && !Modifier.isFinal(modifiers)) {
+                String name = field.getAnnotation(XmlAttribute.class).name();
+                if (name.equals("")) {
+                    list.add(new XmlFieldDefinition<>(field));
+                } else {
+                    list.add(new XmlFieldDefinition<>(field, name));
+                }
+            }
+        }
+        return list;
     }
 
     @Nullable
@@ -34,8 +57,14 @@ public class ReflectiveXmlConverter<T> extends XmlComplexConverter<T> {
             int modifiers = field.getModifiers();
             if (Modifier.isPublic(modifiers) && !Modifier.isTransient(modifiers)
                     && !Modifier.isStatic(modifiers)
-                    && !Modifier.isFinal(modifiers)) {
-                list.add(new XmlFieldDefinition<>(field));
+                    && !Modifier.isFinal(modifiers)
+                    && !field.isAnnotationPresent(XmlAttribute.class)) {
+                XmlElement annotation = field.getAnnotation(XmlElement.class);
+                if (annotation == null) {
+                    list.add(new XmlFieldDefinition<>(field));
+                } else {
+                    list.add(new XmlFieldDefinition<>(field, annotation.name()));
+                }
             }
         }
         return list;

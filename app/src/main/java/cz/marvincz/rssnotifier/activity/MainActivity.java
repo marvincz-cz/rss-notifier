@@ -2,6 +2,7 @@ package cz.marvincz.rssnotifier.activity;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,7 +15,7 @@ import java.util.Collections;
 
 import cz.marvincz.rssnotifier.R;
 import cz.marvincz.rssnotifier.adapter.ItemAdapter;
-import cz.marvincz.rssnotifier.model.Rss;
+import cz.marvincz.rssnotifier.model.RssChannel;
 import cz.marvincz.rssnotifier.retrofit.Client;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,16 +37,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Client.call().rss("http://www.darthsanddroids.net/rss2.xml").enqueue(new Callback<Rss>() {
+        fab.setOnClickListener(view -> Client.call().rss("http://www.darthsanddroids.net/rss2.xml").enqueue(new Callback<RssChannel>() {
             @Override
-            public void onResponse(Call<Rss> call, Response<Rss> response) {
-                if (response != null && response.body() != null) {
-                    adapter.replaceList(response.body().channel.item);
+            public void onResponse(@NonNull Call<RssChannel> call, @NonNull Response<RssChannel> response) {
+                if (response.body() != null) {
+                    adapter.replaceList(response.body().items);
                 }
             }
 
             @Override
-            public void onFailure(Call<Rss> call, Throwable t) {
+            public void onFailure(@NonNull Call<RssChannel> call, @NonNull Throwable t) {
                 Log.e("MainActivity", "Error", t);
             }
         }));

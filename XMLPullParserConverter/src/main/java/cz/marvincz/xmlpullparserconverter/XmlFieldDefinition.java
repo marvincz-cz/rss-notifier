@@ -36,6 +36,10 @@ public class XmlFieldDefinition<T, V> {
     }
 
     public XmlFieldDefinition(Field field) {
-        this(field.getName(), TypeUtils.wrap(field.getGenericType()));
+        this(field, field.getName());
+    }
+
+    public XmlFieldDefinition(Field field, String name) {
+        this(name, new ReflectiveFieldValueSetter<>(field), TypeUtils.wrap(field.getGenericType()));
     }
 }

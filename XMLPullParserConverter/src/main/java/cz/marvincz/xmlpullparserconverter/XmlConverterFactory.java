@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import cz.marvincz.xmlpullparserconverter.annotation.XmlRootElement;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import okhttp3.internal.Util;
@@ -55,7 +56,9 @@ public class XmlConverterFactory extends Converter.Factory {
                 parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
                 parser.setInput(in, charset(body));
                 parser.nextTag();
-                return XmlConverterFactory.this.convert(type, parser, parser.getName(), XmlPullParser.NO_NAMESPACE);
+                @Nullable XmlRootElement annotation = getRawType(type).getAnnotation(XmlRootElement.class);
+                String name = annotation != null ? annotation.name() : getRawType(type).getSimpleName();
+                return XmlConverterFactory.this.convert(type, parser, name, XmlPullParser.NO_NAMESPACE);
             } catch (XmlPullParserException e) {
                 throw new IOException(e);
             }
