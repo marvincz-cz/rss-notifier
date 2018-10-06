@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "marvincz.cz.rssnotifier"
+        applicationId "cz.marvincz.rssnotifier"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -31,7 +31,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation 'org.apache.commons:commons-lang3:3.8'
-
+    
+    implementation project(":XMLPullParserConverter")
 
     // JSR310 Android backport
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'

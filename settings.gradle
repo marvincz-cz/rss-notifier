@@ -1,1 +1,1 @@
-include ':app', ':XMLPullParser-AnnotationProcessor'
+include ':app', ':XMLPullParser-AnnotationProcessor', ':XMLPullParserConverter'
