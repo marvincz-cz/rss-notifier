@@ -42,21 +42,29 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         LayoutInflater inflater = LayoutInflater.from(context);
         return new ViewHolder(inflater.inflate(R.layout.item_two_line, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        RssItem item = items.get(i);
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+        RssItem item = items.get(position);
 
         viewHolder.title.setText(stripHtml(item.title));
         viewHolder.description.setText(stripHtml(item.description));
         if (item.link != null) {
-            viewHolder.actionIcon.setImageResource(R.drawable.ic_link);
+            if (item.seen) {
+                viewHolder.actionIcon.setImageResource(R.drawable.ic_eye_closed);
+            } else {
+                viewHolder.actionIcon.setImageResource(R.drawable.ic_eye);
+            }
             viewHolder.actionIcon.setVisibility(View.VISIBLE);
-            viewHolder.itemView.setOnClickListener(v -> callback.goTo(item.link));
+            viewHolder.itemView.setOnClickListener(v -> {
+                callback.goTo(item.link);
+                notifyItemChanged(position);
+                item.seen = true;
+            });
         } else {
             viewHolder.actionIcon.setImageResource(0);
             viewHolder.actionIcon.setVisibility(View.GONE);

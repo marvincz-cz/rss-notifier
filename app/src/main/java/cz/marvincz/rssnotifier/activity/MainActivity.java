@@ -1,5 +1,6 @@
 package cz.marvincz.rssnotifier.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToLink(Uri link) {
-        // TODO: 12.09.2018
+        startActivity(new Intent(Intent.ACTION_VIEW, link)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 }
