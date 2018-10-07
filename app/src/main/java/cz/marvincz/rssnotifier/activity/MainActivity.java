@@ -9,6 +9,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,9 +18,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.marvincz.rssnotifier.R;
+import cz.marvincz.rssnotifier.RssApplication;
 import cz.marvincz.rssnotifier.adapter.ItemAdapter;
 import cz.marvincz.rssnotifier.model.RssChannel;
 import cz.marvincz.rssnotifier.retrofit.Client;
+import cz.marvincz.rssnotifier.room.Database;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,10 +32,14 @@ public class MainActivity extends AppCompatActivity {
     // http://www.giantitp.com/comics/oots.rss
     // https://www.erfworld.com/rss
 
+    @Inject
+    Database database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        RssApplication.getAppComponent().inject(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
