@@ -4,7 +4,41 @@
     android:width="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <path android:fillColor="#de000000"
+    <path android:fillColor="#000000"
         android:pathData="M23,12 C21.27,16.39 17,19.5 12,19.5C7,19.5 2.73,16.39 1,12C1,11 2.9,11 3.18,12
                     C4.83,15.36 8.24,17.5 12,17.5C15.76,17.5 19.17,15.36 20.82,12C21.1,11 23,11 23,12Z" />
+
+    <group
+        android:translateX="12"
+        android:translateY="20.1">
+        <path android:fillColor="#000000" android:pathData="M-1,0C-1,2 1,2 1,0C1,-2 -1,-2 -1,0z" />
+    </group>
+
+    <group
+        android:rotation="28"
+        android:translateX="6.9"
+        android:translateY="19">
+        <path android:fillColor="#000000" android:pathData="M-1,0C-1,2 1,2 1,0C1,-2 -1,-2 -1,0z" />
+    </group>
+
+    <group
+        android:rotation="-28"
+        android:translateX="17.1"
+        android:translateY="19">
+        <path android:fillColor="#000000" android:pathData="M-1,0C-1,2 1,2 1,0C1,-2 -1,-2 -1,0z" />
+    </group>
+
+    <group
+        android:rotation="50"
+        android:translateX="2.8"
+        android:translateY="16">
+        <path android:fillColor="#000000" android:pathData="M-1,0C-1,2 1,2 1,0C1,-2 -1,-2 -1,0z" />
+    </group>
+
+    <group
+        android:rotation="-50"
+        android:translateX="21.2"
+        android:translateY="16">
+        <path android:fillColor="#000000" android:pathData="M-1,0C-1,2 1,2 1,0C1,-2 -1,-2 -1,0z" />
+    </group>
 </vector>
