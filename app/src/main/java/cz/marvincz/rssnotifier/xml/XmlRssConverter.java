@@ -1,13 +1,12 @@
 package cz.marvincz.rssnotifier.xml;
 
-import android.support.annotation.Nullable;
-
 import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.apache.commons.lang3.reflect.Typed;
 
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import cz.marvincz.rssnotifier.model.Rss;
 import cz.marvincz.rssnotifier.model.RssChannel;
 import cz.marvincz.xmlpullparserconverter.XmlComplexConverter;

@@ -1,7 +1,5 @@
 package cz.marvincz.rssnotifier.xml;
 
-import android.support.annotation.Nullable;
-
 import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.apache.commons.lang3.reflect.Typed;
 import org.threeten.bp.ZonedDateTime;
@@ -9,6 +7,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.Locale;
 
+import androidx.annotation.Nullable;
 import cz.marvincz.xmlpullparserconverter.AbstractXmlStringConverter;
 
 public class ABPZonedDateTimeConverter extends AbstractXmlStringConverter<ZonedDateTime> {

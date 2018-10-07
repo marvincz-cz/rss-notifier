@@ -3,8 +3,6 @@ package cz.marvincz.rssnotifier.adapter;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +12,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import cz.marvincz.rssnotifier.R;
 import cz.marvincz.rssnotifier.model.RssItem;
 
