@@ -22,6 +22,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+    // http://www.darthsanddroids.net/rss2.xml
+    // http://www.giantitp.com/comics/oots.rss
+    // https://www.erfworld.com/rss
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

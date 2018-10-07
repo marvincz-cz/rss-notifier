@@ -2,8 +2,10 @@ package cz.marvincz.rssnotifier.adapter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,8 @@ import cz.marvincz.rssnotifier.R;
 import cz.marvincz.rssnotifier.model.RssItem;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
+    private static final String OBJECT_PLACEHOLDER_CHARACTER = "￼";
+
     private final Context context;
     private List<RssItem> items;
     @NonNull
@@ -47,8 +51,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         RssItem item = items.get(i);
 
-        viewHolder.title.setText(item.title);
-        viewHolder.description.setText(item.description);
+        viewHolder.title.setText(stripHtml(item.title));
+        viewHolder.description.setText(stripHtml(item.description));
         if (item.link != null) {
             viewHolder.actionIcon.setImageResource(R.drawable.ic_link);
             viewHolder.actionIcon.setVisibility(View.VISIBLE);
@@ -58,6 +62,21 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             viewHolder.actionIcon.setVisibility(View.GONE);
             viewHolder.itemView.setOnClickListener(null);
         }
+    }
+
+    private String stripHtml(String html) {
+        if (html == null) {
+            return null;
+        }
+        String text;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT).toString();
+        } else {
+            text = Html.fromHtml(html).toString();
+        }
+        return text.replace(OBJECT_PLACEHOLDER_CHARACTER, "")
+                .trim()
+                .replace("\n\n", "\n");
     }
 
     @Override
