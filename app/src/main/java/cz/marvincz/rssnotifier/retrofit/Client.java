@@ -1,6 +1,5 @@
 package cz.marvincz.rssnotifier.retrofit;
 
-import cz.marvincz.rssnotifier.model.Rss;
 import cz.marvincz.rssnotifier.model.RssChannel;
 import cz.marvincz.rssnotifier.model.RssItem;
 import cz.marvincz.rssnotifier.xml.ABPZonedDateTimeConverter;
@@ -16,7 +15,6 @@ public class Client {
                 .client(new OkHttpClient())
                 .baseUrl("http://127.0.0.1")
                 .addConverterFactory(new XmlConverterFactory.Builder()
-                        .addConverter(new ReflectiveXmlConverter<>(Rss.class))
                         .addConverter(new ReflectiveXmlConverter<>(RssItem.class))
                         .addConverter(new ReflectiveXmlConverter<>(RssChannel.class))
                         .addConverter(new ABPZonedDateTimeConverter())
