@@ -5,8 +5,8 @@ import java.util.Set;
 import androidx.room.Relation;
 
 public class ChannelWithItems extends ChannelEntity {
-    ChannelWithItems(int id, String title, String description, String channelUrl) {
-        super(id, title, description, channelUrl);
+    ChannelWithItems() {
+        super();
     }
 
     @Relation(parentColumn = "id", entityColumn = "channelId")

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "28ae1a38375acd6a0fe6f6f6c789da7e",
+    "identityHash": "a94e7ad07c2671bdeba092a0c02d3f78",
     "entities": [
       {
         "tableName": "ChannelEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `description` TEXT, `channelUrl` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `description` TEXT, `url` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,8 +27,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "channelUrl",
-            "columnName": "channelUrl",
+            "fieldPath": "url",
+            "columnName": "url",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -39,7 +39,16 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_ChannelEntity_url",
+            "unique": true,
+            "columnNames": [
+              "url"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_ChannelEntity_url` ON `${TABLE_NAME}` (`url`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -92,7 +101,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"28ae1a38375acd6a0fe6f6f6c789da7e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a94e7ad07c2671bdeba092a0c02d3f78\")"
     ]
   }
 }

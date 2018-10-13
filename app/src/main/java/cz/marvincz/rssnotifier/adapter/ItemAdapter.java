@@ -76,12 +76,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         if (html == null) {
             return null;
         }
-        String text;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT).toString();
-        } else {
-            text = Html.fromHtml(html).toString();
-        }
+        String text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT).toString();
         return text.replace(OBJECT_PLACEHOLDER_CHARACTER, "")
                 .trim()
                 .replace("\n\n", "\n");
