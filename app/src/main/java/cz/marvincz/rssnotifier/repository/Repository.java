@@ -2,7 +2,7 @@ package cz.marvincz.rssnotifier.repository;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,6 +16,7 @@ import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import cz.marvincz.rssnotifier.RssApplication;
 import cz.marvincz.rssnotifier.model.RssChannel;
+import cz.marvincz.rssnotifier.model.RssItem;
 import cz.marvincz.rssnotifier.retrofit.Client;
 import cz.marvincz.rssnotifier.room.ChannelEntity;
 import cz.marvincz.rssnotifier.room.ChannelWithItems;
@@ -50,12 +51,13 @@ public class Repository {
             callback.onData(channels);
         } else {
             isLoading = true;
+            callback.onLoading();
             CompletableFuture.supplyAsync(database.dao()::getChannels, executor)
                     .thenApply(channelsWithItems -> channelsWithItems.stream()
                             .map(this::prepareDownload)
                             .map(supplier -> CompletableFuture.supplyAsync(supplier, executor))
                             .map(CompletableFuture::join)
-                            .peek(rssChannel -> rssChannel.markRead(channelsWithItems))
+                            .peek(rssChannel -> markReadFromDb(rssChannel, channelsWithItems))
                             .collect(Collectors.toList()))
                     .whenCompleteAsync((rssChannels, throwable) -> {
                         isLoading = false;
@@ -77,6 +79,21 @@ public class Repository {
                 throw new RuntimeException(e);
             }
         };
+    }
+
+    private void markReadFromDb(RssChannel channel, List<ChannelWithItems> channelsWithItems) {
+        String url = channel.link.toString();
+        Set<Integer> readItems = channelsWithItems.stream()
+                .filter(ch -> ch.url.equals(url))
+                .flatMap(ch -> ch.readItems.stream())
+                .map(item -> item.id)
+                .collect(Collectors.toSet());
+
+        for (RssItem item : channel.items) {
+            if (readItems.contains(item.getId())) {
+                item.seen = true;
+            }
+        }
     }
 
     @UiThread

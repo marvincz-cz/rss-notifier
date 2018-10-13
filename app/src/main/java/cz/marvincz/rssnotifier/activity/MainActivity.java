@@ -1,7 +1,5 @@
 package cz.marvincz.rssnotifier.activity;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -10,20 +8,16 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import cz.marvincz.rssnotifier.R;
 import cz.marvincz.rssnotifier.RssApplication;
-import cz.marvincz.rssnotifier.adapter.ItemAdapter;
+import cz.marvincz.rssnotifier.adapter.ChannelAdapter;
 import cz.marvincz.rssnotifier.model.RssChannel;
-import cz.marvincz.rssnotifier.model.RssItem;
 import cz.marvincz.rssnotifier.repository.DataCallback;
 import cz.marvincz.rssnotifier.repository.Repository;
 
@@ -34,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     Repository repository;
-    private ItemAdapter adapter;
     private FloatingActionButton fab;
+    private ChannelAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,23 +39,25 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        RecyclerView recyclerView = findViewById(R.id.list);
-        adapter = new ItemAdapter(this, Collections.emptyList(), this::goToLink);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        ViewPager viewPager = findViewById(R.id.pager);
+        adapter = new ChannelAdapter(getSupportFragmentManager(), Collections.emptyList());
+        viewPager.setAdapter(adapter);
 
         fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> loadData());
+        fab.setOnClickListener(v -> {/*TODO*/});
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
     }
 
     private void loadData() {
         repository.getChannels(new DataCallback<List<RssChannel>>() {
             @Override
             public void onData(List<RssChannel> data) {
-                List<RssItem> list = data.stream().flatMap(rss -> rss.items.stream())
-                        .collect(Collectors.toList());
-                adapter.replaceList(list);
+                adapter.replaceList(data);
             }
 
             @Override
@@ -76,10 +72,5 @@ public class MainActivity extends AppCompatActivity {
                 snackbar.show();
             }
         });
-    }
-
-    private void goToLink(Uri link) {
-        startActivity(new Intent(Intent.ACTION_VIEW, link)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 }

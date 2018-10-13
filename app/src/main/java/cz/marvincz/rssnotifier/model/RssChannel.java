@@ -1,35 +1,30 @@
 package cz.marvincz.rssnotifier.model;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import cz.marvincz.rssnotifier.room.ChannelWithItems;
 import cz.marvincz.xmlpullparserconverter.annotation.XmlElement;
 import cz.marvincz.xmlpullparserconverter.annotation.XmlRootElement;
+import paperparcel.PaperParcel;
 
 @XmlRootElement(name = "rss/channel")
-public class RssChannel {
+@PaperParcel
+public class RssChannel implements Parcelable {
+    public static final Creator<RssChannel> CREATOR = PaperParcelRssChannel.CREATOR;
     public String title;
     public String description;
     public Uri link;
     @XmlElement(name = "item")
     public List<RssItem> items;
 
-    public void markRead(List<ChannelWithItems> channelsWithItems) {
-        String url = link.toString();
-        Set<Integer> readItems = channelsWithItems.stream()
-                .filter(ch -> ch.url.equals(url))
-                .flatMap(ch -> ch.readItems.stream())
-                .map(item -> item.id)
-                .collect(Collectors.toSet());
+    @Override public int describeContents() {
+        return 0;
+    }
 
-        for (RssItem item : items) {
-            if (readItems.contains(item.getId())) {
-                item.seen = true;
-            }
-        }
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        PaperParcelRssChannel.writeToParcel(this, dest, flags); // (4)
     }
 }

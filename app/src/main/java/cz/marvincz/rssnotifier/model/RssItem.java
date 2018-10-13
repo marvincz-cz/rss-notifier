@@ -1,8 +1,14 @@
 package cz.marvincz.rssnotifier.model;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class RssItem {
+import paperparcel.PaperParcel;
+
+@PaperParcel
+public class RssItem implements Parcelable {
+    public static final Creator<RssItem> CREATOR = PaperParcelRssItem.CREATOR;
     public String title;
     public String description;
     public Uri link;
@@ -22,5 +28,13 @@ public class RssItem {
             }
         }
         return hash;
+    }
+
+    @Override public int describeContents() {
+        return 0;
+    }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        PaperParcelRssItem.writeToParcel(this, dest, flags); // (4)
     }
 }

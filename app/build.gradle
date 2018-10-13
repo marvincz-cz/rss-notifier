@@ -37,7 +37,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation 'org.apache.commons:commons-lang3:3.8'
-    
+
     implementation project(":XMLPullParserConverter")
 
     // JSR310 Android backport
@@ -55,4 +55,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
+    // PAPER PARCEL
+    compile 'nz.bradcampbell:paperparcel:2.0.6'
+    annotationProcessor 'nz.bradcampbell:paperparcel-compiler:2.0.6'
 }
