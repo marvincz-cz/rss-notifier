@@ -17,7 +17,7 @@ import androidx.viewpager.widget.ViewPager;
 import cz.marvincz.rssnotifier.R;
 import cz.marvincz.rssnotifier.RssApplication;
 import cz.marvincz.rssnotifier.adapter.ChannelAdapter;
-import cz.marvincz.rssnotifier.model.RssChannel;
+import cz.marvincz.rssnotifier.model.ChannelWithItems;
 import cz.marvincz.rssnotifier.repository.DataCallback;
 import cz.marvincz.rssnotifier.repository.Repository;
 
@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        repository.getChannels(new DataCallback<List<RssChannel>>() {
+        repository.getChannels(new DataCallback<List<ChannelWithItems>>() {
             @Override
-            public void onData(List<RssChannel> data) {
+            public void onData(List<ChannelWithItems> data) {
                 adapter.replaceList(data);
             }
 

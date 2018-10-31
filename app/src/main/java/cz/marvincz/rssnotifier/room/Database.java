@@ -7,9 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+import cz.marvincz.rssnotifier.model.RssChannel;
+import cz.marvincz.rssnotifier.model.RssItem;
 
-@androidx.room.Database(entities = {ChannelEntity.class, ReadItem.class}, version = 1)
+@androidx.room.Database(entities = {RssChannel.class, RssItem.class}, version = 1)
+@TypeConverters({Converter.class})
 public abstract class Database extends RoomDatabase {
     private static final String DB_NAME = "data.db";
 
@@ -48,11 +52,11 @@ public abstract class Database extends RoomDatabase {
         insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml");
     }
 
-    private static void insert(SupportSQLiteDatabase db, String title, String description, String url) {
+    private static void insert(SupportSQLiteDatabase db, String title, String description, String link) {
         ContentValues content = new ContentValues(3);
         content.put("title", title);
         content.put("description", description);
-        content.put("url", url);
+        content.put("link", link);
         db.insert("ChannelEntity", SQLiteDatabase.CONFLICT_REPLACE, content);
     }
 }

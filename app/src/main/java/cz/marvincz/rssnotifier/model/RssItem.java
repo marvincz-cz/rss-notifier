@@ -4,37 +4,37 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 import paperparcel.PaperParcel;
 
+@Entity(foreignKeys = @ForeignKey(
+        entity = RssChannel.class,
+        onDelete = ForeignKey.CASCADE,
+        parentColumns = "id",
+        childColumns = "channelId"),
+        indices = @Index("channelId"))
 @PaperParcel
 public class RssItem implements Parcelable {
     public static final Creator<RssItem> CREATOR = PaperParcelRssItem.CREATOR;
+
+    @PrimaryKey
+    public int id;
+    public int channelId;
     public String title;
     public String description;
     public Uri link;
-    public transient boolean seen;
+    public boolean seen;
 
-    /**
-     * Based on {@link String#toString}
-     * @return id based on link hash
-     */
-    public int getId() {
-        String s = link.toString();
-        int hash = 0;
-        final int len = s.length();
-        if (len > 0) {
-            for (int i = 0; i < len; i++) {
-                hash = 31 * hash + s.charAt(i);
-            }
-        }
-        return hash;
-    }
-
-    @Override public int describeContents() {
+    @Override
+    public int describeContents() {
         return 0;
     }
 
-    @Override public void writeToParcel(Parcel dest, int flags) {
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
         PaperParcelRssItem.writeToParcel(this, dest, flags); // (4)
     }
 }

@@ -1,5 +1,7 @@
 package cz.marvincz.rssnotifier.repository;
 
+import android.net.Uri;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -15,11 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import cz.marvincz.rssnotifier.RssApplication;
+import cz.marvincz.rssnotifier.model.ChannelWithItems;
 import cz.marvincz.rssnotifier.model.RssChannel;
 import cz.marvincz.rssnotifier.model.RssItem;
 import cz.marvincz.rssnotifier.retrofit.Client;
-import cz.marvincz.rssnotifier.room.ChannelEntity;
-import cz.marvincz.rssnotifier.room.ChannelWithItems;
 import cz.marvincz.rssnotifier.room.Database;
 import cz.marvincz.rssnotifier.util.MainThreadExecutor;
 import retrofit2.Call;
@@ -32,10 +33,10 @@ public class Repository {
 
     private final ExecutorService executor;
 
-    private List<RssChannel> channels;
+    private List<ChannelWithItems> channels;
 
     private boolean isLoading = false;
-    private DataCallback<List<RssChannel>> callback;
+    private DataCallback<List<ChannelWithItems>> callback;
 
     public Repository() {
         RssApplication.getAppComponent().inject(this);
@@ -43,7 +44,7 @@ public class Repository {
     }
 
     @UiThread
-    public void getChannels(DataCallback<List<RssChannel>> cb) {
+    public void getChannels(DataCallback<List<ChannelWithItems>> cb) {
         callback = cb;
         if (isLoading) {
             callback.onLoading();
@@ -53,12 +54,6 @@ public class Repository {
             isLoading = true;
             callback.onLoading();
             CompletableFuture.supplyAsync(database.dao()::getChannels, executor)
-                    .thenApply(channelsWithItems -> channelsWithItems.stream()
-                            .map(this::prepareDownload)
-                            .map(supplier -> CompletableFuture.supplyAsync(supplier, executor))
-                            .map(CompletableFuture::join)
-                            .peek(rssChannel -> markReadFromDb(rssChannel, channelsWithItems))
-                            .collect(Collectors.toList()))
                     .whenCompleteAsync((rssChannels, throwable) -> {
                         isLoading = false;
                         if (throwable != null) {
@@ -71,33 +66,32 @@ public class Repository {
         }
     }
 
-    private Supplier<RssChannel> prepareDownload(ChannelEntity entity) {
+    private Supplier<RssChannel> prepareDownload(RssChannel entity) {
         return () -> {
             try {
-                return Client.call().rss(entity.url).execute().body();
+                return Client.call().rss(entity.link).execute().body();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         };
     }
 
-    private void markReadFromDb(RssChannel channel, List<ChannelWithItems> channelsWithItems) {
-        String url = channel.link.toString();
+    private void markReadFromDb(ChannelWithItems channel, List<ChannelWithItems> channelsWithItems) {
         Set<Integer> readItems = channelsWithItems.stream()
-                .filter(ch -> ch.url.equals(url))
-                .flatMap(ch -> ch.readItems.stream())
+                .filter(ch -> ch.link.equals(channel.link))
+                .flatMap(ch -> ch.items.stream())
                 .map(item -> item.id)
                 .collect(Collectors.toSet());
 
         for (RssItem item : channel.items) {
-            if (readItems.contains(item.getId())) {
+            if (readItems.contains(item.id)) {
                 item.seen = true;
             }
         }
     }
 
     @UiThread
-    public void addChannel(String url, DataCallback<ChannelWithItems> cb) {
+    public void addChannel(Uri url, DataCallback<ChannelWithItems> cb) {
         cb.onLoading();
         executor.submit(() -> {
             if (!database.dao().channelExists(url)) {
@@ -109,13 +103,13 @@ public class Repository {
     }
 
     @WorkerThread
-    private void callAddChannel(String uri, DataCallback<ChannelWithItems> cb) {
-        Client.call().rss(uri).enqueue(new Callback<RssChannel>() {
+    private void callAddChannel(Uri uri, DataCallback<ChannelWithItems> cb) {
+        Client.call().rss(uri).enqueue(new Callback<ChannelWithItems>() {
             @Override
-            public void onResponse(Call<RssChannel> call, Response<RssChannel> response) {
+            public void onResponse(Call<ChannelWithItems> call, Response<ChannelWithItems> response) {
                 if (response.body() != null) {
                     executor.submit(() -> {
-                        ChannelWithItems channel = database.dao().saveChannel(new ChannelEntity(response.body()));
+                        ChannelWithItems channel = database.dao().saveChannel(new RssChannel());
                         onMainThread(() -> cb.onData(channel));
                     });
                 } else {
@@ -124,7 +118,7 @@ public class Repository {
             }
 
             @Override
-            public void onFailure(Call<RssChannel> call, Throwable t) {
+            public void onFailure(Call<ChannelWithItems> call, Throwable t) {
                 callback.onError();
             }
         });

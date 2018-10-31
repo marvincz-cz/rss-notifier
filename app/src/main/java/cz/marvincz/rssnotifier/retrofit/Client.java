@@ -1,7 +1,7 @@
 package cz.marvincz.rssnotifier.retrofit;
 
-import cz.marvincz.rssnotifier.model.RssChannel;
 import cz.marvincz.rssnotifier.model.RssItem;
+import cz.marvincz.rssnotifier.model.ChannelWithItems;
 import cz.marvincz.rssnotifier.xml.ABPZonedDateTimeConverter;
 import cz.marvincz.rssnotifier.xml.XmlUriConverter;
 import cz.marvincz.xmlpullparserconverter.ReflectiveXmlConverter;
@@ -16,7 +16,7 @@ public class Client {
                 .baseUrl("http://127.0.0.1")
                 .addConverterFactory(new XmlConverterFactory.Builder()
                         .addConverter(new ReflectiveXmlConverter<>(RssItem.class))
-                        .addConverter(new ReflectiveXmlConverter<>(RssChannel.class))
+                        .addConverter(new ReflectiveXmlConverter<>(ChannelWithItems.class))
                         .addConverter(new ABPZonedDateTimeConverter())
                         .addConverter(new XmlUriConverter())
                         .build())

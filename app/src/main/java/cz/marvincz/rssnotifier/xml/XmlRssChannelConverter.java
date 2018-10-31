@@ -9,30 +9,30 @@ import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import cz.marvincz.rssnotifier.model.RssChannel;
+import cz.marvincz.rssnotifier.model.ChannelWithItems;
 import cz.marvincz.rssnotifier.model.RssItem;
 import cz.marvincz.xmlpullparserconverter.XmlComplexConverter;
 import cz.marvincz.xmlpullparserconverter.XmlFieldDefinition;
 
-public class XmlRssChannelConverter extends XmlComplexConverter<RssChannel> {
+public class XmlRssChannelConverter extends XmlComplexConverter<ChannelWithItems> {
     public XmlRssChannelConverter() {
-        super(t -> new RssChannel());
+        super(t -> new ChannelWithItems());
     }
 
     @Override
-    public Typed<RssChannel> getType() {
-        return new TypeLiteral<RssChannel>() {};
+    public Typed<ChannelWithItems> getType() {
+        return new TypeLiteral<ChannelWithItems>() {};
     }
 
     @Nullable
     @Override
-    protected List<XmlFieldDefinition<RssChannel, ?>> getAttributes() {
+    protected List<XmlFieldDefinition<ChannelWithItems, ?>> getAttributes() {
         return null;
     }
 
     @Nullable
     @Override
-    protected List<XmlFieldDefinition<RssChannel, ?>> getTags() {
+    protected List<XmlFieldDefinition<ChannelWithItems, ?>> getTags() {
         return Arrays.asList(
                 new XmlFieldDefinition<>("title", (ch, t) -> ch.title = t, new TypeLiteral<String>() {}),
                 new XmlFieldDefinition<>("description", (ch, d) -> ch.description = d, new TypeLiteral<String>() {}),

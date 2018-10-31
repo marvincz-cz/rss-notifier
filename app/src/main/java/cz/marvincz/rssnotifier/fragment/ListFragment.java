@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.marvincz.rssnotifier.R;
 import cz.marvincz.rssnotifier.adapter.ItemAdapter;
-import cz.marvincz.rssnotifier.model.RssChannel;
+import cz.marvincz.rssnotifier.model.ChannelWithItems;
 
 /**
  * Activities that contain this fragment must implement the
@@ -29,7 +29,7 @@ public class ListFragment extends Fragment {
     private static final String ARG_CHANNEL = "channel_param";
 
     // TODO: Rename and change types of parameters
-    private RssChannel channel;
+    private ChannelWithItems channel;
 
     private OnFragmentInteractionListener mListener;
 
@@ -44,7 +44,7 @@ public class ListFragment extends Fragment {
      * @param channel Parameter 1.
      * @return A new instance of fragment ListFragment.
      */
-    public static ListFragment newInstance(RssChannel channel) {
+    public static ListFragment newInstance(ChannelWithItems channel) {
         ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_CHANNEL, channel);

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a94e7ad07c2671bdeba092a0c02d3f78",
+    "identityHash": "fd0246d5da530290616ce27ad7ab402a",
     "entities": [
       {
-        "tableName": "ChannelEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `description` TEXT, `url` TEXT)",
+        "tableName": "RssChannel",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `description` TEXT, `link` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,8 +27,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "url",
-            "columnName": "url",
+            "fieldPath": "link",
+            "columnName": "link",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -41,19 +41,19 @@
         },
         "indices": [
           {
-            "name": "index_ChannelEntity_url",
+            "name": "index_RssChannel_link",
             "unique": true,
             "columnNames": [
-              "url"
+              "link"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_ChannelEntity_url` ON `${TABLE_NAME}` (`url`)"
+            "createSql": "CREATE UNIQUE INDEX `index_RssChannel_link` ON `${TABLE_NAME}` (`link`)"
           }
         ],
         "foreignKeys": []
       },
       {
-        "tableName": "ReadItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `channelId` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`channelId`) REFERENCES `ChannelEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "RssItem",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `channelId` INTEGER NOT NULL, `title` TEXT, `description` TEXT, `link` TEXT, `seen` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`channelId`) REFERENCES `RssChannel`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -66,6 +66,30 @@
             "columnName": "channelId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "link",
+            "columnName": "link",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "seen",
+            "columnName": "seen",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -76,17 +100,17 @@
         },
         "indices": [
           {
-            "name": "index_ReadItem_channelId",
+            "name": "index_RssItem_channelId",
             "unique": false,
             "columnNames": [
               "channelId"
             ],
-            "createSql": "CREATE  INDEX `index_ReadItem_channelId` ON `${TABLE_NAME}` (`channelId`)"
+            "createSql": "CREATE  INDEX `index_RssItem_channelId` ON `${TABLE_NAME}` (`channelId`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "ChannelEntity",
+            "table": "RssChannel",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -101,7 +125,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a94e7ad07c2671bdeba092a0c02d3f78\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"fd0246d5da530290616ce27ad7ab402a\")"
     ]
   }
 }
