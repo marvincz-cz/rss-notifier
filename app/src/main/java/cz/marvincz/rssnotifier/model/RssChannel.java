@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
@@ -14,17 +15,17 @@ import cz.marvincz.xmlpullparserconverter.annotation.XmlElement;
 import cz.marvincz.xmlpullparserconverter.annotation.XmlRootElement;
 import paperparcel.PaperParcel;
 
-@Entity(indices = @Index(value = "link", unique = true))
+@Entity
 @XmlRootElement(name = "rss/channel")
 @PaperParcel
 public class RssChannel implements Parcelable {
     public static final Creator<RssChannel> CREATOR = PaperParcelRssChannel.CREATOR;
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+    @PrimaryKey
+    @NonNull
+    public Uri link;
     public String title;
     public String description;
-    public Uri link;
 
     @Override
     public int describeContents() {

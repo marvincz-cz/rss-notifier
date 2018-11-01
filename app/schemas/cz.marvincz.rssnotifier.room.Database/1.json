@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fd0246d5da530290616ce27ad7ab402a",
+    "identityHash": "70c5bbe27b3ea244cb64467976fa1762",
     "entities": [
       {
         "tableName": "RssChannel",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `description` TEXT, `link` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT, `description` TEXT, PRIMARY KEY(`link`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "link",
+            "columnName": "link",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -23,49 +23,34 @@
           {
             "fieldPath": "description",
             "columnName": "description",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "link",
-            "columnName": "link",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "link"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
-        "indices": [
-          {
-            "name": "index_RssChannel_link",
-            "unique": true,
-            "columnNames": [
-              "link"
-            ],
-            "createSql": "CREATE UNIQUE INDEX `index_RssChannel_link` ON `${TABLE_NAME}` (`link`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "RssItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `channelId` INTEGER NOT NULL, `title` TEXT, `description` TEXT, `link` TEXT, `seen` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`channelId`) REFERENCES `RssChannel`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `channelLink` TEXT, `title` TEXT, `description` TEXT, `seen` INTEGER NOT NULL, PRIMARY KEY(`link`), FOREIGN KEY(`channelLink`) REFERENCES `RssChannel`(`link`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "link",
+            "columnName": "link",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "channelId",
-            "columnName": "channelId",
-            "affinity": "INTEGER",
-            "notNull": true
+            "fieldPath": "channelLink",
+            "columnName": "channelLink",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "title",
@@ -76,12 +61,6 @@
           {
             "fieldPath": "description",
             "columnName": "description",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "link",
-            "columnName": "link",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -94,18 +73,18 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "link"
           ],
           "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_RssItem_channelId",
+            "name": "index_RssItem_channelLink",
             "unique": false,
             "columnNames": [
-              "channelId"
+              "channelLink"
             ],
-            "createSql": "CREATE  INDEX `index_RssItem_channelId` ON `${TABLE_NAME}` (`channelId`)"
+            "createSql": "CREATE  INDEX `index_RssItem_channelLink` ON `${TABLE_NAME}` (`channelLink`)"
           }
         ],
         "foreignKeys": [
@@ -114,10 +93,10 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "channelId"
+              "channelLink"
             ],
             "referencedColumns": [
-              "id"
+              "link"
             ]
           }
         ]
@@ -125,7 +104,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"fd0246d5da530290616ce27ad7ab402a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"70c5bbe27b3ea244cb64467976fa1762\")"
     ]
   }
 }

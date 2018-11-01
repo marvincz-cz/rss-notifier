@@ -1,10 +1,12 @@
 package cz.marvincz.rssnotifier.repository;
 
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
@@ -54,19 +57,45 @@ public class Repository {
             isLoading = true;
             callback.onLoading();
             CompletableFuture.supplyAsync(database.dao()::getChannels, executor)
-                    .whenCompleteAsync((rssChannels, throwable) -> {
-                        isLoading = false;
-                        if (throwable != null) {
-                            callback.onError();
-                        } else {
-                            channels = rssChannels;
-                            callback.onData(rssChannels);
-                        }
-                    }, new MainThreadExecutor());
+                    .whenCompleteAsync(this::returnResults, new MainThreadExecutor());
         }
     }
 
-    private Supplier<RssChannel> prepareDownload(RssChannel entity) {
+    @UiThread
+    private void returnResults(List<ChannelWithItems> rssChannels, Throwable throwable) {
+        isLoading = false;
+        if (throwable != null) {
+            Log.e("ERR", "Repository getChannels error", throwable);
+            callback.onError();
+        } else {
+            channels = rssChannels;
+            callback.onData(rssChannels);
+        }
+    }
+
+    @UiThread
+    public void reload(DataCallback<List<ChannelWithItems>> cb) {
+        callback = cb;
+        if (isLoading) {
+            callback.onLoading();
+        } else if (channels != null) {
+            callback.onData(channels);
+        } else {
+            isLoading = true;
+            callback.onLoading();
+            CompletableFuture.supplyAsync(database.dao()::getChannels, executor)
+                    .thenAccept(channelsWithItems -> channelsWithItems.stream()
+                            .map(this::prepareDownload)
+                            .map(supplier -> CompletableFuture.supplyAsync(supplier, executor))
+                            .map(CompletableFuture::join)
+                            .forEach(rssChannel -> updateInDb(rssChannel, channelsWithItems)))
+                    .thenApply(v -> database.dao().getChannels())
+                    .whenCompleteAsync(this::returnResults, new MainThreadExecutor());
+        }
+    }
+
+    @AnyThread
+    private Supplier<ChannelWithItems> prepareDownload(ChannelWithItems entity) {
         return () -> {
             try {
                 return Client.call().rss(entity.link).execute().body();
@@ -76,18 +105,25 @@ public class Repository {
         };
     }
 
-    private void markReadFromDb(ChannelWithItems channel, List<ChannelWithItems> channelsWithItems) {
-        Set<Integer> readItems = channelsWithItems.stream()
-                .filter(ch -> ch.link.equals(channel.link))
+    @WorkerThread
+    private void updateInDb(ChannelWithItems rssChannel, List<ChannelWithItems> dbChannels) {
+        List<RssItem> dbItems = dbChannels.stream()
+                .filter(ch -> ch.link.equals(rssChannel.link))
                 .flatMap(ch -> ch.items.stream())
-                .map(item -> item.id)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
-        for (RssItem item : channel.items) {
-            if (readItems.contains(item.id)) {
-                item.seen = true;
-            }
-        }
+        rssChannel.items.forEach(item -> item.channelLink = rssChannel.link);
+
+        List<RssItem> toDelete = dbItems.stream()
+                .filter(i -> !rssChannel.items.contains(i))
+                .collect(Collectors.toList());
+
+        List<RssItem> toAdd = rssChannel.items.stream()
+                .filter(i -> !dbItems.contains(i))
+                .peek(i -> i.seen = false)
+                .collect(Collectors.toList());
+
+        database.dao().deleteAndInsertItems(toDelete, toAdd);
     }
 
     @UiThread

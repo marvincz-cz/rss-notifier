@@ -10,7 +10,7 @@ import cz.marvincz.xmlpullparserconverter.annotation.XmlElement;
 import paperparcel.PaperParcel;
 
 public class ChannelWithItems extends RssChannel {
-    @Relation(parentColumn = "id", entityColumn = "channelId")
+    @Relation(parentColumn = "link", entityColumn = "channelLink")
     @XmlElement(name = "item")
     public List<RssItem> items;
 }
