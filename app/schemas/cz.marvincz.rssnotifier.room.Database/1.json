@@ -2,17 +2,23 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "70c5bbe27b3ea244cb64467976fa1762",
+    "identityHash": "b509ca41196edc771e1b4a67f3a6b886",
     "entities": [
       {
         "tableName": "RssChannel",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT, `description` TEXT, PRIMARY KEY(`link`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`accessUrl` TEXT NOT NULL, `link` TEXT, `title` TEXT, `description` TEXT, PRIMARY KEY(`accessUrl`))",
         "fields": [
+          {
+            "fieldPath": "accessUrl",
+            "columnName": "accessUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "link",
             "columnName": "link",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "title",
@@ -29,7 +35,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "link"
+            "accessUrl"
           ],
           "autoGenerate": false
         },
@@ -38,7 +44,7 @@
       },
       {
         "tableName": "RssItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `channelLink` TEXT, `title` TEXT, `description` TEXT, `seen` INTEGER NOT NULL, PRIMARY KEY(`link`), FOREIGN KEY(`channelLink`) REFERENCES `RssChannel`(`link`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `channelUrl` TEXT, `title` TEXT, `description` TEXT, `seen` INTEGER NOT NULL, PRIMARY KEY(`link`), FOREIGN KEY(`channelUrl`) REFERENCES `RssChannel`(`accessUrl`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "link",
@@ -47,8 +53,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "channelLink",
-            "columnName": "channelLink",
+            "fieldPath": "channelUrl",
+            "columnName": "channelUrl",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -79,12 +85,12 @@
         },
         "indices": [
           {
-            "name": "index_RssItem_channelLink",
+            "name": "index_RssItem_channelUrl",
             "unique": false,
             "columnNames": [
-              "channelLink"
+              "channelUrl"
             ],
-            "createSql": "CREATE  INDEX `index_RssItem_channelLink` ON `${TABLE_NAME}` (`channelLink`)"
+            "createSql": "CREATE  INDEX `index_RssItem_channelUrl` ON `${TABLE_NAME}` (`channelUrl`)"
           }
         ],
         "foreignKeys": [
@@ -93,10 +99,10 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "channelLink"
+              "channelUrl"
             ],
             "referencedColumns": [
-              "link"
+              "accessUrl"
             ]
           }
         ]
@@ -104,7 +110,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"70c5bbe27b3ea244cb64467976fa1762\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b509ca41196edc771e1b4a67f3a6b886\")"
     ]
   }
 }

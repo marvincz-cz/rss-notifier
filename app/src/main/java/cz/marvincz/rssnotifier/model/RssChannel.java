@@ -4,25 +4,19 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import cz.marvincz.xmlpullparserconverter.annotation.XmlElement;
-import cz.marvincz.xmlpullparserconverter.annotation.XmlRootElement;
 import paperparcel.PaperParcel;
 
 @Entity
-@XmlRootElement(name = "rss/channel")
 @PaperParcel
 public class RssChannel implements Parcelable {
     public static final Creator<RssChannel> CREATOR = PaperParcelRssChannel.CREATOR;
 
     @PrimaryKey
     @NonNull
+    public Uri accessUrl;
     public Uri link;
     public String title;
     public String description;

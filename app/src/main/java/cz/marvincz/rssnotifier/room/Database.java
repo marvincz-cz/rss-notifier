@@ -47,16 +47,17 @@ public abstract class Database extends RoomDatabase {
     }
 
     private static void initData(Context context, SupportSQLiteDatabase db) {
-        insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss");
-        insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss");
-        insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml");
+        insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss", "http://www.giantitp.com/Comics.html");
+        insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss", "todo");
+        insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml", "todo");
     }
 
-    private static void insert(SupportSQLiteDatabase db, String title, String description, String link) {
-        ContentValues content = new ContentValues(3);
+    private static void insert(SupportSQLiteDatabase db, String title, String description, String accessUrl, String link) {
+        ContentValues content = new ContentValues(4);
         content.put("title", title);
         content.put("description", description);
         content.put("link", link);
-        db.insert("ChannelEntity", SQLiteDatabase.CONFLICT_REPLACE, content);
+        content.put("accessUrl", accessUrl);
+        db.insert("RssChannel", SQLiteDatabase.CONFLICT_REPLACE, content);
     }
 }

@@ -5,8 +5,9 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -78,10 +79,9 @@ public class Repository {
         callback = cb;
         if (isLoading) {
             callback.onLoading();
-        } else if (channels != null) {
-            callback.onData(channels);
         } else {
             isLoading = true;
+            channels = null;
             callback.onLoading();
             CompletableFuture.supplyAsync(database.dao()::getChannels, executor)
                     .thenAccept(channelsWithItems -> channelsWithItems.stream()
@@ -98,7 +98,10 @@ public class Repository {
     private Supplier<ChannelWithItems> prepareDownload(ChannelWithItems entity) {
         return () -> {
             try {
-                return Client.call().rss(entity.link).execute().body();
+                return Optional.ofNullable(Client.call().rss(entity.accessUrl).execute())
+                        .map(Response::body)
+                        .map(ch -> ch.fixUrl(entity.accessUrl))
+                        .orElse(entity);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -108,20 +111,23 @@ public class Repository {
     @WorkerThread
     private void updateInDb(ChannelWithItems rssChannel, List<ChannelWithItems> dbChannels) {
         List<RssItem> dbItems = dbChannels.stream()
-                .filter(ch -> ch.link.equals(rssChannel.link))
+                .filter(ch -> ch.accessUrl.equals(rssChannel.accessUrl))
                 .flatMap(ch -> ch.items.stream())
                 .collect(Collectors.toList());
-
-        rssChannel.items.forEach(item -> item.channelLink = rssChannel.link);
 
         List<RssItem> toDelete = dbItems.stream()
                 .filter(i -> !rssChannel.items.contains(i))
                 .collect(Collectors.toList());
 
-        List<RssItem> toAdd = rssChannel.items.stream()
-                .filter(i -> !dbItems.contains(i))
-                .peek(i -> i.seen = false)
-                .collect(Collectors.toList());
+        List<RssItem> toAdd = new ArrayList<>();
+        rssChannel.items.forEach(item -> {
+            int i = dbItems.indexOf(item);
+            if (i >= 0) {
+                item.seen = dbItems.get(i).seen;
+            } else {
+                toAdd.add(item);
+            }
+        });
 
         database.dao().deleteAndInsertItems(toDelete, toAdd);
     }

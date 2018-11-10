@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -16,9 +19,9 @@ import paperparcel.PaperParcel;
 @Entity(foreignKeys = @ForeignKey(
         entity = RssChannel.class,
         onDelete = ForeignKey.CASCADE,
-        parentColumns = "link",
-        childColumns = "channelLink"),
-        indices = @Index("channelLink"))
+        parentColumns = "accessUrl",
+        childColumns = "channelUrl"),
+        indices = @Index("channelUrl"))
 @PaperParcel
 public class RssItem implements Parcelable {
     public static final Creator<RssItem> CREATOR = PaperParcelRssItem.CREATOR;
@@ -26,7 +29,7 @@ public class RssItem implements Parcelable {
     @PrimaryKey
     @NonNull
     public Uri link;
-    public Uri channelLink;
+    public Uri channelUrl;
     public String title;
     public String description;
     public boolean seen;
@@ -44,17 +47,26 @@ public class RssItem implements Parcelable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
+
         RssItem rssItem = (RssItem) o;
-        return channelLink == rssItem.channelLink &&
-                Objects.equals(link, rssItem.link) &&
-                Objects.equals(title, rssItem.title) &&
-                Objects.equals(description, rssItem.description);
+
+        return new EqualsBuilder()
+                .append(link, rssItem.link)
+                .append(channelUrl, rssItem.channelUrl)
+                .append(title, rssItem.title)
+                .append(description, rssItem.description)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(link, channelLink, title, description);
+        return new HashCodeBuilder(17, 37)
+                .append(link)
+                .append(channelUrl)
+                .append(title)
+                .append(description)
+                .toHashCode();
     }
 }

@@ -20,12 +20,12 @@ public abstract class Dao {
     @Transaction
     public abstract List<ChannelWithItems> getChannels();
 
-    @Query("SELECT * FROM RssChannel WHERE RssChannel.link = :link")
+    @Query("SELECT * FROM RssChannel WHERE RssChannel.accessUrl = :url")
     @Transaction
-    abstract ChannelWithItems getChannelWithItems(Uri link);
+    abstract ChannelWithItems getChannelWithItems(Uri url);
 
-    @Query("SELECT 1 FROM RssChannel WHERE RssChannel.link = :link")
-    abstract Integer getChannelExists(Uri link);
+    @Query("SELECT 1 FROM RssChannel WHERE RssChannel.accessUrl = :url")
+    abstract Integer getChannelExists(Uri url);
 
     @Insert
     public abstract void insertChannel(RssChannel channel);
@@ -59,8 +59,8 @@ public abstract class Dao {
     }
 
     @Transaction
-    public boolean channelExists(Uri link) {
-        return getChannelExists(link) != null;
+    public boolean channelExists(Uri url) {
+        return getChannelExists(url) != null;
     }
 
     @Transaction

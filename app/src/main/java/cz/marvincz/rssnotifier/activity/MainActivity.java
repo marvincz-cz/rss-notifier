@@ -11,8 +11,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 import cz.marvincz.rssnotifier.R;
 import cz.marvincz.rssnotifier.RssApplication;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     Repository repository;
+
+    private SwipeRefreshLayout pullDown;
     private FloatingActionButton fab;
     private ChannelAdapter adapter;
 
@@ -45,12 +49,38 @@ public class MainActivity extends AppCompatActivity {
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(v -> {/*TODO*/});
+
+        pullDown = findViewById(R.id.pullDown);
+        pullDown.setOnRefreshListener(() -> this.reloadData());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loadData();
+    }
+
+    private void reloadData() {
+        repository.reload(new DataCallback<List<ChannelWithItems>>() {
+            @Override
+            public void onData(@NonNull List<ChannelWithItems> data) {
+                pullDown.setRefreshing(false);
+                adapter.replaceList(data);
+            }
+
+            @Override
+            public void onLoading() {
+                /* no-op */
+            }
+
+            @Override
+            public void onError() {
+                pullDown.setRefreshing(false);
+                Snackbar snackbar = Snackbar.make(fab, "Error", Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("Close", v -> snackbar.dismiss());
+                snackbar.show();
+            }
+        });
     }
 
     private void loadData() {
