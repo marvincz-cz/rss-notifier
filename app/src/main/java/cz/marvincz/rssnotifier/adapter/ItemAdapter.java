@@ -36,8 +36,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     public void replaceList(List<RssItem> list) {
-        items = list;
-        notifyDataSetChanged();
+        if (!items.equals(list)) {
+            items = list;
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull
