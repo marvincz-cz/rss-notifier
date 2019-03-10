@@ -7,6 +7,7 @@ import java.util.List;
 
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
@@ -52,6 +53,9 @@ public abstract class Dao {
     @Delete
     public abstract void deleteItems(Collection<RssItem> items);
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract void insertOrUpdate(Collection<RssItem> channels);
+
     @Transaction
     public ChannelWithItems saveChannel(RssChannel channel) {
         insertChannel(channel);
@@ -64,8 +68,8 @@ public abstract class Dao {
     }
 
     @Transaction
-    public void deleteAndInsertItems(List<RssItem> toDelete, List<RssItem> toAdd) {
-        deleteItems(toDelete);
-        insertItems(toAdd);
+    public List<ChannelWithItems> insertUpdateAndReturn(Collection<RssItem> items) {
+        insertOrUpdate(items);
+        return getChannels();
     }
 }

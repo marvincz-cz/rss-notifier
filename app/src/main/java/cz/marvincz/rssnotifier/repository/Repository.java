@@ -102,14 +102,14 @@ public class Repository {
             PreferenceUtil.updateLastDownload();
             CompletableFuture.supplyAsync(database.dao()::getChannels, executor)
                     .thenApplyAsync(rssChannels -> results(rssChannels, false), new MainThreadExecutor())
-                    .thenApplyAsync(channelsWithItems -> {
-                        channelsWithItems.stream()
-                                .map(this::prepareDownload)
-                                .map(supplier -> CompletableFuture.supplyAsync(supplier, executor))
-                                .map(CompletableFuture::join)
-                                .forEach(rssChannel -> updateInDb(rssChannel, channelsWithItems));
-                        return channelsWithItems;
-                    }, executor)
+                    .thenApplyAsync(channelsWithItems -> channelsWithItems.stream()
+                            .map(this::prepareDownload)
+                            .map(download -> CompletableFuture.supplyAsync(download, executor))
+                            .map(CompletableFuture::join)
+                            .flatMap(ch -> ch.items
+                                    .stream())
+                            .collect(Collectors.toList()), executor)
+                    .thenApply(database.dao()::insertUpdateAndReturn)
                     .whenCompleteAsync(this::returnResults, new MainThreadExecutor());
         }
     }
@@ -126,30 +126,6 @@ public class Repository {
                 throw new RuntimeException(e);
             }
         };
-    }
-
-    @WorkerThread
-    private void updateInDb(ChannelWithItems rssChannel, List<ChannelWithItems> dbChannels) {
-        List<RssItem> dbItems = dbChannels.stream()
-                .filter(ch -> ch.accessUrl.equals(rssChannel.accessUrl))
-                .flatMap(ch -> ch.items.stream())
-                .collect(Collectors.toList());
-
-        List<RssItem> toDelete = dbItems.stream()
-                .filter(i -> !rssChannel.items.contains(i))
-                .collect(Collectors.toList());
-
-        List<RssItem> toAdd = new ArrayList<>();
-        rssChannel.items.forEach(item -> {
-            int i = dbItems.indexOf(item);
-            if (i >= 0) {
-                item.seen = dbItems.get(i).seen;
-            } else {
-                toAdd.add(item);
-            }
-        });
-
-        database.dao().deleteAndInsertItems(toDelete, toAdd);
     }
 
 //    @UiThread
