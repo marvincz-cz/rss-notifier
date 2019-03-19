@@ -81,7 +81,7 @@ public class XmlConverterFactory extends Converter.Factory {
             return new XmlProxyConverter<T>(this, type, name)
                     .parseTag(parser, StringUtils.substringBefore(name, XmlProxyConverter.SEPARATOR), namespace);
         }
-        XmlConverter converter = converters.get(type);
+        XmlConverter converter = getConverter(type);
         if (converter != null) {
             return (T) converter.parseTag(parser, name, namespace);
         } else if (TypeUtils.isAssignable(type, Collection.class)) {
@@ -91,9 +91,23 @@ public class XmlConverterFactory extends Converter.Factory {
         }
     }
 
+    /**
+     * Fix kvuli nesoumernemu equals pri converters.get
+     * @param type
+     * @return
+     */
+    private XmlConverter getConverter(Type type) {
+        return converters.entrySet()
+                .stream()
+                .filter(e -> e.getKey().equals(type))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElseGet(() -> converters.get(type));
+    }
+
     @SuppressWarnings("unchecked")
     <T> T convertAttribute(Typed<T> type, String attributeValue) throws IOException {
-        XmlConverter converter = converters.get(type.getType());
+        XmlConverter converter = getConverter(type.getType());
         if (converter != null) {
             return (T) converter.convertString(attributeValue);
         } else {
@@ -120,8 +134,20 @@ public class XmlConverterFactory extends Converter.Factory {
             return addConverter(converter, converter.getType().getType());
         }
 
+        public Builder addConverterWithWildcard(XmlConverter converter) {
+            return addConverterWithWildcard(converter, converter.getType().getType());
+        }
+
         private Builder addConverter(XmlConverter converter, Type type) {
             converters.put(type, converter);
+            return this;
+        }
+
+        private Builder addConverterWithWildcard(XmlConverter converter, Type type) {
+            converters.put(type, converter);
+            converters.put(TypeUtils.wildcardType()
+                    .withUpperBounds(type)
+                    .build(), converter);
             return this;
         }
 
