@@ -12,7 +12,7 @@ import org.threeten.bp.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.function.BiFunction
+import java.util.function.BiConsumer
 import java.util.function.Supplier
 import javax.inject.Inject
 
@@ -48,7 +48,7 @@ class Repository {
                             .flatMap { ch -> ch.items }
                 }
                 .thenAccept { database.dao().insertOrUpdate(it) }
-                .handleAsync(BiFunction<Void, Throwable, Unit> { _: Void, t: Throwable -> onDone.invoke()}, MainThreadExecutor())
+                .whenCompleteAsync( BiConsumer { _, _ -> onDone() }, MainThreadExecutor())
     }
 
     @AnyThread
