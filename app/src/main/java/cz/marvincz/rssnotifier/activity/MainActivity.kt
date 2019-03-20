@@ -38,4 +38,9 @@ class MainActivity : AppCompatActivity() {
 
         pullDown.setOnRefreshListener { repository.download(true) { pullDown.isRefreshing = false } }
     }
+
+    override fun onResume() {
+        super.onResume()
+        repository.download()
+    }
 }

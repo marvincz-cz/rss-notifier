@@ -27,17 +27,17 @@ class Repository {
         executor = Executors.newCachedThreadPool()
     }
 
-    fun download(force: Boolean = false, onDone: () -> Unit) {
+    fun download(force: Boolean = false, onDone: (() -> Unit)? = null) {
         val sinceLastDownload = PreferenceUtil.sinceLastDownload()
 
         if (force || sinceLastDownload > OLD_DATA_DURATION) {
             doDownload(onDone)
         } else {
-            onDone()
+            onDone?.invoke()
         }
     }
 
-    private fun doDownload(onDone: () -> Unit) {
+    private fun doDownload(onDone: (() -> Unit)? = null) {
         PreferenceUtil.updateLastDownload()
         CompletableFuture.supplyAsync(Supplier { database.dao().getSlow() }, executor)
                 .thenApply { channelsWithItems ->
@@ -48,7 +48,7 @@ class Repository {
                             .flatMap { ch -> ch.items }
                 }
                 .thenAccept { database.dao().insertOrUpdate(it) }
-                .whenCompleteAsync( BiConsumer { _, _ -> onDone() }, MainThreadExecutor())
+                .whenCompleteAsync( BiConsumer { _, _ -> onDone?.invoke() }, MainThreadExecutor())
     }
 
     @AnyThread
