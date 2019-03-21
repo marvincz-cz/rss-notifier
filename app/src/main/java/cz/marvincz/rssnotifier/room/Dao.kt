@@ -1,16 +1,9 @@
 package cz.marvincz.rssnotifier.room
 
-import android.net.Uri
 import androidx.annotation.AnyThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.*
 import cz.marvincz.rssnotifier.model.ChannelWithItems
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
@@ -46,7 +39,7 @@ abstract class Dao {
     abstract fun insertItems(items: Collection<RssItem>)
 
     @Update
-    abstract fun updateItems(vararg items: RssItem)
+    abstract fun updateItem(item: RssItem)
 
     @Update
     abstract fun updateItems(items: Collection<RssItem>)

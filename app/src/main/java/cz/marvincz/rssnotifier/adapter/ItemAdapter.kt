@@ -1,20 +1,24 @@
 package cz.marvincz.rssnotifier.adapter
 
+import android.content.Context
 import android.net.Uri
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import cz.marvincz.rssnotifier.R
+import cz.marvincz.rssnotifier.RssApplication
 import cz.marvincz.rssnotifier.model.RssItem
+import cz.marvincz.rssnotifier.repository.Repository
 import kotlinx.android.synthetic.main.item_two_line.view.*
 import java.util.function.Consumer
+import javax.inject.Inject
 
-class ItemAdapter(private val fragment: Fragment, var callback: Consumer<Uri>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(private val context: Context, var callback: Consumer<Uri>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+    @Inject
+    lateinit var repository: Repository
 
     var data: List<RssItem> = listOf()
         set(value) {
@@ -22,8 +26,12 @@ class ItemAdapter(private val fragment: Fragment, var callback: Consumer<Uri>) :
             notifyDataSetChanged()
         }
 
+    init {
+        RssApplication.appComponent.inject(this)
+    }
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): ViewHolder {
-        val inflater = LayoutInflater.from(fragment.context)
+        val inflater = LayoutInflater.from(context)
         return ViewHolder(inflater.inflate(R.layout.item_two_line, viewGroup, false))
     }
 
@@ -32,20 +40,24 @@ class ItemAdapter(private val fragment: Fragment, var callback: Consumer<Uri>) :
 
         viewHolder.itemView.title.text = stripHtml(item.title)
         viewHolder.itemView.description.text = stripHtml(item.description)
-            if (item.seen) {
-                viewHolder.itemView.actionIcon.setImageResource(R.drawable.ic_eye_closed)
-            } else {
-                viewHolder.itemView.actionIcon.setImageResource(R.drawable.ic_eye)
-            }
-            viewHolder.itemView.actionIcon.visibility = View.VISIBLE
-            viewHolder.itemView.setOnClickListener { v ->
-                callback.accept(Uri.parse(item.link))
-                notifyItemChanged(position)
-                item.seen = true
-            }
-//            viewHolder.actionIcon.setImageResource(0)
-//            viewHolder.actionIcon.visibility = View.GONE
-//            viewHolder.itemView.setOnClickListener(null)
+        if (item.seen) {
+            viewHolder.itemView.actionIcon.setImageResource(R.drawable.ic_eye_closed)
+            viewHolder.itemView.actionIcon.contentDescription = context.getString(R.string.action_mark_unread)
+        } else {
+            viewHolder.itemView.actionIcon.setImageResource(R.drawable.ic_eye)
+            viewHolder.itemView.actionIcon.contentDescription = context.getString(R.string.action_mark_read)
+        }
+        viewHolder.itemView.actionIcon.visibility = View.VISIBLE
+        viewHolder.itemView.actionIcon.setOnClickListener {
+            item.seen = !item.seen
+            notifyItemChanged(position)
+            repository.updateItem(item)
+        }
+        viewHolder.itemView.setOnClickListener {
+            callback.accept(Uri.parse(item.link))
+            item.seen = true
+            notifyItemChanged(position)
+        }
     }
 
     override fun getItemCount() = data.size

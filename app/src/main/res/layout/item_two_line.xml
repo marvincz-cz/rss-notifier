@@ -18,6 +18,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"
         tools:visibility="visible"
+        android:contentDescription="@string/image_icon"
         tools:src="@drawable/ic_check"/>
 
     <TextView
@@ -47,6 +48,7 @@
         app:layout_constraintEnd_toStartOf="@id/actionIcon"
         app:layout_constraintHorizontal_bias="0.0"
         android:textAppearance="@style/TwoLineText"
+        android:maxLines="1"
         tools:text="A slightly longer description" />
 
     <ImageView
@@ -63,6 +65,7 @@
         android:tintMode="src_in"
         android:visibility="gone"
         tools:visibility="visible"
+        android:contentDescription="@string/image_action"
         tools:src="@drawable/ic_check"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

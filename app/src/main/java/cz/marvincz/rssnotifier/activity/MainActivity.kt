@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         database.dao().getChannels().observe(this, Observer { adapter.data = it })
         pager.adapter = adapter
 
-        fab.setOnClickListener { /*TODO add Channel?*/}
+        fab.setOnClickListener { repository.addChannel("http://www.thetruthaboutguns.com/feed/") /* TODO input URL */ }
 
         pullDown.setOnRefreshListener { repository.download(true) { pullDown.isRefreshing = false } }
     }
