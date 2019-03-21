@@ -6,8 +6,15 @@
     <string name="image_icon">Icon</string>
     <string name="image_action">Action</string>
 
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_continue">OK</string>
+
     <string name="action_mark_read">Mark read</string>
     <string name="action_mark_unread">Mark unread</string>
+
+    <string name="dialog_add_channel_title">Add feed</string>
+    <string name="dialog_add_channel_message">Feed URL</string>
 
     <!--Preferences-->
     <string translatable="false" name="preference_last_download">LAST_DOWNLOAD_TIME</string>
