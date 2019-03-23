@@ -29,12 +29,12 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/actionIcon"
+        app:layout_constraintEnd_toStartOf="@id/action_icon"
         android:textAppearance="@style/TwoLineTitle"
         tools:text="Title" />
 
     <ImageView
-        android:id="@+id/actionIcon"
+        android:id="@+id/action_icon"
         android:layout_width="@dimen/icon_action"
         android:layout_height="@dimen/icon_action"
         android:layout_marginEnd="@dimen/activity_horizontal_padding"
@@ -46,5 +46,13 @@
         android:visibility="gone"
         tools:visibility="visible"
         tools:src="@drawable/ic_check"/>
+
+    <View
+        android:id="@+id/action_area"
+        android:layout_width="56dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

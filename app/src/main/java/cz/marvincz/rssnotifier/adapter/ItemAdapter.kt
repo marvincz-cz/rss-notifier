@@ -6,7 +6,6 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.RssApplication
@@ -41,14 +40,15 @@ class ItemAdapter(private val context: Context, var callback: Consumer<Uri>) : R
         viewHolder.itemView.title.text = stripHtml(item.title)
         viewHolder.itemView.description.text = stripHtml(item.description)
         if (item.seen) {
-            viewHolder.itemView.actionIcon.setImageResource(R.drawable.ic_eye_closed)
-            viewHolder.itemView.actionIcon.contentDescription = context.getString(R.string.action_mark_unread)
+            viewHolder.itemView.action_icon.setImageResource(R.drawable.ic_eye_closed)
+            viewHolder.itemView.action_icon.contentDescription = context.getString(R.string.action_mark_unread)
         } else {
-            viewHolder.itemView.actionIcon.setImageResource(R.drawable.ic_eye)
-            viewHolder.itemView.actionIcon.contentDescription = context.getString(R.string.action_mark_read)
+            viewHolder.itemView.action_icon.setImageResource(R.drawable.ic_eye)
+            viewHolder.itemView.action_icon.contentDescription = context.getString(R.string.action_mark_read)
         }
-        viewHolder.itemView.actionIcon.visibility = View.VISIBLE
-        viewHolder.itemView.actionIcon.setOnClickListener {
+        viewHolder.itemView.action_icon.visibility = View.VISIBLE
+        viewHolder.itemView.action_area.visibility = View.VISIBLE
+        viewHolder.itemView.action_area.setOnClickListener {
             item.seen = !item.seen
             notifyItemChanged(position)
             repository.updateItem(item)
