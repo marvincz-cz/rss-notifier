@@ -54,9 +54,10 @@ class ItemAdapter(private val context: Context, var callback: Consumer<Uri>) : R
             repository.updateItem(item)
         }
         viewHolder.itemView.setOnClickListener {
-            callback.accept(Uri.parse(item.link))
             item.seen = true
             notifyItemChanged(position)
+            repository.updateItem(item)
+            callback.accept(Uri.parse(item.link))
         }
     }
 
