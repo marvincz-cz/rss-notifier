@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.RssApplication
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
+import cz.marvincz.rssnotifier.repository.Repository
 import cz.marvincz.rssnotifier.room.Database
 import kotlinx.android.synthetic.main.fragment_list.*
+import org.koin.android.ext.android.inject
 import java.util.function.Consumer
 import javax.inject.Inject
 
@@ -30,8 +32,8 @@ class RssItemFragment : Fragment() {
 
     // TODO: Rename and change types of parameters
     private lateinit var channelUrl: String
-    @Inject
-    lateinit var database: Database
+    private val database: Database by inject()
+    private val repository: Repository by inject()
 
     //    private OnFragmentInteractionListener mListener;
     private lateinit var adapter: ItemAdapter
@@ -39,7 +41,6 @@ class RssItemFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         channelUrl = arguments!!.getString(ARG_CHANNEL)!!
-        RssApplication.appComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -51,8 +52,12 @@ class RssItemFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        adapter = ItemAdapter(context!!,
-                Consumer { this.goToLink(it) })
+        adapter = ItemAdapter(context!!) { item, goTo ->
+            repository.updateItem(item)
+            if (goTo) {
+                this.goToLink(Uri.parse(item.link))
+            }
+        }
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         list.itemAnimator = DefaultItemAnimator()

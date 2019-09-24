@@ -8,26 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cz.marvincz.rssnotifier.R
-import cz.marvincz.rssnotifier.RssApplication
 import cz.marvincz.rssnotifier.model.RssItem
-import cz.marvincz.rssnotifier.repository.Repository
 import kotlinx.android.synthetic.main.item_two_line.view.*
 import java.util.function.Consumer
-import javax.inject.Inject
 
-class ItemAdapter(private val context: Context, var callback: Consumer<Uri>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
-    @Inject
-    lateinit var repository: Repository
-
+class ItemAdapter(private val context: Context, var callback: (RssItem, Boolean) -> Unit) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
     var data: List<RssItem> = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-
-    init {
-        RssApplication.appComponent.inject(this)
-    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
@@ -51,13 +41,12 @@ class ItemAdapter(private val context: Context, var callback: Consumer<Uri>) : R
         viewHolder.itemView.action_area.setOnClickListener {
             item.seen = !item.seen
             notifyItemChanged(position)
-            repository.updateItem(item)
+            callback(item, false)
         }
         viewHolder.itemView.setOnClickListener {
             item.seen = true
             notifyItemChanged(position)
-            repository.updateItem(item)
-            callback.accept(Uri.parse(item.link))
+            callback(item, true)
         }
     }
 

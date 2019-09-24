@@ -3,7 +3,6 @@ package cz.marvincz.rssnotifier.repository
 import android.util.Log
 import androidx.annotation.AnyThread
 import androidx.annotation.UiThread
-import cz.marvincz.rssnotifier.RssApplication
 import cz.marvincz.rssnotifier.model.ChannelWithItems
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
@@ -16,18 +15,10 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiConsumer
 import java.util.function.Supplier
-import javax.inject.Inject
 
-class Repository {
-    @Inject
-    lateinit var database: Database
+class Repository(private val database: Database) {
 
-    private val executor: ExecutorService
-
-    init {
-        RssApplication.appComponent.inject(this)
-        executor = Executors.newCachedThreadPool()
-    }
+    private val executor: ExecutorService = Executors.newCachedThreadPool()
 
     @UiThread
     fun download(force: Boolean = false, onDone: (() -> Unit)? = null) {

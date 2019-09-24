@@ -34,6 +34,9 @@ androidExtensions {
     experimental = true
 }
 
+def koin_version = '2.0.1'
+def room_version = '2.1.0'
+def lifecycle_version = '2.2.0-alpha04'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -41,6 +44,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     testImplementation 'junit:junit:4.12'
+    implementation 'androidx.core:core-ktx:1.1.0'
 
     implementation 'org.apache.commons:commons-lang3:3.8'
 
@@ -53,20 +57,22 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
 
     // LIFECYCLE - ViewModel and LiveData
-    def lifecycle_version = "2.2.0-alpha04"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
-    // DAGGER
-    implementation 'com.google.dagger:dagger:2.16'
-    kapt 'com.google.dagger:dagger-compiler:2.16'
+    // KOIN
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
 
     // ROOM
-    def room_version = "2.1.0"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     // XML
     implementation 'com.io7m.xom:xom:1.2.10'
