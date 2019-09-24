@@ -39,12 +39,12 @@ abstract class Database : RoomDatabase() {
 
             return builder.addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
-                    initData(context, db)
+                    initData(db)
                 }
             }).build()
         }
 
-        private fun initData(context: Context, db: SupportSQLiteDatabase) {
+        private fun initData(db: SupportSQLiteDatabase) {
             insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss", "http://www.giantitp.com/Comics.html")
             insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss", "todo")
             insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml", "todo")

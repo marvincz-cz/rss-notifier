@@ -3,7 +3,9 @@ package cz.marvincz.rssnotifier.repository
 import android.util.Log
 import androidx.annotation.AnyThread
 import androidx.annotation.UiThread
+import androidx.lifecycle.LiveData
 import cz.marvincz.rssnotifier.model.ChannelWithItems
+import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
 import cz.marvincz.rssnotifier.room.Database
@@ -19,6 +21,31 @@ import java.util.function.Supplier
 class Repository(private val database: Database) {
 
     private val executor: ExecutorService = Executors.newCachedThreadPool()
+
+    fun getChannels(): LiveData<List<RssChannel>> = database.dao().getChannels()
+
+    fun getItems(channelUrl: String): LiveData<List<RssItem>> = database.dao().getItems(channelUrl)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @UiThread
     fun download(force: Boolean = false, onDone: (() -> Unit)? = null) {
@@ -43,7 +70,7 @@ class Repository(private val database: Database) {
                             .flatMap { ch -> ch.items }
                 }
                 .thenAccept { database.dao().insertOrUpdate(it) }
-                .whenCompleteAsync( BiConsumer { _, _ -> onDone?.invoke() }, MainThreadExecutor())
+                .whenCompleteAsync(BiConsumer { _, _ -> onDone?.invoke() }, MainThreadExecutor())
     }
 
     @UiThread
@@ -52,7 +79,7 @@ class Repository(private val database: Database) {
                 .thenAccept { exists -> if (exists) throw IllegalArgumentException() }
                 .thenApply { prepareDownload(url).get() }
                 .thenAccept { database.dao().insertChannel(it) }
-                .whenCompleteAsync( BiConsumer { _, _ -> onDone?.invoke() }, MainThreadExecutor())
+                .whenCompleteAsync(BiConsumer { _, _ -> onDone?.invoke() }, MainThreadExecutor())
     }
 
     @AnyThread
@@ -65,10 +92,10 @@ class Repository(private val database: Database) {
         }
     }
 
-    @UiThread
-    fun updateItem(item: RssItem) {
-        CompletableFuture.runAsync(Runnable { database.dao().updateItem(item) }, executor)
+    suspend fun updateItem(item: RssItem) {
+        database.dao().updateItem(item)
     }
 
 }
+
 private val OLD_DATA_DURATION = Duration.ofMinutes(30)

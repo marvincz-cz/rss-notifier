@@ -39,7 +39,7 @@ abstract class Dao {
     abstract fun insertItems(items: Collection<RssItem>)
 
     @Update
-    abstract fun updateItem(item: RssItem)
+    abstract suspend fun updateItem(item: RssItem)
 
     @Update
     abstract fun updateItems(items: Collection<RssItem>)

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="text" format="string" />
+    <attr name="secondaryText" format="string" />
+    <attr name="drawable" format="reference" />
+    <attr name="actionDrawable" format="reference" />
+
+    <!-- Standard orientation constant. -->
+    <attr name="orientation">
+        <!-- Defines an horizontal widget. -->
+        <enum name="horizontal" value="0" />
+        <!-- Defines a vertical widget. -->
+        <enum name="vertical" value="1" />
+    </attr>
+
+    <attr name="iconType">
+        <enum name="SMALL" value="1" />
+        <enum name="MEDIUM" value="2" />
+        <enum name="LARGE" value="3" />
+    </attr>
+
+    <declare-styleable name="OneLine">
+        <attr name="text" />
+        <attr name="drawable" />
+        <attr name="actionDrawable" />
+        <attr name="iconType" />
+    </declare-styleable>
+
+    <declare-styleable name="TwoLine">
+        <attr name="text" />
+        <attr name="secondaryText" />
+        <attr name="drawable" />
+        <attr name="actionDrawable" />
+        <attr name="iconType" />
+    </declare-styleable>
+
+    <declare-styleable name="Divider">
+        <attr name="orientation" />
+        <attr name="inverseColor" format="boolean" />
+    </declare-styleable>
+</resources>

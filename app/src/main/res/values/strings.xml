@@ -16,6 +16,11 @@
     <string name="dialog_add_channel_title">Add feed</string>
     <string name="dialog_add_channel_message">Feed URL</string>
 
+    <!--  CONTENT DESCRIPTIONS - GENERAL  -->
+    <string name="description_icon">Icon</string>
+    <string name="description_avatar">Avatar</string>
+    <string name="description_action">Action</string>
+
     <!--Preferences-->
     <string translatable="false" name="preference_last_download">LAST_DOWNLOAD_TIME</string>
 </resources>
