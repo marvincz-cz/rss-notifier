@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BaseAdapter<T>(
@@ -14,10 +14,10 @@ abstract class BaseAdapter<T>(
     private var items: List<T> = emptyList()
 
     init {
-        data.observe(lifecycleOwner, Observer {
+        data.observe(lifecycleOwner) {
             items = it
             notifyDataSetChanged()
-        })
+        }
     }
 
     override fun getItemCount() = items.size

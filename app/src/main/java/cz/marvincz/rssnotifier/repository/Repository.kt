@@ -26,19 +26,19 @@ class Repository(private val database: Database) {
 
             val rss = Client.call().rss(channelUrl)
 
-            database.dao().insertOrUpdate(rss.channel.items.map {
-                it.copy(
-                        channelUrl = channelUrl,
-                        seen = oldItems[it.link]?.seen ?: false
-                )
-            })
-
             database.dao().insertOrUpdate(channel.copy(
                     link = rss.channel.link,
                     title = rss.channel.title,
                     description = rss.channel.description,
                     lastDownloaded = ZonedDateTime.now()
             ))
+
+            database.dao().insertOrUpdate(rss.channel.items.map {
+                it.copy(
+                        channelUrl = channelUrl,
+                        seen = oldItems[it.link]?.seen ?: false
+                )
+            })
         }
     }
 

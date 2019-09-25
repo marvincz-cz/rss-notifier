@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import cz.marvincz.rssnotifier.fragment.RssItemFragment
 import cz.marvincz.rssnotifier.model.RssChannel
 
@@ -15,10 +15,10 @@ class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentMa
         private set
 
     init {
-        data.observe(lifecycleOwner, Observer {
+        data.observe(lifecycleOwner) {
             items = it
             notifyDataSetChanged()
-        })
+        }
     }
 
     override fun getItem(position: Int) =
