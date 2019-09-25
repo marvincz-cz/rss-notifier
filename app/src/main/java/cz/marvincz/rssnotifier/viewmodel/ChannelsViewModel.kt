@@ -1,5 +1,6 @@
 package cz.marvincz.rssnotifier.viewmodel
 
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.repository.Repository
@@ -9,6 +10,7 @@ import kotlinx.coroutines.launch
 
 class ChannelsViewModel(private val repository: Repository) : BaseViewModel() {
     val channels = repository.getChannels()
+            .map { it.sortedBy(RssChannel::title) }
 
     init {
         viewModelScope.launch {
