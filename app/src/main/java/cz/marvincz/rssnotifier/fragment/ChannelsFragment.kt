@@ -24,7 +24,7 @@ class ChannelsFragment : Fragment() {
         pager.adapter = channelAdapter
 
         fab.setOnClickListener {
-            viewModel.download(channelAdapter.currentChannel!!)
+            viewModel.reload(channelAdapter.currentChannel!!)
         }
     }
 }

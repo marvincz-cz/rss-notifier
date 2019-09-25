@@ -46,7 +46,7 @@ abstract class Database : RoomDatabase() {
         }
 
         private fun initData(db: SupportSQLiteDatabase) {
-            val date = Converter().dateToLong(ZonedDateTime.now())
+            val date = Converter().dateToLong(ZonedDateTime.now().minusDays(1))
             insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss", "http://www.giantitp.com/Comics.html", date)
             insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss", "todo", date)
             insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml", "todo", date)

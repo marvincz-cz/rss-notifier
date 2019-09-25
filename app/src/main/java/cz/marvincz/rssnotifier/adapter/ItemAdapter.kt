@@ -18,7 +18,7 @@ class ItemAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssItem>>,
         itemView.text = stripHtml(item.title)
         itemView.secondaryText = stripHtml(item.description)
         if (item.seen) {
-            itemView.setActionDrawable(R.drawable.ic_eye_closed)
+            itemView.setActionDrawable(R.drawable.ic_check)
             itemView.setActionDescription(R.string.action_mark_unread)
         } else {
             itemView.setActionDrawable(R.drawable.ic_eye)

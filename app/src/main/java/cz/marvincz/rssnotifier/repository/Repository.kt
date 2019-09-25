@@ -6,6 +6,8 @@ import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
 import cz.marvincz.rssnotifier.room.Database
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
@@ -18,15 +20,25 @@ class Repository(private val database: Database) {
 
     suspend fun updateItem(item: RssItem) = database.dao().updateItem(item)
 
-    suspend fun download(channelUrl: String) {
+    suspend fun download(channelUrl: String, forced: Boolean) {
         withContext(Dispatchers.Default) {
             val channel = database.dao().getChannel(channelUrl)
+
+            if (!forced && channel.isFresh())
+                return@withContext // DB data is fresh enough
+
             val oldItems = database.dao().getItems(channelUrl)
                     .associateBy { it.link }
 
             val rss = Client.call().rss(channelUrl)
 
-            database.dao().insertOrUpdate(channel.copy(
+            database.dao().insertOrUpdate(channel?.copy(
+                    link = rss.channel.link,
+                    title = rss.channel.title,
+                    description = rss.channel.description,
+                    lastDownloaded = ZonedDateTime.now()
+            ) ?: RssChannel(
+                    accessUrl = channelUrl,
                     link = rss.channel.link,
                     title = rss.channel.title,
                     description = rss.channel.description,
@@ -42,6 +54,20 @@ class Repository(private val database: Database) {
         }
     }
 
+    suspend fun refreshAll() {
+        withContext(Dispatchers.Default) {
+            database.dao().getChannels()
+                    .forEach {
+                        launch {
+                            download(it.accessUrl, false)
+                        }
+                    }
+        }
+    }
 }
 
 private val OLD_DATA_DURATION = Duration.ofMinutes(30)
+
+private fun RssChannel?.isFresh() =
+        this != null &&
+                Duration.between(lastDownloaded, ZonedDateTime.now()) <= OLD_DATA_DURATION

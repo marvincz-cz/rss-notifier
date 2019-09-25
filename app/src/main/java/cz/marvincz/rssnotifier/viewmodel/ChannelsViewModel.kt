@@ -9,9 +9,15 @@ import kotlinx.coroutines.launch
 class ChannelsViewModel(private val repository: Repository) : ViewModel() {
     val channels = repository.getChannels()
 
-    fun download(currentChannel: RssChannel) {
+    init {
         viewModelScope.launch {
-            repository.download(currentChannel.accessUrl)
+            repository.refreshAll()
+        }
+    }
+
+    fun reload(currentChannel: RssChannel) {
+        viewModelScope.launch {
+            repository.download(currentChannel.accessUrl, true)
         }
     }
 }

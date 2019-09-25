@@ -13,6 +13,9 @@ abstract class Dao {
     @Query("SELECT * FROM RssChannel")
     abstract fun getChannelsLive(): LiveData<List<RssChannel>>
 
+    @Query("SELECT * FROM RssChannel")
+    abstract suspend fun getChannels(): List<RssChannel>
+
     @Query("SELECT * FROM RssItem WHERE channelUrl = :channelUrl")
     abstract fun getItemsLive(channelUrl: String): LiveData<List<RssItem>>
 
@@ -20,7 +23,7 @@ abstract class Dao {
     abstract suspend fun updateItem(item: RssItem)
 
     @Query("SELECT * FROM RssChannel WHERE accessUrl = :channelUrl")
-    abstract suspend fun getChannel(channelUrl: String): RssChannel
+    abstract suspend fun getChannel(channelUrl: String): RssChannel?
 
     @Query("SELECT * FROM RssItem WHERE channelUrl = :channelUrl")
     abstract suspend fun getItems(channelUrl: String): List<RssItem>
