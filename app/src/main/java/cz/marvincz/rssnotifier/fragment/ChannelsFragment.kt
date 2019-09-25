@@ -24,7 +24,9 @@ class ChannelsFragment : BaseFragment<ChannelsViewModel>() {
         pager.adapter = channelAdapter
 
         swipe.setOnRefreshListener {
-            viewModel.reload(channelAdapter.currentChannel!!)
+            channelAdapter.currentChannel?.let {
+                viewModel.reload(it)
+            } ?: swipe.setRefreshing(false)
         }
     }
 
