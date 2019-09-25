@@ -1,10 +1,7 @@
 package cz.marvincz.rssnotifier.retrofit
 
-import cz.marvincz.rssnotifier.xml.ABPZonedDateTimeConverter
-import cz.marvincz.rssnotifier.xml.XmlChannelWithItemsConverter
-import cz.marvincz.rssnotifier.xml.XmlRssItemConverter
-import cz.marvincz.rssnotifier.xml.XmlUriConverter
-import cz.marvincz.xmlpullparserconverter.XmlConverterFactory
+import com.tickaroo.tikxml.TikXml
+import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
@@ -13,13 +10,12 @@ object Client {
         return Retrofit.Builder()
                 .client(OkHttpClient())
                 .baseUrl("http://127.0.0.1")
-                .addConverterFactory(XmlConverterFactory.Builder()
-                        .addConverterWithWildcard(XmlRssItemConverter())
-                        .addConverter(XmlChannelWithItemsConverter())
-                        .addConverter(ABPZonedDateTimeConverter())
-                        .addConverter(XmlUriConverter())
-                        .build())
-
-                .build().create(RestApi::class.java)
+                .addConverterFactory(TikXmlConverterFactory.create(
+                        TikXml.Builder()
+                                .exceptionOnUnreadXml(false)
+                                .build())
+                )
+                .build()
+                .create(RestApi::class.java)
     }
 }

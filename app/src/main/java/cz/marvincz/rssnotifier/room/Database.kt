@@ -9,6 +9,7 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
+import org.threeten.bp.ZonedDateTime
 
 @androidx.room.Database(entities = [RssChannel::class, RssItem::class], version = 1)
 @TypeConverters(Converter::class)
@@ -45,17 +46,19 @@ abstract class Database : RoomDatabase() {
         }
 
         private fun initData(db: SupportSQLiteDatabase) {
-            insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss", "http://www.giantitp.com/Comics.html")
-            insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss", "todo")
-            insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml", "todo")
+            val date = Converter().dateToLong(ZonedDateTime.now())
+            insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss", "http://www.giantitp.com/Comics.html", date)
+            insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss", "todo", date)
+            insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml", "todo", date)
         }
 
-        private fun insert(db: SupportSQLiteDatabase, title: String, description: String, accessUrl: String, link: String) {
+        private fun insert(db: SupportSQLiteDatabase, title: String, description: String, accessUrl: String, link: String, date: Long) {
             val content = ContentValues(4)
             content.put("title", title)
             content.put("description", description)
             content.put("link", link)
             content.put("accessUrl", accessUrl)
+            content.put("lastDownloaded", date)
             db.insert("RssChannel", SQLiteDatabase.CONFLICT_REPLACE, content)
         }
     }

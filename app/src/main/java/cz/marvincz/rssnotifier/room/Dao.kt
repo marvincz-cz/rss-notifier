@@ -1,61 +1,33 @@
 package cz.marvincz.rssnotifier.room
 
-import androidx.annotation.AnyThread
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import androidx.room.*
-import cz.marvincz.rssnotifier.model.ChannelWithItems
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 
 @androidx.room.Dao
 abstract class Dao {
     @Query("SELECT * FROM RssChannel")
-    @AnyThread
-    @Transaction
-    abstract fun getChannels(): LiveData<List<RssChannel>>
-
-    @Query("SELECT accessUrl AS channelUrl FROM RssChannel")
-    @WorkerThread
-    @Transaction
-    abstract fun getSlow(): List<ChannelWithItems>
+    abstract fun getChannelsLive(): LiveData<List<RssChannel>>
 
     @Query("SELECT * FROM RssItem WHERE channelUrl = :channelUrl")
-    abstract fun getItems(channelUrl: String): LiveData<List<RssItem>>
-
-    @Query("SELECT 1 FROM RssChannel WHERE RssChannel.accessUrl = :url")
-    abstract fun getChannelExists(url: String): Int?
-
-    @Insert
-    abstract fun insertChannel(channel: RssChannel)
-
-    @Delete
-    abstract fun deleteChannel(channel: RssChannel)
-
-    @Insert
-    abstract fun insertItems(vararg items: RssItem)
-
-    @Insert
-    abstract fun insertItems(items: Collection<RssItem>)
+    abstract fun getItemsLive(channelUrl: String): LiveData<List<RssItem>>
 
     @Update
     abstract suspend fun updateItem(item: RssItem)
 
-    @Update
-    abstract fun updateItems(items: Collection<RssItem>)
+    @Query("SELECT * FROM RssChannel WHERE accessUrl = :channelUrl")
+    abstract suspend fun getChannel(channelUrl: String): RssChannel
 
-    @Delete
-    abstract fun deleteItems(items: Collection<RssItem>)
+    @Query("SELECT * FROM RssItem WHERE channelUrl = :channelUrl")
+    abstract suspend fun getItems(channelUrl: String): List<RssItem>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insertOrUpdate(items: Collection<RssItem>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertOrUpdate(items: Collection<RssItem>)
 
-    @Transaction
-    open fun channelExists(url: String) = getChannelExists(url) != null
-
-    @Transaction
-    open fun insertChannel(channel: ChannelWithItems) {
-        insertChannel(channel.channel.first())
-        insertItems(channel.items)
-    }
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertOrUpdate(channel: RssChannel)
 }

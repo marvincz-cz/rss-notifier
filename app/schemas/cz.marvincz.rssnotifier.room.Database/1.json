@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b509ca41196edc771e1b4a67f3a6b886",
+    "identityHash": "d7e6375eeeda413d9720f99aa7233b90",
     "entities": [
       {
         "tableName": "RssChannel",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`accessUrl` TEXT NOT NULL, `link` TEXT, `title` TEXT, `description` TEXT, PRIMARY KEY(`accessUrl`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`accessUrl` TEXT NOT NULL, `link` TEXT, `title` TEXT, `description` TEXT, `lastDownloaded` INTEGER NOT NULL, PRIMARY KEY(`accessUrl`))",
         "fields": [
           {
             "fieldPath": "accessUrl",
@@ -31,6 +31,12 @@
             "columnName": "description",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloaded",
+            "columnName": "lastDownloaded",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -108,9 +114,10 @@
         ]
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b509ca41196edc771e1b4a67f3a6b886\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd7e6375eeeda413d9720f99aa7233b90')"
     ]
   }
 }

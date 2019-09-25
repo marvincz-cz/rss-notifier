@@ -20,6 +20,11 @@ class ChannelsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        pager.adapter = ChannelAdapter(this, parentFragmentManager, viewModel.channels)
+        val channelAdapter = ChannelAdapter(this, parentFragmentManager, viewModel.channels)
+        pager.adapter = channelAdapter
+
+        fab.setOnClickListener {
+            viewModel.download(channelAdapter.currentChannel!!)
+        }
     }
 }

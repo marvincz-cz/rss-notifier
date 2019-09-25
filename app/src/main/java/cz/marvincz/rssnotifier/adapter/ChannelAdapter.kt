@@ -11,7 +11,8 @@ import cz.marvincz.rssnotifier.model.RssChannel
 
 class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentManager, data: LiveData<List<RssChannel>>) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     var items: List<RssChannel> = listOf()
-    private var currentChannel: RssChannel? = null
+    var currentChannel: RssChannel? = null
+        private set
 
     init {
         data.observe(lifecycleOwner, Observer {

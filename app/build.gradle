@@ -50,15 +50,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.core:core-ktx:1.1.0'
 
-    implementation 'org.apache.commons:commons-lang3:3.8'
-
-    implementation project(":XMLPullParserConverter")
-
     // JSR310 Android backport
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 
     // RETROFIT
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.13'
+    implementation 'com.tickaroo.tikxml:annotation:0.8.13'
+    kapt  'com.tickaroo.tikxml:processor:0.8.13'
 
     // LIFECYCLE - ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"

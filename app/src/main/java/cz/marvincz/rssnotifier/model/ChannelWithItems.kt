@@ -1,20 +1,13 @@
 package cz.marvincz.rssnotifier.model
 
-import androidx.room.Relation
-import cz.marvincz.xmlpullparserconverter.annotation.XmlRootElement
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
-@XmlRootElement(name = "rss/channel")
-data class ChannelWithItems(var channelUrl: String = "") {
-    @Relation(parentColumn = "channelUrl", entityColumn = "channelUrl")
-    lateinit var items: List<RssItem>
-
-    @Relation(parentColumn = "channelUrl", entityColumn = "accessUrl")
-    lateinit var channel: Set<RssChannel>
-
-    fun fixedUrl(url: String): ChannelWithItems {
-        channelUrl = url
-        channel.first().accessUrl = url
-        items.forEach { it.channelUrl = url }
-        return this
-    }
-}
+@Xml(name = "channel")
+data class ChannelWithItems(
+        @Element val items: List<RssItem> = emptyList(),
+        @PropertyElement val link: String? = null,
+        @PropertyElement val title: String? = null,
+        @PropertyElement val description: String? = null
+)

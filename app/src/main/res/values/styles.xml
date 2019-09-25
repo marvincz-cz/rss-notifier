@@ -57,6 +57,8 @@
     <style name="FloatingActionButton" parent="@style/Widget.MaterialComponents.FloatingActionButton">
         <item name="android:layout_marginEnd">@dimen/fab_margin</item>
         <item name="android:layout_marginBottom">@dimen/fab_margin</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="Icon">

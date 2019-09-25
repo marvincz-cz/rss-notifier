@@ -7,17 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
+import kotlinx.android.synthetic.main.fragment_list.*
 import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 
 class RssItemFragment : Fragment() {
     private lateinit var viewModel: ItemsViewModel
-
-    private lateinit var adapter: ItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +32,7 @@ class RssItemFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        adapter = ItemAdapter(this, viewModel.items, object : ItemAdapter.ItemListCallBack {
+        list.adapter = ItemAdapter(this, viewModel.items, object : ItemAdapter.ItemListCallBack {
             override fun toggle(item: RssItem) {
                 viewModel.toggle(item)
             }
@@ -42,6 +43,8 @@ class RssItemFragment : Fragment() {
             }
 
         })
+        list.layoutManager = LinearLayoutManager(context)
+        list.itemAnimator = DefaultItemAnimator()
     }
 
     private fun goToLink(link: String) {
