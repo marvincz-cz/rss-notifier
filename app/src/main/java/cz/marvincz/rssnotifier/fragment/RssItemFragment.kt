@@ -6,25 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
+import cz.marvincz.rssnotifier.fragment.base.BaseFragment
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
 import kotlinx.android.synthetic.main.fragment_list.*
-import org.koin.android.viewmodel.ext.android.getViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class RssItemFragment : Fragment() {
-    private lateinit var viewModel: ItemsViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val channelUrl = arguments!!.getString(ARG_CHANNEL)!!
-        viewModel = getViewModel { parametersOf(channelUrl) }
-    }
+class RssItemFragment : BaseFragment<ItemsViewModel>() {
+    val channelUrl : String by lazy { arguments!!.getString(ARG_CHANNEL)!!}
+    override val viewModel: ItemsViewModel by viewModel { parametersOf(channelUrl) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View =

@@ -1,12 +1,12 @@
 package cz.marvincz.rssnotifier.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
+import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.launch
 
-class ItemsViewModel(private val repository: Repository, private val channelUrl: String) : ViewModel() {
+class ItemsViewModel(private val repository: Repository, private val channelUrl: String) : BaseViewModel() {
     val items = repository.getItems(channelUrl)
 
     fun toggle(item: RssItem) {
