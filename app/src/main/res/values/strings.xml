@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">RSS Notifier</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
 
-    <string name="image_icon">Icon</string>
-    <string name="image_action">Action</string>
+    <string name="menu_settings">Settings</string>
 
     <string name="action_ok">OK</string>
     <string name="action_cancel">Cancel</string>
@@ -20,4 +18,7 @@
     <string name="description_icon">Icon</string>
     <string name="description_avatar">Avatar</string>
     <string name="description_action">Action</string>
+
+    <string name="no_channels_title">No channels</string>
+    <string name="no_channels_message">You are currently not subscribed to any channels.</string>
 </resources>

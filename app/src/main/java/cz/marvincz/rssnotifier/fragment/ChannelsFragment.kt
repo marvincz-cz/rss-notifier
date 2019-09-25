@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.observe
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ChannelAdapter
 import cz.marvincz.rssnotifier.fragment.base.BaseFragment
@@ -23,6 +24,8 @@ class ChannelsFragment : BaseFragment<ChannelsViewModel>() {
         val channelAdapter = ChannelAdapter(this, parentFragmentManager, viewModel.channels)
         pager.adapter = channelAdapter
 
+        handleEmptyState()
+
         swipe.setOnRefreshListener {
             channelAdapter.currentChannel?.let {
                 viewModel.reload(it)
@@ -30,7 +33,24 @@ class ChannelsFragment : BaseFragment<ChannelsViewModel>() {
         }
     }
 
+    private fun handleEmptyState() {
+        viewModel.channels.observe(this) {
+            if (it.isEmpty()) {
+                flipper.displayedChild = FLIP_EMPTY
+                swipe.isEnabled = false
+            } else {
+                flipper.displayedChild = FLIP_TABS
+                swipe.isEnabled = true
+            }
+        }
+    }
+
     override fun setLoading(loading: Boolean) {
         swipe.isRefreshing = loading
+    }
+
+    companion object {
+        private const val FLIP_TABS = 0;
+        private const val FLIP_EMPTY = 1;
     }
 }
