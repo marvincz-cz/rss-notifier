@@ -4,6 +4,7 @@ import android.app.Application
 import com.jakewharton.threetenabp.AndroidThreeTen
 import cz.marvincz.rssnotifier.repository.Repository
 import cz.marvincz.rssnotifier.room.Database
+import cz.marvincz.rssnotifier.viewmodel.AddChannelViewModel
 import cz.marvincz.rssnotifier.viewmodel.ChannelsViewModel
 import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
 import org.koin.android.ext.koin.androidContext
@@ -25,6 +26,7 @@ class RssApplication : Application() {
                         single { Repository(get()) }
                         viewModel { ChannelsViewModel(get()) }
                         viewModel { (channelUrl: String) -> ItemsViewModel(get(), channelUrl) }
+                        viewModel { AddChannelViewModel(get()) }
                     }
             )
         }

@@ -31,6 +31,7 @@ class ChannelsFragment : BaseFragment<ChannelsViewModel>() {
                 viewModel.reload(it)
             } ?: swipe.setRefreshing(false)
         }
+        fab.setOnClickListener { viewModel.addNew() }
     }
 
     private fun handleEmptyState() {
@@ -50,7 +51,7 @@ class ChannelsFragment : BaseFragment<ChannelsViewModel>() {
     }
 
     companion object {
-        private const val FLIP_TABS = 0;
-        private const val FLIP_EMPTY = 1;
+        private const val FLIP_TABS = 0
+        private const val FLIP_EMPTY = 1
     }
 }

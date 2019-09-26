@@ -6,7 +6,6 @@ import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
 import cz.marvincz.rssnotifier.room.Database
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
@@ -32,7 +31,7 @@ class Repository(private val database: Database) {
 
             val rss = Client.call().rss(channelUrl)
 
-            database.dao().insertOrUpdate(channel?.copy(
+            val newChannel = channel?.copy(
                     link = rss.channel.link,
                     title = rss.channel.title,
                     description = rss.channel.description,
@@ -43,14 +42,16 @@ class Repository(private val database: Database) {
                     title = rss.channel.title,
                     description = rss.channel.description,
                     lastDownloaded = ZonedDateTime.now()
-            ))
+            )
 
-            database.dao().insertOrUpdate(rss.channel.items.map {
+            val newItems = rss.channel.items.map {
                 it.copy(
                         channelUrl = channelUrl,
                         seen = oldItems[it.link]?.seen ?: false
                 )
-            })
+            }
+
+            database.dao().insertOrUpdate(newChannel, newItems)
         }
     }
 

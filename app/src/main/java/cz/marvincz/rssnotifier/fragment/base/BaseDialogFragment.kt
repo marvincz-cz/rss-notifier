@@ -2,13 +2,14 @@ package cz.marvincz.rssnotifier.fragment.base
 
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.annotation.CallSuper
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import cz.marvincz.rssnotifier.extension.setLayout
 import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import cz.marvincz.rssnotifier.viewmodel.base.ViewCommand
-import cz.marvincz.rssnotifier.extension.setLayout
 
 /**
  * Parent to all page DialogFragments. Handles commands from the ViewModel
@@ -33,10 +34,15 @@ abstract class BaseDialogFragment<T : BaseViewModel> : DialogFragment(),
         )
     }
 
+    @CallSuper
+    override fun setLoading(loading: Boolean) {
+        dialog?.setCanceledOnTouchOutside(!loading)
+        dialog?.setCancelable(!loading)
+    }
+
     /**
      * Dialog handles the extra [Dismiss][ViewCommand.Dismiss] [ViewCommand]
      */
-    @Override
     override fun handleDefaultViewCommand(viewCommand: ViewCommand): Boolean {
         return super.handleDefaultViewCommand(viewCommand)
                 || when (viewCommand) {

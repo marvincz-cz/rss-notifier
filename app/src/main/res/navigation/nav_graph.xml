@@ -5,9 +5,18 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/channelsFragment">
 
+    <dialog
+        android:id="@+id/addChannelFragment"
+        android:name="cz.marvincz.rssnotifier.fragment.AddChannelFragment"
+        android:label="@string/fragment_add_channel"
+        tools:layout="@layout/fragment_add_channel" />
     <fragment
         android:id="@+id/channelsFragment"
         android:name="cz.marvincz.rssnotifier.fragment.ChannelsFragment"
-        android:label="fragment_channels"
-        tools:layout="@layout/fragment_channels" />
+        android:label="@string/fragment_channels"
+        tools:layout="@layout/fragment_channels">
+        <action
+            android:id="@+id/action_addChannel"
+            app:destination="@id/addChannelFragment" />
+    </fragment>
 </navigation>

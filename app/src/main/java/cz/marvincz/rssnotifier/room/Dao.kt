@@ -1,10 +1,7 @@
 package cz.marvincz.rssnotifier.room
 
 import androidx.lifecycle.LiveData
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 
@@ -29,8 +26,14 @@ abstract class Dao {
     abstract suspend fun getItems(channelUrl: String): List<RssItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertOrUpdate(items: Collection<RssItem>)
+    protected abstract suspend fun insertOrUpdate(items: Collection<RssItem>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertOrUpdate(channel: RssChannel)
+    protected abstract suspend fun insertOrUpdate(channel: RssChannel)
+
+    @Transaction
+    open suspend fun insertOrUpdate(channel: RssChannel, items: Collection<RssItem>) {
+        insertOrUpdate(channel)
+        insertOrUpdate(items)
+    }
 }
