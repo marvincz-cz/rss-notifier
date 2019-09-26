@@ -6,13 +6,14 @@ import cz.marvincz.rssnotifier.fragment.ChannelsFragment
 import cz.marvincz.rssnotifier.fragment.ChannelsFragmentDirections
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.repository.Repository
+import cz.marvincz.rssnotifier.util.PreferenceUtil
 import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import cz.marvincz.rssnotifier.viewmodel.base.ViewCommand
 import kotlinx.coroutines.launch
 
 class ChannelsViewModel(private val repository: Repository) : BaseViewModel() {
     val channels = repository.getChannels()
-            .map { it.sortedBy(RssChannel::title) }
+            .map { it.sortedBy { ch -> PreferenceUtil.getChannelOrder().indexOf(ch.accessUrl) } } // FIXME: Better comparator
 
     init {
         viewModelScope.launch {

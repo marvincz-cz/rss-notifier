@@ -28,8 +28,12 @@ class AddChannelFragment : BaseDialogFragment<AddChannelViewModel>() {
 
     override fun handleViewCommand(command: ViewSpecificCommand): Boolean {
         return when (command) {
-            is AddChannelViewModel.Invalid -> {
-                url_layout.error = "Invalid URL"
+            AddChannelViewModel.Invalid.URI -> {
+                url_layout.error = getString(R.string.validation_url)
+                true
+            }
+            AddChannelViewModel.Invalid.RSS -> {
+                url_layout.error = getString(R.string.validation_rss)
                 true
             }
             else -> false

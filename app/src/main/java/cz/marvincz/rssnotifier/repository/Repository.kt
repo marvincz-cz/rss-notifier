@@ -5,6 +5,7 @@ import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
 import cz.marvincz.rssnotifier.room.Database
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +30,8 @@ class Repository(private val database: Database) {
             val oldItems = database.dao().getItems(channelUrl)
                     .associateBy { it.link }
 
-            val rss = Client.call().rss(channelUrl)
+            val rss = runCatching { Client.call().rss(channelUrl) }
+                    .getOrNull() ?: throw CancellationException()
 
             val newChannel = channel?.copy(
                     link = rss.channel.link,

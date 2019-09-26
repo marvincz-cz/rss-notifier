@@ -50,6 +50,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
+    implementation "androidx.preference:preference-ktx:1.1.0"
 
     // JSR310 Android backport
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
@@ -62,6 +63,9 @@ dependencies {
     implementation 'com.tickaroo.tikxml:annotation:0.8.13'
     implementation 'com.tickaroo.tikxml:converter-htmlescape:0.8.13'
     kapt  'com.tickaroo.tikxml:processor:0.8.13'
+
+    // JSON
+    implementation 'com.squareup.moshi:moshi:1.8.0'
 
     // LIFECYCLE - ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"

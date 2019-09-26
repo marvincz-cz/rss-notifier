@@ -22,9 +22,14 @@
     <string name="description_avatar">Avatar</string>
     <string name="description_action">Action</string>
 
-    <string name="no_channels_title">No channels</string>
-    <string name="no_channels_message">You are currently not subscribed to any channels.</string>
+    <string name="no_channels_title">No feeds</string>
+    <string name="no_channels_message">You are currently not subscribed to any RSS feeds.</string>
 
-    <string name="add_channel_title">Subscribe to a channel</string>
-    <string name="channel_url_hint">Channel URL</string>
+    <string name="add_channel_title">Subscribe to a feed</string>
+    <string name="channel_url_hint">Feed URL</string>
+
+    <string name="validation_url">Invalid URL</string>
+    <string name="validation_rss">Not an RSS feed</string>
+
+    <string name="preference_channel_order">channel_order</string>
 </resources>
