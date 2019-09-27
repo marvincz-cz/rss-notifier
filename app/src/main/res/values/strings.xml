@@ -4,6 +4,7 @@
 
     <string name="fragment_channels">@string/app_name</string>
     <string name="fragment_add_channel">@string/add_channel_title</string>
+    <string name="fragment_sorting">Manage feeds</string>
 
     <string name="menu_settings">Settings</string>
 
@@ -27,6 +28,8 @@
 
     <string name="add_channel_title">Subscribe to a feed</string>
     <string name="channel_url_hint">Feed URL</string>
+
+    <string name="action_delete">Delete</string>
 
     <string name="validation_url">Invalid URL</string>
     <string name="validation_rss">Not an RSS feed</string>

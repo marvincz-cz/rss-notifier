@@ -18,7 +18,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class RssItemFragment : BaseFragment<ItemsViewModel>() {
-    val channelUrl : String by lazy { arguments!!.getString(ARG_CHANNEL)!!}
+    val channelUrl: String by lazy { arguments!!.getString(ARG_CHANNEL)!! }
     override val viewModel: ItemsViewModel by viewModel { parametersOf(channelUrl) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -27,7 +27,7 @@ class RssItemFragment : BaseFragment<ItemsViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        list.adapter = ItemAdapter(this, viewModel.items, object : ItemAdapter.ItemListCallBack {
+        list.adapter = ItemAdapter(viewLifecycleOwner, viewModel.items, object : ItemAdapter.ItemListCallBack {
             override fun toggle(item: RssItem) {
                 viewModel.toggle(item)
             }

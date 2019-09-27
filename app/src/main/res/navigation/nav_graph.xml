@@ -18,5 +18,13 @@
         <action
             android:id="@+id/action_addChannel"
             app:destination="@id/addChannelFragment" />
+        <action
+            android:id="@+id/action_sortChannels"
+            app:destination="@id/sortingFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/sortingFragment"
+        android:name="cz.marvincz.rssnotifier.fragment.SortingFragment"
+        android:label="@string/fragment_sorting"
+        tools:layout="@layout/fragment_sorting" />
 </navigation>

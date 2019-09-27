@@ -12,11 +12,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import cz.marvincz.rssnotifier.R
-import cz.marvincz.rssnotifier.extension.dimensionSize
-import cz.marvincz.rssnotifier.extension.drawable
-import cz.marvincz.rssnotifier.extension.inflate
-import cz.marvincz.rssnotifier.extension.resourceArray
+import cz.marvincz.rssnotifier.extension.*
 import kotlinx.android.synthetic.main.one_line_internal.view.*
+import kotlinx.android.synthetic.main.one_line_internal.view.item_action
+import kotlinx.android.synthetic.main.one_line_internal.view.item_icon
+import kotlinx.android.synthetic.main.one_line_internal.view.item_title
+import kotlinx.android.synthetic.main.two_line_internal.view.*
 
 class OneLine @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) :
     ConstraintLayout(context, attributeSet) {
@@ -125,6 +126,16 @@ class OneLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
     fun setActionDrawable(@DrawableRes resId: Int) {
         item_action.setImageResource(resId)
         updateActionVisibility()
+    }
+
+    var actionDescription: CharSequence
+        get() = item_action.contentDescription
+        set(value) {
+            item_action.contentDescription = value
+        }
+
+    fun setActionDescription(@StringRes resId: Int) {
+        actionDescription = string(resId)
     }
 
     private fun updateActionVisibility() {

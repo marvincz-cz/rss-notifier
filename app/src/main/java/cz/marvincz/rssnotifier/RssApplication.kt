@@ -7,6 +7,7 @@ import cz.marvincz.rssnotifier.room.Database
 import cz.marvincz.rssnotifier.viewmodel.AddChannelViewModel
 import cz.marvincz.rssnotifier.viewmodel.ChannelsViewModel
 import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
+import cz.marvincz.rssnotifier.viewmodel.SortingViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -27,6 +28,7 @@ class RssApplication : Application() {
                         viewModel { ChannelsViewModel(get()) }
                         viewModel { (channelUrl: String) -> ItemsViewModel(get(), channelUrl) }
                         viewModel { AddChannelViewModel(get()) }
+                        viewModel { SortingViewModel(get()) }
                     }
             )
         }
