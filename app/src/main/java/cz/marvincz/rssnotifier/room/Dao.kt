@@ -35,20 +35,15 @@ abstract class Dao {
     @Transaction
     open suspend fun insertOrUpdate(channel: RssChannel, items: Collection<RssItem>) {
         insertOrUpdate(channel)
+        deleteChannelItems(channel.accessUrl)
         insertOrUpdate(items)
     }
-
-    @Delete
-    protected abstract fun deleteChannelOnly(channel: RssChannel)
 
     @Query("DELETE FROM RssItem WHERE channelUrl = :channelUrl")
     protected abstract fun deleteChannelItems(channelUrl: String)
 
-    @Transaction
-    open suspend fun deleteChannel(channel: RssChannel) {
-        deleteChannelItems(channel.accessUrl)
-        deleteChannelOnly(channel)
-    }
+    @Delete
+    abstract fun deleteChannel(channel: RssChannel)
 
     @Query("SELECT MAX(sortOrder) FROM RssChannel")
     protected abstract suspend fun lastChannelOrder(): Int?

@@ -28,7 +28,7 @@ abstract class Database : RoomDatabase() {
          */
         fun get(context: Context): Database {
             // Dagger handles Singleton instantiation
-            return create(context, true)
+            return create(context, inMemory = true)
         }
 
         private fun create(context: Context, inMemory: Boolean): Database {

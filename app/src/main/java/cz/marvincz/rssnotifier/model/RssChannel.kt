@@ -6,11 +6,10 @@ import org.threeten.bp.ZonedDateTime
 
 @Entity
 data class RssChannel(
-        @PrimaryKey
-    val accessUrl: String,
-        val link: String? = null,
+        @PrimaryKey val accessUrl: String,
+        val link: String?,
         val title: String,
-        val description: String? = null,
+        val description: String?,
         val sortOrder: Int,
         val lastDownloaded: ZonedDateTime
 )

@@ -33,7 +33,7 @@ class RssItemFragment : BaseFragment<ItemsViewModel>() {
 
             override fun open(item: RssItem) {
                 viewModel.read(item)
-                goToLink(item.link)
+                item.link?.let { goToLink(it) }
             }
 
         })

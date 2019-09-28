@@ -31,7 +31,7 @@ class Repository(private val database: Database) {
                 return@withContext // DB data is fresh enough
 
             val oldItems = database.dao().getItems(channelUrl)
-                    .associateBy { it.link }
+                    .associateBy { it.id }
 
             val rss = runCatching { Client.call().rss(channelUrl) }
                     .getOrNull() ?: throw CancellationException()
@@ -51,9 +51,14 @@ class Repository(private val database: Database) {
             )
 
             val newItems = rss.channel.items.map {
-                it.copy(
+                val id = it.getId()
+                RssItem(
+                        id = id,
+                        link = it.link,
                         channelUrl = channelUrl,
-                        seen = oldItems[it.link]?.seen ?: false
+                        title = it.title,
+                        description = it.description,
+                        seen = oldItems[id]?.seen ?: false
                 )
             }
 
