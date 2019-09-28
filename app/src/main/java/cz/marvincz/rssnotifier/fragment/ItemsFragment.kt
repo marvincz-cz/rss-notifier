@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DefaultItemAnimator
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
@@ -41,6 +42,24 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
         })
         list.itemAnimator = DefaultItemAnimator()
+
+        handleEmptyState()
+    }
+
+    private fun handleEmptyState() {
+        viewModel.items.observe(this) {
+            if (it.isEmpty())
+                flipper.displayedChild = FLIP_EMPTY
+            else
+                flipper.displayedChild = FLIP_LIST
+        }
+
+        viewModel.showSeen.observe(this) { showSeen ->
+            if (showSeen)
+                empty_message.setText(R.string.empty_no_items)
+            else
+                empty_message.setText(R.string.empty_no_unseen)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -82,5 +101,8 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 putString(ARG_CHANNEL, channelUrl)
             }
         }
+
+        private const val FLIP_LIST = 0
+        private const val FLIP_EMPTY = 1
     }
 }

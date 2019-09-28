@@ -9,7 +9,9 @@ import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.launch
 
 class ItemsViewModel(private val repository: Repository, private val channelUrl: String) : BaseViewModel() {
-    val items = PreferenceUtil.observeShowSeen().switchMap { showSeen ->
+    val showSeen = PreferenceUtil.observeShowSeen()
+
+    val items = showSeen.switchMap { showSeen ->
         repository.getItems(channelUrl, showSeen)
     }
 
