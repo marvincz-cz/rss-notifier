@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 
@@ -51,6 +51,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
     implementation "androidx.preference:preference-ktx:1.1.0"
+    implementation "androidx.work:work-runtime-ktx:2.2.0"
 
     // JSR310 Android backport
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'

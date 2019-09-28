@@ -47,17 +47,18 @@ abstract class Database : RoomDatabase() {
 
         private fun initData(db: SupportSQLiteDatabase) {
             val date = Converter().dateToLong(ZonedDateTime.now().minusDays(1))
-            insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss", "http://www.giantitp.com/Comics.html", date)
-            insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss", "todo", date)
-            insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml", "todo", date)
+            insert(db, "OOTS", "OOTS description", "http://www.giantitp.com/comics/oots.rss", "http://www.giantitp.com/Comics.html", 1, date)
+            insert(db, "Erfworld", "Erfworld description", "https://www.erfworld.com/rss", "todo", 2, date)
+            insert(db, "DnD", "DnD description", "http://www.darthsanddroids.net/rss2.xml", "todo", 3, date)
         }
 
-        private fun insert(db: SupportSQLiteDatabase, title: String, description: String, accessUrl: String, link: String, date: Long) {
+        private fun insert(db: SupportSQLiteDatabase, title: String, description: String, accessUrl: String, link: String, sortOrder: Int, date: Long) {
             val content = ContentValues(4)
             content.put("title", title)
             content.put("description", description)
             content.put("link", link)
             content.put("accessUrl", accessUrl)
+            content.put("sortOrder", sortOrder)
             content.put("lastDownloaded", date)
             db.insert("RssChannel", SQLiteDatabase.CONFLICT_REPLACE, content)
         }

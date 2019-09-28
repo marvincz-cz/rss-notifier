@@ -8,7 +8,7 @@ import cz.marvincz.rssnotifier.retrofit.Client
 import cz.marvincz.rssnotifier.room.Database
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
@@ -23,59 +23,71 @@ class Repository(private val database: Database) {
 
     suspend fun updateItem(item: RssItem) = database.dao().updateItem(item)
 
-    suspend fun download(channelUrl: String, forced: Boolean) {
-        withContext(Dispatchers.Default) {
-            val channel = database.dao().getChannel(channelUrl)
+    /**
+     * Queries the RSS feed at [channelUrl]. If new items are found on the server, they are saved to the database and also returned.
+     * If the [channelUrl] does not correspond to any currently subscribed [RssChannel], it is also saved to the database.
+     *
+     * @param channelUrl URL to be queried, also corresponding to [RssChannel.accessUrl]
+     * @param forced If *false*, respects default cool-off period and returns cached data if sufficiently fresh. If *true*, server is queried irregardless of cache freshness.
+     * @return New [items][RssItem] mapped to their respective [channels][RssChannel]
+     */
+    suspend fun download(channelUrl: String, forced: Boolean): List<RssItem> =
+            withContext(Dispatchers.Default) {
+                val channel = database.dao().getChannel(channelUrl)
 
-            if (!forced && channel.isFresh())
-                return@withContext // DB data is fresh enough
+                if (!forced && channel.isFresh())
+                    return@withContext emptyList<RssItem>() // DB data is fresh enough
 
-            val oldItems = database.dao().getItems(channelUrl)
-                    .associateBy { it.id }
+                val oldItems = database.dao().getItems(channelUrl)
+                        .associateBy { it.id }
 
-            val rss = runCatching { Client.call().rss(channelUrl) }
-                    .getOrNull() ?: throw CancellationException()
+                val rss = runCatching { Client.call().rss(channelUrl) }
+                        .getOrNull() ?: throw CancellationException()
 
-            val newChannel = channel?.copy(
-                    link = rss.channel.link,
-                    title = rss.channel.title ?: channel.title ?: channelUrl,
-                    description = rss.channel.description,
-                    lastDownloaded = ZonedDateTime.now()
-            ) ?: RssChannel(
-                    accessUrl = channelUrl,
-                    link = rss.channel.link,
-                    title = rss.channel.title ?: channelUrl,
-                    description = rss.channel.description,
-                    sortOrder = database.dao().newChannelOrder(),
-                    lastDownloaded = ZonedDateTime.now()
-            )
-
-            val newItems = rss.channel.items.map {
-                val id = it.getId()
-                RssItem(
-                        id = id,
-                        link = it.link,
-                        channelUrl = channelUrl,
-                        title = it.title,
-                        description = it.description,
-                        seen = oldItems[id]?.seen ?: false
+                val newChannel = channel?.copy(
+                        link = rss.channel.link,
+                        title = rss.channel.title ?: channel.title ?: channelUrl,
+                        description = rss.channel.description,
+                        lastDownloaded = ZonedDateTime.now()
+                ) ?: RssChannel(
+                        accessUrl = channelUrl,
+                        link = rss.channel.link,
+                        title = rss.channel.title ?: channelUrl,
+                        description = rss.channel.description,
+                        sortOrder = database.dao().newChannelOrder(),
+                        lastDownloaded = ZonedDateTime.now()
                 )
+
+                val newItems = rss.channel.items.map {
+                    val id = it.getId()
+                    RssItem(
+                            id = id,
+                            link = it.link,
+                            channelUrl = channelUrl,
+                            title = it.title,
+                            description = it.description,
+                            seen = oldItems[id]?.seen ?: false
+                    )
+                }
+
+                database.dao().insertOrUpdate(newChannel, newItems)
+
+                return@withContext newItems.filterNot { it.id in oldItems }
             }
 
-            database.dao().insertOrUpdate(newChannel, newItems)
-        }
-    }
-
-    suspend fun refreshAll() {
-        withContext(Dispatchers.Default) {
-            database.dao().getChannels()
-                    .forEach {
-                        launch {
-                            download(it.accessUrl, false)
-                        }
-                    }
-        }
-    }
+    /**
+     * Refreshes all subscribed [channels][RssChannel]. If new [items][RssItem] are found on the server, they are saved to the database and also returned.
+     *
+     * @param forced If *false*, respects default cool-off period and returns cached data if sufficiently fresh. If *true*, server is queried irregardless of cache freshness.
+     * @return New [items][RssItem] mapped to their respective [channels][RssChannel]
+     */
+    suspend fun refreshAll(forced: Boolean = false) =
+            withContext(Dispatchers.Default) {
+                database.dao().getChannels()
+                        .map { it to async { download(it.accessUrl, forced) } }
+                        .map { (channel, job) -> channel to job.await() }
+                        .toMap()
+            }
 
     suspend fun deleteChannel(channel: RssChannel) {
         database.dao().deleteChannel(channel)

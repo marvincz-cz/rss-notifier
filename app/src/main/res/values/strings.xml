@@ -2,9 +2,14 @@
     <string name="app_name">RSS Notifier</string>
     <string name="title_activity_main">@string/app_name</string>
 
+    <!-- Screens -->
     <string name="fragment_channels">@string/app_name</string>
     <string name="fragment_add_channel">@string/add_channel_title</string>
     <string name="fragment_sorting">Manage feeds</string>
+
+    <!-- Notifications -->
+    <string name="channel_name">New Updates</string>
+    <string name="channel_description">New updates from subscribed RSS feeds.</string>
 
     <string name="menu_settings">Settings</string>
 
