@@ -10,11 +10,11 @@ import cz.marvincz.rssnotifier.adapter.ItemAdapter
 import cz.marvincz.rssnotifier.fragment.base.BaseFragment
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
-import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.android.synthetic.main.fragment_items.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class RssItemFragment : BaseFragment<ItemsViewModel>() {
+class ItemsFragment : BaseFragment<ItemsViewModel>() {
     val channelUrl: String by lazy { arguments!!.getString(ARG_CHANNEL)!! }
     override val viewModel: ItemsViewModel by viewModel { parametersOf(channelUrl) }
 
@@ -25,7 +25,7 @@ class RssItemFragment : BaseFragment<ItemsViewModel>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.fragment_list, container, false)
+            inflater.inflate(R.layout.fragment_items, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -75,9 +75,9 @@ class RssItemFragment : BaseFragment<ItemsViewModel>() {
          * this fragment using the provided parameters.
          *
          * @param channelUrl RSS Channel ID
-         * @return A new instance of fragment RssItemFragment.
+         * @return A new instance of fragment ItemsFragment.
          */
-        fun newInstance(channelUrl: String) = RssItemFragment().apply {
+        fun newInstance(channelUrl: String) = ItemsFragment().apply {
             arguments = Bundle().apply {
                 putString(ARG_CHANNEL, channelUrl)
             }

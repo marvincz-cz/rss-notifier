@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.observe
-import cz.marvincz.rssnotifier.fragment.RssItemFragment
+import cz.marvincz.rssnotifier.fragment.ItemsFragment
 import cz.marvincz.rssnotifier.model.RssChannel
 
 class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentManager, data: LiveData<List<RssChannel>>) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
@@ -22,7 +22,7 @@ class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentMa
     }
 
     override fun getItem(position: Int) =
-            RssItemFragment.newInstance(items[position].accessUrl)
+            ItemsFragment.newInstance(items[position].accessUrl)
 
     override fun getCount() = items.size
 
