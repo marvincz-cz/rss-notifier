@@ -40,10 +40,10 @@ abstract class Dao {
     }
 
     @Query("DELETE FROM RssItem WHERE channelUrl = :channelUrl")
-    protected abstract fun deleteChannelItems(channelUrl: String)
+    protected abstract suspend fun deleteChannelItems(channelUrl: String)
 
     @Delete
-    abstract fun deleteChannel(channel: RssChannel)
+    abstract suspend fun deleteChannel(channel: RssChannel)
 
     @Query("SELECT MAX(sortOrder) FROM RssChannel")
     protected abstract suspend fun lastChannelOrder(): Int?
