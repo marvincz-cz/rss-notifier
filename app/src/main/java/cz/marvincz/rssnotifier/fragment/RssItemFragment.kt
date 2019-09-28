@@ -3,9 +3,7 @@ package cz.marvincz.rssnotifier.fragment
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.recyclerview.widget.DefaultItemAnimator
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
@@ -19,6 +17,11 @@ import org.koin.core.parameter.parametersOf
 class RssItemFragment : BaseFragment<ItemsViewModel>() {
     val channelUrl: String by lazy { arguments!!.getString(ARG_CHANNEL)!! }
     override val viewModel: ItemsViewModel by viewModel { parametersOf(channelUrl) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true);
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View =
@@ -38,6 +41,21 @@ class RssItemFragment : BaseFragment<ItemsViewModel>() {
 
         })
         list.itemAnimator = DefaultItemAnimator()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_items, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_all_seen -> {
+                viewModel.markAllRead()
+                return true
+            }
+        }
+        return false
     }
 
     private fun goToLink(link: String) {

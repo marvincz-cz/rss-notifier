@@ -98,6 +98,10 @@ class Repository(private val database: Database) {
             channel.copy(sortOrder = i + 1)
         })
     }
+
+    suspend fun markAllRead(channelUrl: String) {
+        database.dao().markAllRead(channelUrl)
+    }
 }
 
 private val OLD_DATA_DURATION = Duration.ofMinutes(30)

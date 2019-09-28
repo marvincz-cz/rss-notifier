@@ -20,4 +20,10 @@ class ItemsViewModel(private val repository: Repository, private val channelUrl:
             repository.updateItem(item.copy(seen = true))
         }
     }
+
+    fun markAllRead() {
+        viewModelScope.launch {
+            repository.markAllRead(channelUrl)
+        }
+    }
 }
