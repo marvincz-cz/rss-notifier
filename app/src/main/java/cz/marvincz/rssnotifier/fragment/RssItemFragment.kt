@@ -54,6 +54,10 @@ class RssItemFragment : BaseFragment<ItemsViewModel>() {
                 viewModel.markAllRead()
                 return true
             }
+            R.id.action_show_seen -> {
+                viewModel.toggleShowSeen()
+                return true
+            }
         }
         return false
     }

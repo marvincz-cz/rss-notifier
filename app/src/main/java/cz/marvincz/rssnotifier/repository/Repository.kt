@@ -19,7 +19,7 @@ class Repository(private val database: Database) {
 
     fun getChannelsOneTime() = liveData { emit(database.dao().getChannels()) }
 
-    fun getItems(channelUrl: String): LiveData<List<RssItem>> = database.dao().getItemsLive(channelUrl)
+    fun getItems(channelUrl: String, showSeen: Boolean): LiveData<List<RssItem>> = database.dao().getItemsLive(channelUrl, showSeen)
 
     suspend fun updateItem(item: RssItem) = database.dao().updateItem(item)
 

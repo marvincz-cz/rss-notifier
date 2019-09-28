@@ -1,13 +1,17 @@
 package cz.marvincz.rssnotifier.viewmodel
 
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
+import cz.marvincz.rssnotifier.util.PreferenceUtil
 import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.launch
 
 class ItemsViewModel(private val repository: Repository, private val channelUrl: String) : BaseViewModel() {
-    val items = repository.getItems(channelUrl)
+    val items = PreferenceUtil.observeShowSeen().switchMap { showSeen ->
+        repository.getItems(channelUrl, showSeen)
+    }
 
     fun toggle(item: RssItem) {
         viewModelScope.launch {
@@ -25,5 +29,9 @@ class ItemsViewModel(private val repository: Repository, private val channelUrl:
         viewModelScope.launch {
             repository.markAllRead(channelUrl)
         }
+    }
+
+    fun toggleShowSeen() {
+        PreferenceUtil.toggleShowSeen()
     }
 }

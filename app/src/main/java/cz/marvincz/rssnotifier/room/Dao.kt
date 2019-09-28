@@ -14,8 +14,8 @@ abstract class Dao {
     @Query("SELECT * FROM RssChannel ORDER BY sortOrder")
     abstract suspend fun getChannels(): List<RssChannel>
 
-    @Query("SELECT * FROM RssItem WHERE channelUrl = :channelUrl")
-    abstract fun getItemsLive(channelUrl: String): LiveData<List<RssItem>>
+    @Query("SELECT * FROM RssItem WHERE channelUrl = :channelUrl AND (seen = 0 OR :showSeen = 1)")
+    abstract fun getItemsLive(channelUrl: String, showSeen: Boolean): LiveData<List<RssItem>>
 
     @Update
     abstract suspend fun updateItem(item: RssItem)
