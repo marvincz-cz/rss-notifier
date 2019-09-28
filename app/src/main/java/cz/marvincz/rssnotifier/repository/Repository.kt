@@ -1,6 +1,7 @@
 package cz.marvincz.rssnotifier.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
@@ -15,6 +16,8 @@ import org.threeten.bp.ZonedDateTime
 class Repository(private val database: Database) {
 
     fun getChannels(): LiveData<List<RssChannel>> = database.dao().getChannelsLive()
+
+    fun getChannelsOneTime() = liveData { emit(database.dao().getChannels()) }
 
     fun getItems(channelUrl: String): LiveData<List<RssItem>> = database.dao().getItemsLive(channelUrl)
 
@@ -35,14 +38,15 @@ class Repository(private val database: Database) {
 
             val newChannel = channel?.copy(
                     link = rss.channel.link,
-                    title = rss.channel.title,
+                    title = rss.channel.title ?: channel.title ?: channelUrl,
                     description = rss.channel.description,
                     lastDownloaded = ZonedDateTime.now()
             ) ?: RssChannel(
                     accessUrl = channelUrl,
                     link = rss.channel.link,
-                    title = rss.channel.title,
+                    title = rss.channel.title ?: channelUrl,
                     description = rss.channel.description,
+                    sortOrder = database.dao().newChannelOrder(),
                     lastDownloaded = ZonedDateTime.now()
             )
 
@@ -66,6 +70,16 @@ class Repository(private val database: Database) {
                         }
                     }
         }
+    }
+
+    suspend fun deleteChannel(channel: RssChannel) {
+        database.dao().deleteChannel(channel)
+    }
+
+    suspend fun saveChannelOrder(channels: List<RssChannel>) {
+        database.dao().update(channels.mapIndexed { i, channel ->
+            channel.copy(sortOrder = i + 1)
+        })
     }
 }
 

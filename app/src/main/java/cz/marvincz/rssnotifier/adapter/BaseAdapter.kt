@@ -8,10 +8,11 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BaseAdapter<T>(
-    lifecycleOwner: LifecycleOwner,
-    data: LiveData<List<T>>
+        lifecycleOwner: LifecycleOwner,
+        data: LiveData<List<T>>
 ) : RecyclerView.Adapter<ViewHolder>() {
-    private var items: List<T> = emptyList()
+    var items: List<T> = emptyList()
+        protected set
 
     init {
         data.observe(lifecycleOwner) {
@@ -27,12 +28,12 @@ abstract class BaseAdapter<T>(
     }
 
     final override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        onBind(holder.itemView, position, items[position])
+        onBind(holder.itemView, position, items[position], holder)
     }
 
     abstract fun inflateView(parent: ViewGroup, viewType: Int): View
 
-    abstract fun onBind(itemView: View, position: Int, item: T)
+    abstract fun onBind(itemView: View, position: Int, item: T, holder: ViewHolder)
 }
 
 class ViewHolder(view: View) : RecyclerView.ViewHolder(view)

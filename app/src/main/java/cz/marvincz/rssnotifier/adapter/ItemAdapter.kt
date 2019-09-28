@@ -12,7 +12,7 @@ import cz.marvincz.rssnotifier.model.RssItem
 class ItemAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssItem>>, private val callBack: ItemListCallBack) : BaseAdapter<RssItem>(lifecycleOwner, data) {
     override fun inflateView(parent: ViewGroup, viewType: Int) = TwoLine(parent.context)
 
-    override fun onBind(itemView: View, position: Int, item: RssItem) {
+    override fun onBind(itemView: View, position: Int, item: RssItem, holder: ViewHolder) {
         require(itemView is TwoLine)
 
         itemView.text = stripHtml(item.title)

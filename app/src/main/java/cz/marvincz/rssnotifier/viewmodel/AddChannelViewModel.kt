@@ -2,7 +2,6 @@ package cz.marvincz.rssnotifier.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import cz.marvincz.rssnotifier.repository.Repository
-import cz.marvincz.rssnotifier.util.PreferenceUtil
 import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import cz.marvincz.rssnotifier.viewmodel.base.ViewCommand
 import cz.marvincz.rssnotifier.viewmodel.base.ViewSpecificCommand
@@ -17,7 +16,6 @@ class AddChannelViewModel(val repository: Repository) : BaseViewModel() {
                     viewModelScope.launch {
                         viewCommand(ViewCommand.Loading(true))
                         repository.download(it, false)
-                        addToOrder(it)
                         viewCommand(ViewCommand.Dismiss)
                     }.invokeOnCompletion { cause ->
                         if (cause is CancellationException) {
@@ -31,14 +29,6 @@ class AddChannelViewModel(val repository: Repository) : BaseViewModel() {
     private fun isValid(url: String) = runCatching {
         URL(url).protocol in acceptedProtocols
     }.getOrDefault(false)
-
-    private fun addToOrder(url: String) {
-        val newOrder = PreferenceUtil.getChannelOrder()
-                .toMutableList().apply {
-                    add(url)
-                }
-        PreferenceUtil.setChannelOrder(newOrder)
-    }
 
     companion object {
         private val acceptedProtocols = listOf("http", "https")

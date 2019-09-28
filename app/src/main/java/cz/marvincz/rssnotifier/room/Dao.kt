@@ -5,12 +5,13 @@ import androidx.room.*
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 
+
 @androidx.room.Dao
 abstract class Dao {
-    @Query("SELECT * FROM RssChannel")
+    @Query("SELECT * FROM RssChannel ORDER BY sortOrder")
     abstract fun getChannelsLive(): LiveData<List<RssChannel>>
 
-    @Query("SELECT * FROM RssChannel")
+    @Query("SELECT * FROM RssChannel ORDER BY sortOrder")
     abstract suspend fun getChannels(): List<RssChannel>
 
     @Query("SELECT * FROM RssItem WHERE channelUrl = :channelUrl")
@@ -36,4 +37,30 @@ abstract class Dao {
         insertOrUpdate(channel)
         insertOrUpdate(items)
     }
+
+    @Delete
+    protected abstract fun deleteChannelOnly(channel: RssChannel)
+
+    @Query("DELETE FROM RssItem WHERE channelUrl = :channelUrl")
+    protected abstract fun deleteChannelItems(channelUrl: String)
+
+    @Transaction
+    open suspend fun deleteChannel(channel: RssChannel) {
+        deleteChannelItems(channel.accessUrl)
+        deleteChannelOnly(channel)
+    }
+
+    @Query("SELECT MAX(sortOrder) FROM RssChannel")
+    protected abstract suspend fun lastChannelOrder(): Int?
+
+    /**
+     * Order value for a new channel, so it is placed at the end
+     */
+    @Transaction
+    open suspend fun newChannelOrder(): Int {
+        return 1 + (lastChannelOrder() ?: 0)
+    }
+
+    @Update
+    abstract suspend fun update(channels: Collection<RssChannel>)
 }

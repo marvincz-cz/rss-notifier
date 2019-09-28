@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
 import cz.marvincz.rssnotifier.fragment.base.BaseFragment
@@ -38,7 +37,6 @@ class RssItemFragment : BaseFragment<ItemsViewModel>() {
             }
 
         })
-        list.layoutManager = LinearLayoutManager(context)
         list.itemAnimator = DefaultItemAnimator()
     }
 

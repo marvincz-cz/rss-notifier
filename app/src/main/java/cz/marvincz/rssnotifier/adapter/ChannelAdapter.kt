@@ -30,6 +30,6 @@ class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentMa
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, fragment: Any) {
         super.setPrimaryItem(container, position, fragment)
-        currentChannel = items[position]
+        currentChannel = items.getOrNull(position)
     }
 }
