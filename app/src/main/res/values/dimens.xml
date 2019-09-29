@@ -1,17 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="activity_horizontal_padding">16dp</dimen>
-    <dimen name="activity_vertical_padding">16dp</dimen>
+    <dimen name="match_constraint">0dp</dimen>
 
-    <dimen name="text_title_size">16sp</dimen>
-    <dimen name="text_normal_size">14sp</dimen>
+    <!--  STEPS  -->
+    <dimen name="dimen_0">0dp</dimen>
+    <dimen name="dimen_1">8dp</dimen>
+    <dimen name="dimen_2">16dp</dimen>
+    <dimen name="dimen_3">24dp</dimen>
+    <dimen name="dimen_4">32dp</dimen>
+    <dimen name="dimen_5">40dp</dimen>
+    <dimen name="dimen_6">48dp</dimen>
+    <dimen name="dimen_7">56dp</dimen>
+    <dimen name="dimen_8">64dp</dimen>
+    <dimen name="dimen_9">72dp</dimen>
+    <dimen name="dimen_10">80dp</dimen>
+    <dimen name="dimen_12">96dp</dimen>
+    <dimen name="dimen_16">128dp</dimen>
 
-    <dimen name="icon_primary">40dp</dimen>
-    <dimen name="icon_action">24dp</dimen>
+    <!--  STEPS - ICONOGRAPHY  -->
+    <dimen name="dimen_icon_1">4dp</dimen>
+    <dimen name="dimen_icon_2">8dp</dimen>
+    <dimen name="dimen_icon_3">12dp</dimen>
+    <dimen name="dimen_icon_4">16dp</dimen>
+    <dimen name="dimen_icon_5">20dp</dimen>
+    <dimen name="dimen_icon_6">24dp</dimen>
+    <dimen name="dimen_icon_7">28dp</dimen>
+    <dimen name="dimen_icon_8">32dp</dimen>
+    <dimen name="dimen_icon_9">36dp</dimen>
+    <dimen name="dimen_icon_10">40dp</dimen>
+    <dimen name="dimen_icon_11">44dp</dimen>
+    <dimen name="dimen_icon_12">48dp</dimen>
+    <dimen name="dimen_icon_13">52dp</dimen>
+    <dimen name="dimen_icon_14">56dp</dimen>
+    <dimen name="dimen_icon_15">60dp</dimen>
 
-    <dimen name="icon_padding">24dp</dimen>
-    <dimen name="padding_half">8dp</dimen>
+    <!--  GENERAL  -->
+    <dimen name="default_padding">@dimen/dimen_2</dimen>
+    <dimen name="view_padding">@dimen/dimen_1</dimen>
+    <dimen name="fab_margin">@dimen/dimen_2</dimen>
 
-    <dimen name="list_one_line">48dp</dimen>
-    <dimen name="list_two_line">64dp</dimen>
+    <!--  LINE COMPONENTS  -->
+    <dimen name="one_line_none_height">@dimen/dimen_6</dimen>
+    <dimen name="one_line_small_height">@dimen/dimen_7</dimen>
+    <dimen name="one_line_medium_height">@dimen/dimen_7</dimen>
+    <dimen name="one_line_large_height">@dimen/dimen_9</dimen>
+
+    <integer-array name="one_line_heights">
+        <item>@dimen/one_line_none_height</item>
+        <item>@dimen/one_line_small_height</item>
+        <item>@dimen/one_line_medium_height</item>
+        <item>@dimen/one_line_large_height</item>
+    </integer-array>
+
+    <dimen name="two_line_none_height">@dimen/dimen_8</dimen>
+    <dimen name="two_line_small_height">@dimen/dimen_9</dimen>
+    <dimen name="two_line_medium_height">@dimen/dimen_9</dimen>
+    <dimen name="two_line_large_height">@dimen/dimen_9</dimen>
+
+    <integer-array name="two_line_heights">
+        <item>@dimen/two_line_none_height</item>
+        <item>@dimen/two_line_small_height</item>
+        <item>@dimen/two_line_medium_height</item>
+        <item>@dimen/two_line_large_height</item>
+    </integer-array>
+
+    <integer-array name="icon_text_margins">
+        <item>@dimen/dimen_0</item>
+        <item>@dimen/dimen_4</item>
+        <item>@dimen/dimen_2</item>
+        <item>@dimen/dimen_2</item>
+    </integer-array>
+
+    <integer-array name="two_line_icon_margins">
+        <item>@dimen/dimen_0</item>
+        <item>@dimen/default_padding</item>
+        <item>@dimen/default_padding</item>
+        <item>@dimen/dimen_1</item>
+    </integer-array>
+
+    <dimen name="two_line_height">@dimen/dimen_8</dimen>
+    <dimen name="two_line_with_icon_height">@dimen/dimen_9</dimen>
+
+    <dimen name="icon_small">@dimen/dimen_icon_6</dimen>
+    <dimen name="icon_medium">@dimen/dimen_icon_10</dimen>
+    <dimen name="icon_large">@dimen/dimen_icon_14</dimen>
+
+    <dimen name="icon_clickable">@dimen/dimen_icon_12</dimen>
+    <dimen name="icon_clickable_padding">@dimen/dimen_icon_3</dimen>
+
+    <dimen name="divider_thickness">1dp</dimen>
+
 </resources>

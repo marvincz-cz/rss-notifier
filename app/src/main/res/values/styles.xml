@@ -1,31 +1,85 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorSecondaryVariant">@color/colorAccent</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/on_surface_high</item>
+        <item name="android:textColorSecondary">@color/on_surface_medium</item>
+        <item name="android:textColorPrimaryInverse">@color/on_primary_high</item>
+        <item name="android:textColorSecondaryInverse">@color/on_primary_medium</item>
+        <item name="colorOnSecondary">@color/on_primary_high</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <!--  TEXT STYLES  -->
+    <style name="Text.Title" parent="TextAppearance.MaterialComponents.Headline5" />
+
+    <style name="Text.Title2" parent="TextAppearance.MaterialComponents.Headline6" />
+
+    <style name="Text.Subtitle" parent="TextAppearance.MaterialComponents.Subtitle1" />
+
+    <style name="Text.Normal" parent="TextAppearance.MaterialComponents.Body1" />
+
+    <style name="Text.Normal.Emphasis">
+        <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-
-    <style name="TwoLineTitle">
-        <item name="android:textSize">@dimen/text_title_size</item>
-        <item name="android:textColor">@color/textPrimary</item>
+    <style name="Text.Secondary" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/on_surface_medium</item>
     </style>
 
-    <style name="TwoLineText">
-        <item name="android:textSize">@dimen/text_normal_size</item>
-        <item name="android:textColor">@color/textSecondary</item>
+    <style name="Text.Secondary.Emphasis">
+        <item name="android:textColor">@color/on_surface_high</item>
     </style>
 
+    <style name="Text.Small" parent="TextAppearance.MaterialComponents.Caption" />
+
+    <!--  BUTTONS  -->
+    <style name="Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Button.Text.Red">
+        <item name="android:textColor">@color/error</item>
+    </style>
+
+    <style name="FloatingActionButton" parent="@style/Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:layout_marginEnd">@dimen/fab_margin</item>
+        <item name="android:layout_marginBottom">@dimen/fab_margin</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Icon">
+        <item name="android:layout_width">@dimen/icon_small</item>
+        <item name="android:layout_height">@dimen/icon_small</item>
+        <item name="tint">@color/icon_on_surface</item>
+    </style>
+
+    <style name="Icon.Clickable">
+        <item name="android:layout_width">@dimen/icon_clickable</item>
+        <item name="android:layout_height">@dimen/icon_clickable</item>
+        <item name="android:padding">@dimen/icon_clickable_padding</item>
+    </style>
+
+    <style name="Icon.Clickable.Ripple">
+        <item name="android:background">@drawable/ripple_icon</item>
+    </style>
+
+    <style name="TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox" />
 </resources>
