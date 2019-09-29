@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
-        tools:src="@drawable/ic_edit"
+        tools:src="@drawable/ic_eye"
         tools:visibility="visible" />
 
     <com.google.android.material.textview.MaterialTextView

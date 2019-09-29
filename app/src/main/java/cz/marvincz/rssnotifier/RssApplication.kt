@@ -10,15 +10,17 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jakewharton.threetenabp.AndroidThreeTen
+import cz.marvincz.rssnotifier.background.WorkScheduler
 import cz.marvincz.rssnotifier.background.Worker
 import cz.marvincz.rssnotifier.repository.Repository
 import cz.marvincz.rssnotifier.room.Database
-import cz.marvincz.rssnotifier.viewmodel.AddChannelViewModel
-import cz.marvincz.rssnotifier.viewmodel.ChannelsViewModel
-import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
-import cz.marvincz.rssnotifier.viewmodel.SortingViewModel
+import cz.marvincz.rssnotifier.util.PreferenceUtil
+import cz.marvincz.rssnotifier.viewmodel.*
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.Koin
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
@@ -35,18 +37,20 @@ class RssApplication : Application() {
                     module {
                         single { Database.get(androidContext()) }
                         single { Repository(get()) }
+                        single { WorkScheduler(androidContext()) }
                         viewModel { ChannelsViewModel(get()) }
                         viewModel { (channelUrl: String) -> ItemsViewModel(get(), channelUrl) }
                         viewModel { AddChannelViewModel(get()) }
                         viewModel { SortingViewModel(get()) }
+                        viewModel { SettingsViewModel(get()) }
                     }
             )
 
             createNotificationChannel()
-            scheduleWork()
         }
 
-        instance = this
+        val workScheduler: WorkScheduler = getKoin().get()
+        workScheduler.scheduleWork()
     }
 
     private fun createNotificationChannel() {
@@ -66,24 +70,7 @@ class RssApplication : Application() {
         }
     }
 
-    private fun scheduleWork() {
-        val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-        val workRequest = PeriodicWorkRequestBuilder<Worker>(2, TimeUnit.HOURS)
-                .setConstraints(constraints)
-                .setInitialDelay(30, TimeUnit.MINUTES)
-                .addTag(WORK_TAG)
-                .build()
-        val workManager = WorkManager.getInstance(this)
-        workManager.cancelAllWorkByTag(WORK_TAG)
-        workManager.enqueue(workRequest)
-    }
-
     companion object {
-        lateinit var instance: RssApplication
-            private set
-
         const val NOTIFICATION_CHANNEL_ID = "NEW_UPDATES"
         const val WORK_TAG = "PERIODIC_CHECK"
     }

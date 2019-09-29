@@ -17,12 +17,14 @@ object PreferenceUtil : KoinComponent {
 
     private fun name(@StringRes prefKey: Int) = context.getString(prefKey)
 
-    fun observeShowSeen() = observe(R.string.preference_show_seen, true)
+    fun observeShowSeen(): LiveData<Boolean> = observe(R.string.preference_show_seen, true)
 
     fun toggleShowSeen() {
         val name = name(R.string.preference_show_seen)
         put(name, !get(name, true))
     }
+
+    fun isWifiOnly(): Boolean = get(R.string.preference_wifi_only, false)
 
     /**
      * Generic getter for a preference value

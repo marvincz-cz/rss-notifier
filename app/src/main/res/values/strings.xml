@@ -6,6 +6,7 @@
     <string name="fragment_channels">@string/app_name</string>
     <string name="fragment_add_channel">@string/add_channel_title</string>
     <string name="fragment_sorting">Manage feeds</string>
+    <string name="fragment_settings">Settings</string>
 
     <!-- Notifications -->
     <string name="channel_name">New Updates</string>
@@ -45,5 +46,8 @@
     <string name="validation_url">Invalid URL</string>
     <string name="validation_rss">Not an RSS feed</string>
 
-    <string name="preference_show_seen">show_seen</string>
+    <string name="preference_show_seen" translatable="false">show_seen</string>
+    <string name="preference_wifi_only" translatable="false">wifi_only</string>
+    <string name="preference_wifi_only_title">Limit mobile data usage</string>
+    <string name="preference_wifi_only_summary">Check feeds for updates over Wi-Fi only</string>
 </resources>

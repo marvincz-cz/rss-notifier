@@ -20,9 +20,11 @@ class ItemAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssItem>>,
         if (item.seen) {
             itemView.setActionDrawable(R.drawable.ic_check)
             itemView.setActionDescription(R.string.action_mark_unread)
+            itemView.emphasis = false
         } else {
             itemView.setActionDrawable(R.drawable.ic_eye)
             itemView.setActionDescription(R.string.action_mark_read)
+            itemView.emphasis = true
         }
         itemView.setActionListener { callBack.toggle(item) }
         itemView.setOnClickListener { callBack.open(item) }

@@ -28,4 +28,8 @@ class ChannelsViewModel(private val repository: Repository) : BaseViewModel() {
     fun sortItems() {
         navigate(ChannelsFragmentDirections.actionSortChannels())
     }
+
+    fun settings() {
+        navigate(ChannelsFragmentDirections.actionSettings())
+    }
 }

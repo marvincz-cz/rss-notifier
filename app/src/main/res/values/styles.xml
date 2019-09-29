@@ -25,11 +25,15 @@
     <style name="Text.Normal" parent="TextAppearance.MaterialComponents.Body1" />
 
     <style name="Text.Normal.Emphasis">
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Text.Secondary" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">@color/on_surface_medium</item>
+    </style>
+
+    <style name="Text.Secondary.Emphasis">
+        <item name="android:textColor">@color/on_surface_high</item>
     </style>
 
     <style name="Text.Small" parent="TextAppearance.MaterialComponents.Caption" />

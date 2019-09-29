@@ -4,6 +4,7 @@
     <attr name="secondaryText" format="string" />
     <attr name="drawable" format="reference" />
     <attr name="actionDrawable" format="reference" />
+    <attr name="emphasis" format="boolean" />
 
     <!-- Standard orientation constant. -->
     <attr name="orientation">
@@ -24,6 +25,7 @@
         <attr name="drawable" />
         <attr name="actionDrawable" />
         <attr name="iconType" />
+        <attr name="emphasis" />
     </declare-styleable>
 
     <declare-styleable name="TwoLine">
@@ -32,6 +34,7 @@
         <attr name="drawable" />
         <attr name="actionDrawable" />
         <attr name="iconType" />
+        <attr name="emphasis" />
     </declare-styleable>
 
     <declare-styleable name="Divider">

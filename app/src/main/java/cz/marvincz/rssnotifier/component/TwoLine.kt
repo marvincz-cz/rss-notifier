@@ -60,6 +60,8 @@ class TwoLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
 
         attributes.getDrawable(R.styleable.TwoLine_actionDrawable)
                 ?.let { actionDrawable = it }
+
+        emphasis = attributes.getBoolean(R.styleable.TwoLine_emphasis, false)
     }
 
     private fun adjustSize() {
@@ -161,4 +163,16 @@ class TwoLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
             drawable(R.drawable.ripple_icon)
         else null
     }
+
+    var emphasis: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                item_title.setTextAppearance(R.style.Text_Normal_Emphasis)
+                item_secondary.setTextAppearance(R.style.Text_Secondary_Emphasis)
+            } else {
+                item_title.setTextAppearance(R.style.Text_Normal)
+                item_secondary.setTextAppearance(R.style.Text_Secondary)
+            }
+        }
 }

@@ -14,13 +14,9 @@ import androidx.core.view.updateLayoutParams
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.extension.*
 import kotlinx.android.synthetic.main.one_line_internal.view.*
-import kotlinx.android.synthetic.main.one_line_internal.view.item_action
-import kotlinx.android.synthetic.main.one_line_internal.view.item_icon
-import kotlinx.android.synthetic.main.one_line_internal.view.item_title
-import kotlinx.android.synthetic.main.two_line_internal.view.*
 
 class OneLine @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) :
-    ConstraintLayout(context, attributeSet) {
+        ConstraintLayout(context, attributeSet) {
 
     private var iconType = IconType.SMALL
         set(value) {
@@ -43,8 +39,8 @@ class OneLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
 
         if (attributeSet == null) {
             layoutParams = LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                layoutHeight
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    layoutHeight
             )
         }
     }
@@ -53,13 +49,15 @@ class OneLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
         iconType = IconType[attributes.getInt(R.styleable.OneLine_iconType, 1)]
 
         attributes.getDrawable(R.styleable.OneLine_drawable)
-            ?.let { drawable = it }
+                ?.let { drawable = it }
 
         attributes.getText(R.styleable.OneLine_text)
-            ?.let { text = it }
+                ?.let { text = it }
 
         attributes.getDrawable(R.styleable.OneLine_actionDrawable)
-            ?.let { actionDrawable = it }
+                ?.let { actionDrawable = it }
+
+        emphasis = attributes.getBoolean(R.styleable.OneLine_emphasis, false)
     }
 
     private fun adjustSize() {
@@ -82,8 +80,8 @@ class OneLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(
-            widthMeasureSpec,
-            MeasureSpec.makeMeasureSpec(layoutHeight, MeasureSpec.EXACTLY)
+                widthMeasureSpec,
+                MeasureSpec.makeMeasureSpec(layoutHeight, MeasureSpec.EXACTLY)
         )
     }
 
@@ -148,4 +146,14 @@ class OneLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
             drawable(R.drawable.ripple_icon)
         else null
     }
+
+    var emphasis: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                item_title.setTextAppearance(R.style.Text_Normal_Emphasis)
+            } else {
+                item_title.setTextAppearance(R.style.Text_Normal)
+            }
+        }
 }

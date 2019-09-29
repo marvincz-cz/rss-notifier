@@ -26,8 +26,9 @@ class Worker(appContext: Context, params: WorkerParameters) : CoroutineWorker(ap
                 .forEach { (channel, item) ->
                     val notificationId = item.id.hashCode()
 
-                    // TODO: Open browser or open the app on the channel tab
+                    // TODO: Preference - Open browser or open the app on the channel tab
                     val pendingIntent = if (item.link != null) {
+                        // TODO mark as seen
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.link))
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         PendingIntent.getActivity(applicationContext, 0, intent, 0)

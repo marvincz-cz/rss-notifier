@@ -51,6 +51,10 @@ class ChannelsFragment : BaseFragment<ChannelsViewModel>() {
                 viewModel.sortItems()
                 return true
             }
+            R.id.action_settings -> {
+                viewModel.settings()
+                return true
+            }
         }
         return false
     }
