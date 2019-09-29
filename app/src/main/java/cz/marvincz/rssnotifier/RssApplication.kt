@@ -72,6 +72,5 @@ class RssApplication : Application() {
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "NEW_UPDATES"
-        const val WORK_TAG = "PERIODIC_CHECK"
     }
 }

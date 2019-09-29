@@ -102,6 +102,10 @@ class Repository(private val database: Database) {
     suspend fun markAllRead(channelUrl: String) {
         database.dao().markAllRead(channelUrl)
     }
+
+    suspend fun markRead(itemId: String) {
+        database.dao().markRead(itemId)
+    }
 }
 
 private val OLD_DATA_DURATION = Duration.ofMinutes(30)

@@ -59,6 +59,9 @@ abstract class Dao {
     @Update
     abstract suspend fun update(channels: Collection<RssChannel>)
 
-    @Query("UPDATE RssItem SET seen = 1 WHERE :channelUrl = channelUrl")
+    @Query("UPDATE RssItem SET seen = 1 WHERE channelUrl = :channelUrl")
     abstract suspend fun markAllRead(channelUrl: String)
+
+    @Query("UPDATE RssItem SET seen = 1 WHERE id = :itemId")
+    abstract suspend fun markRead(itemId: String)
 }

@@ -28,10 +28,10 @@ class Worker(appContext: Context, params: WorkerParameters) : CoroutineWorker(ap
 
                     // TODO: Preference - Open browser or open the app on the channel tab
                     val pendingIntent = if (item.link != null) {
-                        // TODO mark as seen
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.link))
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        PendingIntent.getActivity(applicationContext, 0, intent, 0)
+                        val intent = Intent(applicationContext, RedirectingService::class.java)
+                                .setData(Uri.parse(item.link))
+                                .putExtra(RedirectingService.ITEM_ID, item.id)
+                        PendingIntent.getService(applicationContext, 0, intent, 0)
                     } else {
                         NavDeepLinkBuilder(applicationContext)
                                 .setGraph(R.navigation.nav_graph)
