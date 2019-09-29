@@ -27,7 +27,9 @@ class SortingFragment : BaseFragment<SortingViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val dragCallback = DragCallback()
+        val dragCallback = DragCallback {
+            viewModel.saveChannelOrder(adapter.items)
+        }
         val touchHelper = ItemTouchHelper(dragCallback)
         touchHelper.attachToRecyclerView(list)
 
@@ -46,12 +48,7 @@ class SortingFragment : BaseFragment<SortingViewModel>() {
         list.itemAnimator = DefaultItemAnimator()
     }
 
-    override fun onPause() {
-        viewModel.saveChannelOrder(adapter.items)
-        super.onPause()
-    }
-
-    class DragCallback() : ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN or ItemTouchHelper.UP, 0) {
+    class DragCallback(private val onMoveFinished: () -> Unit) : ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN or ItemTouchHelper.UP, 0) {
         var moveListener: MoveListener? = null
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -62,6 +59,11 @@ class SortingFragment : BaseFragment<SortingViewModel>() {
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) = Unit
 
         override fun isLongPressDragEnabled() = false
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+            onMoveFinished()
+        }
     }
 
     interface MoveListener {

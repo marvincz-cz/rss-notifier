@@ -3,6 +3,7 @@ package cz.marvincz.rssnotifier.fragment
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.observe
+import com.google.android.material.tabs.TabLayoutMediator
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ChannelAdapter
 import cz.marvincz.rssnotifier.fragment.base.BaseFragment
@@ -24,12 +25,18 @@ class ChannelsFragment : BaseFragment<ChannelsViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val channelAdapter = ChannelAdapter(viewLifecycleOwner, parentFragmentManager, viewModel.channels)
+        val channelAdapter = ChannelAdapter(viewLifecycleOwner, childFragmentManager, viewModel.channels)
         pager.adapter = channelAdapter
+
+        TabLayoutMediator(tabs, pager, TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+            channelAdapter.items.getOrNull(position)?.let { channel ->
+                tab.text = channel.title
+            }
+        }).attach()
 
         handleEmptyState()
 
-        swipe.setOnRefreshListener { viewModel.reload(channelAdapter.currentChannel) }
+        swipe.setOnRefreshListener { viewModel.refreshAll(true) }
         fab.setOnClickListener { viewModel.addNew() }
     }
 

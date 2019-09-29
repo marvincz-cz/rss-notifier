@@ -2,7 +2,6 @@ package cz.marvincz.rssnotifier.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import cz.marvincz.rssnotifier.fragment.ChannelsFragmentDirections
-import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.repository.Repository
 import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import cz.marvincz.rssnotifier.viewmodel.base.ViewCommand
@@ -12,14 +11,12 @@ class ChannelsViewModel(private val repository: Repository) : BaseViewModel() {
     val channels = repository.getChannels()
 
     init {
-        viewModelScope.launch {
-            repository.refreshAll()
-        }
+        refreshAll(forced = false)
     }
 
-    fun reload(channel: RssChannel?) {
+    fun refreshAll(forced: Boolean) {
         viewModelScope.launch {
-            channel?.let { repository.download(channel.accessUrl, true) }
+            repository.refreshAll(forced)
             viewCommand(ViewCommand.Loading(false))
         }
     }

@@ -1,17 +1,15 @@
 package cz.marvincz.rssnotifier.adapter
 
-import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.observe
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import cz.marvincz.rssnotifier.fragment.ItemsFragment
 import cz.marvincz.rssnotifier.model.RssChannel
 
-class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentManager, data: LiveData<List<RssChannel>>) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentManager, data: LiveData<List<RssChannel>>) : FragmentStateAdapter(fragmentManager, lifecycleOwner.lifecycle) {
     var items: List<RssChannel> = listOf()
-    var currentChannel: RssChannel? = null
         private set
 
     init {
@@ -21,15 +19,7 @@ class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentMa
         }
     }
 
-    override fun getItem(position: Int) =
-            ItemsFragment.newInstance(items[position].accessUrl)
+    override fun getItemCount() = items.size
 
-    override fun getCount() = items.size
-
-    override fun getPageTitle(position: Int) = items[position].title.orEmpty()
-
-    override fun setPrimaryItem(container: ViewGroup, position: Int, fragment: Any) {
-        super.setPrimaryItem(container, position, fragment)
-        currentChannel = items.getOrNull(position)
-    }
+    override fun createFragment(position: Int) = ItemsFragment.newInstance(items[position].accessUrl)
 }
