@@ -72,9 +72,12 @@ class RssApplication : Application() {
                 .build()
         val workRequest = PeriodicWorkRequestBuilder<Worker>(2, TimeUnit.HOURS)
                 .setConstraints(constraints)
+                .setInitialDelay(30, TimeUnit.MINUTES)
+                .addTag(WORK_TAG)
                 .build()
-        WorkManager.getInstance(this)
-                .enqueue(workRequest)
+        val workManager = WorkManager.getInstance(this)
+        workManager.cancelAllWorkByTag(WORK_TAG)
+        workManager.enqueue(workRequest)
     }
 
     companion object {
@@ -82,5 +85,6 @@ class RssApplication : Application() {
             private set
 
         const val NOTIFICATION_CHANNEL_ID = "NEW_UPDATES"
+        const val WORK_TAG = "PERIODIC_CHECK"
     }
 }
