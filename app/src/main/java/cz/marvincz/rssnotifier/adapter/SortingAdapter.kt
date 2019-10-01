@@ -44,6 +44,14 @@ class SortingAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssChan
         notifyItemMoved(position, toPosition)
     }
 
+    fun remove(item: RssChannel) {
+        if (items.contains(item)) {
+            val position = items.indexOf(item)
+            items = items.minus(item)
+            notifyItemRemoved(position)
+        }
+    }
+
     interface Listener {
         fun onDelete(channel: RssChannel)
         fun drag(viewHolder: RecyclerView.ViewHolder)

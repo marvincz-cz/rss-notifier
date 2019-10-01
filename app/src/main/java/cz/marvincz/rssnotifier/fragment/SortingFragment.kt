@@ -12,6 +12,7 @@ import cz.marvincz.rssnotifier.adapter.SortingAdapter
 import cz.marvincz.rssnotifier.fragment.base.BaseFragment
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.viewmodel.SortingViewModel
+import cz.marvincz.rssnotifier.viewmodel.base.ViewSpecificCommand
 import kotlinx.android.synthetic.main.fragment_sorting.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -46,6 +47,13 @@ class SortingFragment : BaseFragment<SortingViewModel>() {
 
         list.adapter = adapter
         list.itemAnimator = DefaultItemAnimator()
+    }
+
+    override fun handleViewCommand(command: ViewSpecificCommand): Boolean {
+        if (command is SortingViewModel.Remove) {
+            adapter.remove(command.channel)
+            return true
+        } else return super.handleViewCommand(command)
     }
 
     class DragCallback(private val onMoveFinished: () -> Unit) : ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN or ItemTouchHelper.UP, 0) {
