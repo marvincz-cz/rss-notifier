@@ -3,6 +3,7 @@ package cz.marvincz.rssnotifier.util
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
+import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 import cz.marvincz.rssnotifier.R
@@ -12,8 +13,6 @@ import org.koin.core.inject
 object PreferenceUtil : KoinComponent {
     private val context: Context by inject()
     val preferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
-    private val editor: SharedPreferences.Editor
-        get() = preferences.edit()
 
     private fun name(@StringRes prefKey: Int) = context.getString(prefKey)
 
@@ -54,7 +53,7 @@ object PreferenceUtil : KoinComponent {
     /**
      * Generic setter for a preference value
      */
-    private fun <T> put(name: String, value: T) = with(editor) {
+    private fun <T> put(name: String, value: T) = preferences.edit {
         when (value) {
             is Int -> putInt(name, value)
             is Long -> putLong(name, value)
