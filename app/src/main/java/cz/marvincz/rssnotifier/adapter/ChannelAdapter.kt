@@ -22,4 +22,12 @@ class ChannelAdapter(lifecycleOwner: LifecycleOwner, fragmentManager: FragmentMa
     override fun getItemCount() = items.size
 
     override fun createFragment(position: Int) = ItemsFragment.newInstance(items[position].accessUrl)
+
+    override fun getItemId(position: Int) = items[position].id
+
+    override fun containsItem(itemId: Long) = items
+            .any { it.id == itemId }
+
+    private val RssChannel.id: Long
+        get() = accessUrl.hashCode().toLong()
 }
