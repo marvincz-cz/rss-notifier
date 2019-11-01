@@ -1,15 +1,11 @@
 package cz.marvincz.rssnotifier.room
 
-import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
-import org.threeten.bp.ZonedDateTime
 
 @androidx.room.Database(entities = [RssChannel::class, RssItem::class], version = 1)
 @TypeConverters(Converter::class)
@@ -18,7 +14,7 @@ abstract class Database : RoomDatabase() {
     abstract fun dao(): Dao
 
     companion object {
-        private val DB_NAME = "data.db"
+        private const val DB_NAME = "data.db"
 
         /**
          * Do not call directly! Inject through Dagger
@@ -26,38 +22,11 @@ abstract class Database : RoomDatabase() {
          * @param context
          * @return Database instance
          */
-        fun get(context: Context): Database {
-            // Dagger handles Singleton instantiation
-            return create(context, inMemory = false)
-        }
+        fun get(context: Context, inMemory: Boolean = false): Database = if (inMemory) {
+            Room.inMemoryDatabaseBuilder(context.applicationContext, Database::class.java)
+        } else {
+            Room.databaseBuilder(context.applicationContext, Database::class.java, DB_NAME)
+        }.build()
 
-        private fun create(context: Context, inMemory: Boolean): Database {
-            val builder = if (inMemory) {
-                Room.inMemoryDatabaseBuilder(context.applicationContext, Database::class.java)
-            } else {
-                Room.databaseBuilder(context.applicationContext, Database::class.java, DB_NAME)
-            }
-
-            return builder.addCallback(object : RoomDatabase.Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    initData(db)
-                }
-            }).build()
-        }
-
-        private fun initData(db: SupportSQLiteDatabase) {
-            val date = Converter().dateToLong(ZonedDateTime.now().minusDays(1))
-        }
-
-        private fun insert(db: SupportSQLiteDatabase, title: String, description: String, accessUrl: String, link: String, sortOrder: Int, date: Long) {
-            val content = ContentValues(4)
-            content.put("title", title)
-            content.put("description", description)
-            content.put("link", link)
-            content.put("accessUrl", accessUrl)
-            content.put("sortOrder", sortOrder)
-            content.put("lastDownloaded", date)
-            db.insert("RssChannel", SQLiteDatabase.CONFLICT_REPLACE, content)
-        }
     }
 }
