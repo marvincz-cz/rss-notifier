@@ -5,7 +5,6 @@
     <color name="colorPrimaryDark">@color/teal_700</color>
     <color name="colorAccent">@color/purple_200</color>
     <color name="surface">@color/dark_gray</color>
-    <color name="ripple">@color/white_16</color>
     <color name="error">#CF6679</color>
 
     <!--  CONTENT ON WHITE / LIGHT SURFACES  -->

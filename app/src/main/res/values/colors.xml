@@ -7,14 +7,12 @@
     <color name="white_54">#8AFFFFFF</color>
     <color name="white_38">#61FFFFFF</color>
     <color name="white_20">#33FFFFFF</color>
-    <color name="white_16">#29FFFFFF</color>
 
     <color name="black">#000000</color>
     <color name="black_87">#DE000000</color>
     <color name="black_60">#99000000</color>
     <color name="black_54">#8A000000</color>
     <color name="black_38">#61000000</color>
-    <color name="black_16">#29000000</color>
     <color name="black_12">#1F000000</color>
 
     <color name="dark_gray">#121212</color>
@@ -33,7 +31,6 @@
     <color name="colorAccent">@color/purple_200</color>
     <color name="surface">@color/white</color>
     <color name="background">@color/surface</color>
-    <color name="ripple">@color/black_16</color>
     <color name="error">#B00020</color>
 
     <!--  CONTENT ON WHITE / LIGHT SURFACES  -->
