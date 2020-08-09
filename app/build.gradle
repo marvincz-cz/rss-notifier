@@ -39,20 +39,20 @@ androidExtensions {
 }
 
 def koin_version = '2.0.1'
-def room_version = '2.2.1'
-def lifecycle_version = '2.2.0-rc01'
+def room_version = '2.2.5'
+def lifecycle_version = '2.2.0'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.1.0-beta01'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation "androidx.viewpager2:viewpager2:1.0.0-rc01"
+    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
     testImplementation 'junit:junit:4.12'
-    implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
-    implementation "androidx.preference:preference-ktx:1.1.0"
-    implementation "androidx.work:work-runtime-ktx:2.2.0"
+    implementation 'androidx.core:core-ktx:1.3.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation "androidx.preference:preference-ktx:1.1.1"
+    implementation "androidx.work:work-runtime-ktx:2.4.0"
 
     // JSR310 Android backport
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
