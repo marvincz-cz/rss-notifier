@@ -43,8 +43,8 @@ class Worker(appContext: Context, params: WorkerParameters) : CoroutineWorker(ap
                     val builder = NotificationCompat.Builder(applicationContext, RssApplication.NOTIFICATION_CHANNEL_ID)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setSmallIcon(R.drawable.ic_rss_feed)
-                            .setContentTitle(item.title)
-                            .setContentText(channel.title)
+                            .setContentTitle(channel.title)
+                            .setContentText(item.title)
                             .setContentIntent(pendingIntent)
                             .setAutoCancel(true)
 
