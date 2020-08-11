@@ -11,9 +11,11 @@ class RedirectingService : IntentService("RedirectingService") {
     private val repository: Repository by inject()
 
     override fun onHandleIntent(intent: Intent?) {
-        intent?.data?.let { uri ->
-            startActivity(Intent(Intent.ACTION_VIEW, uri)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        if (intent?.getBooleanExtra(REDIRECT, true) == true) {
+            intent.data?.let { uri ->
+                startActivity(Intent(Intent.ACTION_VIEW, uri)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
         }
 
         intent?.getStringExtra(ITEM_ID)?.let { itemId ->
@@ -25,5 +27,6 @@ class RedirectingService : IntentService("RedirectingService") {
 
     companion object {
         const val ITEM_ID = BuildConfig.APPLICATION_ID + ".ITEM_ID"
+        const val REDIRECT = BuildConfig.APPLICATION_ID + ".REDIRECT"
     }
 }

@@ -58,8 +58,9 @@ class Worker(appContext: Context, params: WorkerParameters) : CoroutineWorker(ap
 
     private fun createPendingIntent(item: RssItem, redirect: Boolean = true): PendingIntent {
         val intent = Intent(applicationContext, RedirectingService::class.java)
+                .setData(Uri.parse(item.link))
                 .putExtra(RedirectingService.ITEM_ID, item.id)
-        if (redirect) intent.data = Uri.parse(item.link)
+                .putExtra(RedirectingService.REDIRECT, redirect)
 
         return PendingIntent.getService(applicationContext, 0, intent, 0)
     }
