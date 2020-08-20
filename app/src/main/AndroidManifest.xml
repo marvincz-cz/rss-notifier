@@ -27,6 +27,6 @@
         </activity>
 
         <service
-            android:name=".background.RedirectingService" />
+            android:name=".background.NotificationService" />
     </application>
 </manifest>
