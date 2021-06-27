@@ -40,9 +40,6 @@ class RssApplication : Application() {
 
             createNotificationChannel()
         }
-
-        val workScheduler: WorkScheduler = getKoin().get()
-        workScheduler.scheduleWork()
     }
 
     private fun createNotificationChannel() {

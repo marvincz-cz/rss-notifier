@@ -42,7 +42,7 @@ class Repository(private val database: Database) {
                         .associateBy { it.id }
 
                 val rss = runCatching { Client.call().rss(channelUrl) }
-                        .getOrNull() ?: throw CancellationException()
+                        .getOrThrow()
 
                 val newChannel = channel?.copy(
                         link = rss.channel.link,

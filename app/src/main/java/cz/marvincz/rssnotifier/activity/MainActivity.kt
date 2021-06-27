@@ -6,7 +6,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import cz.marvincz.rssnotifier.R
+import cz.marvincz.rssnotifier.background.WorkScheduler
 import cz.marvincz.rssnotifier.databinding.ActivityMainBinding
+import org.koin.android.ext.android.getKoin
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -20,5 +22,8 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
+
+        val workScheduler: WorkScheduler = getKoin().get()
+        workScheduler.scheduleWork()
     }
 }

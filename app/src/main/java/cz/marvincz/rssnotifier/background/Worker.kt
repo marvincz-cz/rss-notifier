@@ -19,59 +19,78 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.random.Random
 
-class Worker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params), KoinComponent {
+class Worker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params),
+    KoinComponent {
     private val repository: Repository by inject()
     override suspend fun doWork(): Result {
         val newItems = repository.refreshAll(forced = BuildConfig.DEBUG)
 
         newItems.flatMap { (channel, list) -> list.map { channel to it } }
-                .forEach { (channel, item) ->
-                    val notificationId = Random.nextInt()
+            .forEach { (channel, item) ->
+                val notificationId = Random.nextInt()
 
-                    // TODO: Preference - Open browser or open the app on the channel tab
-                    val pendingIntent = if (item.link != null) createOpenIntent(item)
-                    else NavDeepLinkBuilder(applicationContext)
-                            .setGraph(R.navigation.nav_graph)
-                            .setDestination(R.id.channelsFragment)
-                            .setArguments(ChannelsFragmentArgs(channel.accessUrl).toBundle())
-                            .createPendingIntent()
+                // TODO: Preference - Open browser or open the app on the channel tab
+                val pendingIntent = if (item.link != null) createOpenIntent(item)
+                else NavDeepLinkBuilder(applicationContext)
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.channelsFragment)
+                    .setArguments(ChannelsFragmentArgs(channel.accessUrl).toBundle())
+                    .createPendingIntent()
 
-                    val markReadPendingIntent = createMarkReadIntent(item, notificationId)
+                val markReadPendingIntent = createMarkReadIntent(item, notificationId)
 
-                    val notificationBuilder = NotificationCompat.Builder(applicationContext, RssApplication.NOTIFICATION_CHANNEL_ID)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
-                            .setSmallIcon(R.drawable.ic_rss_feed)
-                            .setContentTitle(channel.title)
-                            .setContentText(item.title)
-                            .setContentIntent(pendingIntent)
-                            .addAction(R.drawable.ic_check, applicationContext.getString(R.string.action_mark_read), markReadPendingIntent)
-                            .setAutoCancel(true)
+                val notificationBuilder = NotificationCompat.Builder(
+                    applicationContext,
+                    RssApplication.NOTIFICATION_CHANNEL_ID
+                )
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
+                    .setSmallIcon(R.drawable.ic_rss_feed)
+                    .setContentTitle(channel.title)
+                    .setContentText(item.title)
+                    .setContentIntent(pendingIntent)
+                    .addAction(
+                        R.drawable.ic_check,
+                        applicationContext.getString(R.string.action_mark_read),
+                        markReadPendingIntent
+                    )
+                    .setAutoCancel(true)
 
-                    with(NotificationManagerCompat.from(applicationContext)) {
-                        notify(notificationId, notificationBuilder.build())
-                    }
+                with(NotificationManagerCompat.from(applicationContext)) {
+                    notify(notificationId, notificationBuilder.build())
                 }
+            }
 
         return Result.success()
     }
 
     private fun createOpenIntent(item: RssItem): PendingIntent {
-        val intent = Intent(applicationContext, NotificationService::class.java)
-                .setAction(Intent.ACTION_VIEW)
-                .setData(Uri.parse(item.link))
-                .putExtra(NotificationService.ITEM_ID, item.id)
+        val intent = Intent(applicationContext, NotificationBroadcastReceiver::class.java)
+            .setAction(Intent.ACTION_VIEW)
+            .setData(Uri.parse(item.link))
+            .putExtra(NotificationBroadcastReceiver.ITEM_ID, item.id)
 
-        return PendingIntent.getService(applicationContext, REQUEST_OPEN, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        return PendingIntent.getBroadcast(
+            applicationContext,
+            REQUEST_OPEN,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
     }
 
     private fun createMarkReadIntent(item: RssItem, notificationId: Int): PendingIntent {
-        val intent = Intent(applicationContext, NotificationService::class.java)
-                .setData(Uri.parse(item.link))
-                .putExtra(NotificationService.ITEM_ID, item.id)
-                .putExtra(NotificationService.NOTIFICATION_ID, notificationId)
+        val intent = Intent(applicationContext, NotificationBroadcastReceiver::class.java)
+            .setAction(NotificationBroadcastReceiver.ACTION_MARK_READ)
+            .setData(Uri.parse(item.link))
+            .putExtra(NotificationBroadcastReceiver.ITEM_ID, item.id)
+            .putExtra(NotificationBroadcastReceiver.NOTIFICATION_ID, notificationId)
 
-        return PendingIntent.getService(applicationContext, REQUEST_MARK_READ, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        return PendingIntent.getBroadcast(
+            applicationContext,
+            REQUEST_MARK_READ,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
     }
 
     companion object {

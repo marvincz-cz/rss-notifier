@@ -18,7 +18,8 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".activity.MainActivity"
-            android:label="@string/title_activity_main">
+            android:label="@string/title_activity_main"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +27,13 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".background.NotificationService" />
+        <receiver
+            android:name=".background.NotificationBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name=".ACTION_MARK_READ" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

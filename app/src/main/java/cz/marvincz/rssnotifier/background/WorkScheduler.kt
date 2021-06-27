@@ -12,16 +12,17 @@ import java.util.concurrent.TimeUnit
 class WorkScheduler(private val context: Context) {
     fun scheduleWork() {
         val constraints = Constraints.Builder()
-                .apply {
-                    if (PreferenceUtil.isWifiOnly())
-                        setRequiredNetworkType(NetworkType.UNMETERED)
-                    else
-                        setRequiredNetworkType(NetworkType.CONNECTED)
-                }
-                .build()
-        val workRequest = PeriodicWorkRequestBuilder<Worker>(CHECK_INTERVAL.toMinutes(), TimeUnit.MINUTES)
+            .apply {
+                if (PreferenceUtil.isWifiOnly())
+                    setRequiredNetworkType(NetworkType.UNMETERED)
+                else
+                    setRequiredNetworkType(NetworkType.CONNECTED)
+            }
+            .build()
+        val workRequest =
+            PeriodicWorkRequestBuilder<Worker>(CHECK_INTERVAL.toMinutes(), TimeUnit.MINUTES)
                 .setConstraints(constraints)
-                .setInitialDelay(CHECK_INTERVAL.dividedBy(2).toMinutes(), TimeUnit.MINUTES)
+                .setInitialDelay(INITIAL_DELAY.toMinutes(), TimeUnit.MINUTES)
                 .addTag(WORK_TAG)
                 .build()
         val workManager = WorkManager.getInstance(context)
@@ -32,5 +33,6 @@ class WorkScheduler(private val context: Context) {
     companion object {
         const val WORK_TAG = "PERIODIC_CHECK"
         private val CHECK_INTERVAL = Duration.ofHours(1)
+        private val INITIAL_DELAY = Duration.ofMinutes(10)
     }
 }
