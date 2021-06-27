@@ -5,25 +5,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.jakewharton.threetenabp.AndroidThreeTen
 import cz.marvincz.rssnotifier.background.WorkScheduler
-import cz.marvincz.rssnotifier.background.Worker
 import cz.marvincz.rssnotifier.repository.Repository
 import cz.marvincz.rssnotifier.room.Database
-import cz.marvincz.rssnotifier.util.PreferenceUtil
 import cz.marvincz.rssnotifier.viewmodel.*
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.core.Koin
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import java.util.concurrent.TimeUnit
 
 class RssApplication : Application() {
 

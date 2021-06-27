@@ -3,7 +3,6 @@ package cz.marvincz.rssnotifier.adapter
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.observe
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import cz.marvincz.rssnotifier.fragment.ItemsFragment
 import cz.marvincz.rssnotifier.model.RssChannel

@@ -4,33 +4,44 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DefaultItemAnimator
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
+import cz.marvincz.rssnotifier.databinding.FragmentItemsBinding
 import cz.marvincz.rssnotifier.fragment.base.BaseFragment
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
-import kotlinx.android.synthetic.main.fragment_items.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class ItemsFragment : BaseFragment<ItemsViewModel>() {
-    val channelUrl: String by lazy { arguments!!.getString(ARG_CHANNEL)!! }
+    val channelUrl: String by lazy { requireArguments().getString(ARG_CHANNEL)!! }
     override val viewModel: ItemsViewModel by viewModel { parametersOf(channelUrl) }
+
+    private var _binding: FragmentItemsBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.fragment_items, container, false)
+                              savedInstanceState: Bundle?): View {
+        _binding = FragmentItemsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        list.adapter = ItemAdapter(viewLifecycleOwner, viewModel.items, object : ItemAdapter.ItemListCallBack {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.list.adapter = ItemAdapter(viewLifecycleOwner, viewModel.items, object : ItemAdapter.ItemListCallBack {
             override fun toggle(item: RssItem) {
                 viewModel.toggle(item)
             }
@@ -41,24 +52,24 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             }
 
         })
-        list.itemAnimator = DefaultItemAnimator()
+        binding.list.itemAnimator = DefaultItemAnimator()
 
         handleEmptyState()
     }
 
     private fun handleEmptyState() {
-        viewModel.items.observe(this) {
+        viewModel.items.observe(this.viewLifecycleOwner) {
             if (it.isEmpty())
-                flipper.displayedChild = FLIP_EMPTY
+                binding.flipper.displayedChild = FLIP_EMPTY
             else
-                flipper.displayedChild = FLIP_LIST
+                binding.flipper.displayedChild = FLIP_LIST
         }
 
-        viewModel.showSeen.observe(this) { showSeen ->
+        viewModel.showSeen.observe(this.viewLifecycleOwner) { showSeen ->
             if (showSeen)
-                empty_message.setText(R.string.empty_no_items)
+                binding.emptyMessage.setText(R.string.empty_no_items)
             else
-                empty_message.setText(R.string.empty_no_unseen)
+                binding.emptyMessage.setText(R.string.empty_no_unseen)
         }
     }
 

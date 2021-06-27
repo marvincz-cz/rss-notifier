@@ -12,11 +12,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import cz.marvincz.rssnotifier.R
+import cz.marvincz.rssnotifier.databinding.TwoLineInternalBinding
 import cz.marvincz.rssnotifier.extension.*
-import kotlinx.android.synthetic.main.two_line_internal.view.*
 
 class TwoLine @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) :
         ConstraintLayout(context, attributeSet) {
+
+    private val binding = TwoLineInternalBinding.bind(inflate(R.layout.two_line_internal))
 
     private var iconType = IconType.SMALL
         set(value) {
@@ -31,7 +33,6 @@ class TwoLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
     private var layoutHeight = 0
 
     init {
-        inflate(R.layout.two_line_internal)
         background = drawable(R.drawable.ripple)
 
         val attributes = context.obtainStyledAttributes(attributeSet, R.styleable.TwoLine)
@@ -73,13 +74,13 @@ class TwoLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
         val iconTextMargin = dimensionSize(iconTextMargins[index])
         val iconMargin = dimensionSize(iconMargins[index])
 
-        item_icon.updateLayoutParams<MarginLayoutParams> {
+        binding.itemIcon.updateLayoutParams<MarginLayoutParams> {
             width = iconSize
             height = iconSize
             topMargin = iconMargin
             bottomMargin = iconMargin
         }
-        item_title.updateLayoutParams<MarginLayoutParams> {
+        binding.itemTitle.updateLayoutParams<MarginLayoutParams> {
             marginStart = iconTextMargin
         }
         requestLayout()
@@ -95,58 +96,58 @@ class TwoLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
     override fun isClickable() = hasOnClickListeners()
 
     var text: CharSequence?
-        get() = item_title.text
+        get() = binding.itemTitle.text
         set(value) {
-            item_title.text = value
+            binding.itemTitle.text = value
         }
 
     fun setText(@StringRes resId: Int) {
-        item_title.setText(resId)
+        binding.itemTitle.setText(resId)
     }
 
     var secondaryText: CharSequence?
-        get() = item_secondary.text
+        get() = binding.itemSecondary.text
         set(value) {
-            item_secondary.text = value
+            binding.itemSecondary.text = value
         }
 
     fun setSecondaryText(@StringRes resId: Int) {
-        item_secondary.setText(resId)
+        binding.itemSecondary.setText(resId)
     }
 
     var drawable: Drawable?
-        get() = item_icon.drawable
+        get() = binding.itemIcon.drawable
         set(value) {
-            item_icon.setImageDrawable(value)
+            binding.itemIcon.setImageDrawable(value)
             updateIconVisibility()
         }
 
     fun setDrawable(@DrawableRes resId: Int) {
-        item_icon.setImageResource(resId)
+        binding.itemIcon.setImageResource(resId)
         updateIconVisibility()
     }
 
     private fun updateIconVisibility() {
-        item_icon.isVisible = item_icon.drawable != null
+        binding.itemIcon.isVisible = binding.itemIcon.drawable != null
         adjustSize()
     }
 
     var actionDrawable: Drawable?
-        get() = item_action.drawable
+        get() = binding.itemAction.drawable
         set(value) {
-            item_action.setImageDrawable(value)
+            binding.itemAction.setImageDrawable(value)
             updateActionVisibility()
         }
 
     fun setActionDrawable(@DrawableRes resId: Int) {
-        item_action.setImageResource(resId)
+        binding.itemAction.setImageResource(resId)
         updateActionVisibility()
     }
 
     var actionDescription: CharSequence
-        get() = item_action.contentDescription
+        get() = binding.itemAction.contentDescription
         set(value) {
-            item_action.contentDescription = value
+            binding.itemAction.contentDescription = value
         }
 
     fun setActionDescription(@StringRes resId: Int) {
@@ -154,12 +155,12 @@ class TwoLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
     }
 
     private fun updateActionVisibility() {
-        item_action.isVisible = item_action.drawable != null
+        binding.itemAction.isVisible = binding.itemAction.drawable != null
     }
 
     fun setActionListener(listener: (() -> Unit)?) {
-        item_action.setOnClickListener(listener?.let { OnClickListener { it() } })
-        item_action.background = if (listener != null)
+        binding.itemAction.setOnClickListener(listener?.let { OnClickListener { it() } })
+        binding.itemAction.background = if (listener != null)
             drawable(R.drawable.ripple_icon)
         else null
     }
@@ -168,11 +169,11 @@ class TwoLine @JvmOverloads constructor(context: Context, attributeSet: Attribut
         set(value) {
             field = value
             if (value) {
-                item_title.setTextAppearance(R.style.Text_Normal_Emphasis)
-                item_secondary.setTextAppearance(R.style.Text_Secondary_Emphasis)
+                binding.itemTitle.setTextAppearance(R.style.Text_Normal_Emphasis)
+                binding.itemSecondary.setTextAppearance(R.style.Text_Secondary_Emphasis)
             } else {
-                item_title.setTextAppearance(R.style.Text_Normal)
-                item_secondary.setTextAppearance(R.style.Text_Secondary)
+                binding.itemTitle.setTextAppearance(R.style.Text_Normal)
+                binding.itemSecondary.setTextAppearance(R.style.Text_Secondary)
             }
         }
 }

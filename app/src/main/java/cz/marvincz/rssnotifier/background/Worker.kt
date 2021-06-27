@@ -15,8 +15,8 @@ import cz.marvincz.rssnotifier.RssApplication
 import cz.marvincz.rssnotifier.fragment.ChannelsFragmentArgs
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.random.Random
 
 class Worker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params), KoinComponent {

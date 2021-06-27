@@ -46,7 +46,7 @@ class Repository(private val database: Database) {
 
                 val newChannel = channel?.copy(
                         link = rss.channel.link,
-                        title = rss.channel.title ?: channel.title ?: channelUrl,
+                        title = rss.channel.title ?: channel.title,
                         description = rss.channel.description,
                         lastDownloaded = ZonedDateTime.now()
                 ) ?: RssChannel(

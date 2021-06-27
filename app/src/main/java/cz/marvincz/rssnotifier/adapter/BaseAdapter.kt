@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BaseAdapter<T>(

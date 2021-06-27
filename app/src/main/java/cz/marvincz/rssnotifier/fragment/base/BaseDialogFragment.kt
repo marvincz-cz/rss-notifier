@@ -1,10 +1,10 @@
 package cz.marvincz.rssnotifier.fragment.base
 
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import cz.marvincz.rssnotifier.extension.setLayout
@@ -25,8 +25,8 @@ abstract class BaseDialogFragment<T : BaseViewModel> : DialogFragment(),
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         // stretch the dialog horizontally to fill the screen (with margins)
         setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,

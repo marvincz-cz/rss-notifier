@@ -12,7 +12,6 @@ import cz.marvincz.rssnotifier.extension.swap
 import cz.marvincz.rssnotifier.extension.tintedDrawable
 import cz.marvincz.rssnotifier.fragment.SortingFragment
 import cz.marvincz.rssnotifier.model.RssChannel
-import kotlinx.android.synthetic.main.one_line_internal.view.*
 
 class SortingAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssChannel>>, private val listener: Listener) : BaseAdapter<RssChannel>(lifecycleOwner, data), SortingFragment.MoveListener {
     override fun inflateView(parent: ViewGroup, viewType: Int): View = OneLine(parent.context)
@@ -26,7 +25,7 @@ class SortingAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssChan
         itemView.setActionDescription(R.string.action_delete)
 
         itemView.setActionListener { listener.onDelete(item) }
-        itemView.item_icon.setOnTouchListener { _, event ->
+        itemView.icon.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) listener.drag(holder)
             false
         }

@@ -19,8 +19,8 @@ open class BaseViewModel(initialCommand: ViewCommand? = null) : ViewModel() {
      */
     @ExperimentalCoroutinesApi
     val viewCommands = callbackFlow {
-        initialCommand?.let { offer(it) }
-        sendCommand = { offer(it) }
+        initialCommand?.let { trySend(it) }
+        sendCommand = { trySend(it) }
         awaitClose()
     }.asLiveData(viewModelScope.coroutineContext)
 

@@ -7,8 +7,8 @@ import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 import cz.marvincz.rssnotifier.R
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 object PreferenceUtil : KoinComponent {
     private val context: Context by inject()

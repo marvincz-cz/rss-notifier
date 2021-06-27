@@ -2,7 +2,6 @@ package cz.marvincz.rssnotifier.fragment.base
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
