@@ -8,12 +8,14 @@ def koin_version = '3.1.1'
 def room_version = '2.3.0'
 def lifecycle_version = '2.3.1'
 def compose_version = '1.0.0-beta09'
+def activity_compose_version = '1.3.0-beta02'
+def viewmodel_compose_version = '1.0.0-alpha07'
 
 android {
     compileSdkVersion 30
     defaultConfig {
         applicationId "cz.marvincz.rssnotifier"
-        minSdkVersion 24
+        minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -27,7 +29,7 @@ android {
     buildFeatures {
         viewBinding true
         // Enables Jetpack Compose for this module
-//        compose true
+        compose true
     }
     buildTypes {
         release {
@@ -41,6 +43,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
         useIR = true
     }
     composeOptions {
@@ -53,10 +56,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.3.0'
+    implementation "androidx.fragment:fragment-ktx:1.3.5"
+    implementation "androidx.activity:activity-compose:$activity_compose_version"
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     testImplementation 'junit:junit:4.12'
-    implementation 'androidx.core:core-ktx:1.5.0'
+    implementation 'androidx.core:core-ktx:1.6.0-rc01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation "androidx.preference:preference-ktx:1.1.1"
     implementation "androidx.work:work-runtime-ktx:2.6.0-beta01"
@@ -76,10 +81,12 @@ dependencies {
     // LIFECYCLE - ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$viewmodel_compose_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha03"
 
     // KOIN
     implementation "io.insert-koin:koin-android:$koin_version"
@@ -104,7 +111,6 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
     // Integration with observables
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-    implementation "androidx.compose.runtime:runtime-rxjava2:$compose_version"
 
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"

@@ -6,7 +6,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import cz.marvincz.rssnotifier.util.PreferenceUtil
-import org.threeten.bp.Duration
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 class WorkScheduler(private val context: Context) {

@@ -26,16 +26,7 @@ class RssApplication : Application() {
         startKoin {
             androidContext(this@RssApplication)
             modules(
-                    module {
-                        single { Database.get(androidContext()) }
-                        single { Repository(get()) }
-                        single { WorkScheduler(androidContext()) }
-                        viewModel { ChannelsViewModel(get()) }
-                        viewModel { (channelUrl: String) -> ItemsViewModel(get(), channelUrl) }
-                        viewModel { AddChannelViewModel(get()) }
-                        viewModel { SortingViewModel(get()) }
-                        viewModel { SettingsViewModel(get()) }
-                    }
+                module
             )
 
             createNotificationChannel()
@@ -62,4 +53,15 @@ class RssApplication : Application() {
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "NEW_UPDATES"
     }
+}
+
+private val module = module {
+    single { Database.get(androidContext()) }
+    single { Repository(get()) }
+    single { WorkScheduler(androidContext()) }
+    viewModel { ChannelsViewModel(get()) }
+    viewModel { (channelUrl: String) -> ItemsViewModel(get(), channelUrl) }
+    viewModel { AddChannelViewModel(get()) }
+    viewModel { SortingViewModel(get()) }
+    viewModel { SettingsViewModel(get()) }
 }

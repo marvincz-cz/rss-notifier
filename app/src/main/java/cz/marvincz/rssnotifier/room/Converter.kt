@@ -3,9 +3,9 @@ package cz.marvincz.rssnotifier.room
 import android.net.Uri
 
 import androidx.room.TypeConverter
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 class Converter {
     @TypeConverter

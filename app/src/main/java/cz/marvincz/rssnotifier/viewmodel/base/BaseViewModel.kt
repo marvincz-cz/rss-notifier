@@ -17,7 +17,7 @@ open class BaseViewModel(initialCommand: ViewCommand? = null) : ViewModel() {
     /**
      * A stream of commands for the associated View.
      */
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     val viewCommands = callbackFlow {
         initialCommand?.let { trySend(it) }
         sendCommand = { trySend(it) }

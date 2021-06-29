@@ -2,7 +2,7 @@ package cz.marvincz.rssnotifier.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.threeten.bp.ZonedDateTime
+import java.time.ZonedDateTime
 
 @Entity
 data class RssChannel(

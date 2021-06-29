@@ -6,12 +6,11 @@ import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
 import cz.marvincz.rssnotifier.room.Database
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Duration
-import org.threeten.bp.ZonedDateTime
+import java.time.Duration
+import java.time.ZonedDateTime
 
 class Repository(private val database: Database) {
 
@@ -19,7 +18,7 @@ class Repository(private val database: Database) {
 
     fun getChannelsOneTime() = liveData { emit(database.dao().getChannels()) }
 
-    fun getItems(channelUrl: String, showSeen: Boolean): LiveData<List<RssItem>> = database.dao().getItemsLive(channelUrl, showSeen)
+    fun getItems(channelUrl: String, showSeen: Boolean = true): LiveData<List<RssItem>> = database.dao().getItemsLive(channelUrl, showSeen)
 
     suspend fun updateItem(item: RssItem) = database.dao().updateItem(item)
 
