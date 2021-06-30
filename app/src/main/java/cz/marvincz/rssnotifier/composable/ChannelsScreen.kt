@@ -3,9 +3,7 @@ package cz.marvincz.rssnotifier.composable
 import android.text.Html
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -14,13 +12,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cz.marvincz.rssnotifier.R
+import cz.marvincz.rssnotifier.component.IconType
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.viewmodel.Channels2ViewModel
@@ -111,14 +112,20 @@ fun ItemsList(
                         text = { Text(stripHtml(item.title) ?: item.id) },
                         secondaryText = { Text(stripHtml(item.description) ?: "") },
                         trailing = {
-                            Action(
+                            ActionIcon(
                                 icon,
                                 description
                             ) { onItemToggleSeen(item) }
                         })
             }
         }
-    } else if (items !is InitialList) {
+    } else if (items is InitialList) {
+        Column {
+            repeat(6) {
+                LoadingItem()
+            }
+        }
+    } else {
         val emptyText = if (showSeen) R.string.empty_no_items else R.string.empty_no_unseen
         EmptyText(emptyText)
     }
@@ -137,6 +144,26 @@ private fun EmptyText(@StringRes stringRes: Int) {
         textAlign = TextAlign.Center,
         text = stringResource(id = stringRes)
     )
+}
+
+@Composable
+@OptIn(ExperimentalMaterialApi::class)
+private fun LoadingItem() {
+    ListItem(
+        text = {
+            ShimmerItem(
+                Modifier
+                    .height(height = dimensionResource(id = R.dimen.dimen_2))
+                    .fillMaxWidth(0.75f)
+            )
+        },
+        trailing = {
+            ShimmerItem(
+                Modifier
+                    .size(dimensionResource(id = R.dimen.icon_clickable))
+                    .padding(dimensionResource(id = R.dimen.icon_clickable_padding))
+            )
+        })
 }
 
 @Preview
@@ -218,6 +245,14 @@ private fun PreviewItemsListShowSeen() {
         onItemToggleSeen = {},
         showSeen = false
     )
+}
+
+@Preview
+@Composable
+fun PreviewLoadingItem() {
+    Surface {
+        LoadingItem()
+    }
 }
 
 private val mockChannels
