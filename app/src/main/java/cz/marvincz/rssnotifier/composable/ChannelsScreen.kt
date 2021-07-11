@@ -16,6 +16,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -158,6 +159,18 @@ fun ItemsList(
 @Composable
 private fun LoadingList() {
     Column {
+        ScrollableTabRow(selectedTabIndex = 0, backgroundColor = MaterialTheme.colors.surface) {
+            Tab(selected = true, onClick = {}) {
+                ShimmerItem(
+                    Modifier
+                        .padding(all = dimensionResource(id = R.dimen.dimen_1))
+                        .size(
+                            width = dimensionResource(id = R.dimen.dimen_16),
+                            height = dimensionResource(id = R.dimen.dimen_3)
+                        )
+                )
+            }
+        }
         repeat(6) {
             LoadingItem()
         }
@@ -183,10 +196,11 @@ private fun EmptyText(@StringRes stringRes: Int) {
 @OptIn(ExperimentalMaterialApi::class)
 private fun LoadingItem() {
     ListItem(
+        modifier = Modifier.padding(bottom = 8.dp),
         text = {
             ShimmerItem(
                 Modifier
-                    .height(height = dimensionResource(id = R.dimen.dimen_2))
+                    .height(height = dimensionResource(id = R.dimen.dimen_3))
                     .fillMaxWidth(0.75f)
             )
         },
