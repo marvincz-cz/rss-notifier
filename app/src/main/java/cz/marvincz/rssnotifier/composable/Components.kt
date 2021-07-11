@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,10 +45,9 @@ fun Icon(
 ) {
     if (type != IconType.NONE)
         Icon(
-            modifier = Modifier
-                .size(dimensionResource(id = type.size)),
+            modifier = Modifier.size(dimensionResource(id = type.size)),
             painter = painterResource(id = res),
-            tint = colorResource(id = R.color.icon_on_surface),
+            tint = iconOnSurface(isSystemInDarkTheme()),
             contentDescription = stringResource(id = description)
         )
 }
@@ -61,11 +60,11 @@ fun ActionIcon(
 ) {
     Icon(
         modifier = Modifier
-            .size(dimensionResource(id = R.dimen.icon_clickable))
+            .size(iconClickable)
             .clickable(onClick = action)
-            .padding(dimensionResource(id = R.dimen.icon_clickable_padding)),
+            .padding(iconClickablePadding),
         painter = painterResource(id = res),
-        tint = colorResource(id = R.color.icon_on_surface),
+        tint = iconOnSurface(isSystemInDarkTheme()),
         contentDescription = stringResource(id = description)
     )
 }
@@ -110,6 +109,9 @@ fun ShimmerItem(
 @Composable
 private fun PreviewShimmerItem() {
     Surface {
-        ShimmerItem(Modifier.padding(36.dp).size(width = 128.dp, height = 48.dp))
+        ShimmerItem(
+            Modifier
+                .padding(36.dp)
+                .size(width = 128.dp, height = 48.dp))
     }
 }

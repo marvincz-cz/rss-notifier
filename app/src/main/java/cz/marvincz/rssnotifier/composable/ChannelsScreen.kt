@@ -3,6 +3,7 @@ package cz.marvincz.rssnotifier.composable
 import android.text.Html
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,11 +13,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -65,21 +65,32 @@ private fun ChannelsScreen(
     isRefreshing: Boolean,
     onRefresh: () -> Unit
 ) {
-    MaterialTheme {
+    MaterialTheme(colors = colors(isSystemInDarkTheme())) {
         Surface {
-            when {
-                channels is InitialList || items is InitialList -> LoadingList()
-                channels.isEmpty() -> EmptyText(R.string.no_channels_message)
-                else -> Column {
-                    ChannelTabs(channels, selectedChannelIndex, onChannelSelected)
-                    ItemsList(
-                        items,
-                        onItemOpen,
-                        onItemToggleSeen,
-                        showSeen,
-                        isRefreshing,
-                        onRefresh
-                    )
+            Scaffold(
+                floatingActionButton = {
+                    FloatingActionButton(onClick = {  }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_add),
+                            contentDescription = stringResource(R.string.add_channel_title)
+                        )
+                    }
+                }
+            ) {
+                when {
+                    channels is InitialList || items is InitialList -> LoadingList()
+                    channels.isEmpty() -> EmptyText(R.string.no_channels_message)
+                    else -> Column {
+                        ChannelTabs(channels, selectedChannelIndex, onChannelSelected)
+                        ItemsList(
+                            items,
+                            onItemOpen,
+                            onItemToggleSeen,
+                            showSeen,
+                            isRefreshing,
+                            onRefresh
+                        )
+                    }
                 }
             }
         }
@@ -103,7 +114,7 @@ private fun ChannelTabs(
                     onClick = { onChannelSelected(index) }
                 ) {
                     Text(
-                        modifier = Modifier.padding(dimensionResource(id = R.dimen.default_padding)),
+                        modifier = Modifier.padding(all = viewPadding),
                         text = channel.title,
                         style = MaterialTheme.typography.body1
                     )
@@ -163,10 +174,10 @@ private fun LoadingList() {
             Tab(selected = true, onClick = {}) {
                 ShimmerItem(
                     Modifier
-                        .padding(all = dimensionResource(id = R.dimen.dimen_1))
+                        .padding(all = dimen(1))
                         .size(
-                            width = dimensionResource(id = R.dimen.dimen_16),
-                            height = dimensionResource(id = R.dimen.dimen_3)
+                            width = dimen(16),
+                            height = dimen(3)
                         )
                 )
             }
@@ -183,8 +194,8 @@ private fun EmptyText(@StringRes stringRes: Int) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                horizontal = dimensionResource(id = R.dimen.default_padding),
-                vertical = dimensionResource(id = R.dimen.dimen_6)
+                horizontal = defaultPadding,
+                vertical = dimen(6)
             ),
         style = MaterialTheme.typography.h6,
         textAlign = TextAlign.Center,
@@ -196,19 +207,19 @@ private fun EmptyText(@StringRes stringRes: Int) {
 @OptIn(ExperimentalMaterialApi::class)
 private fun LoadingItem() {
     ListItem(
-        modifier = Modifier.padding(bottom = 8.dp),
+        modifier = Modifier.padding(bottom = viewPadding),
         text = {
             ShimmerItem(
                 Modifier
-                    .height(height = dimensionResource(id = R.dimen.dimen_3))
+                    .height(height = dimen(3))
                     .fillMaxWidth(0.75f)
             )
         },
         trailing = {
             ShimmerItem(
                 Modifier
-                    .size(dimensionResource(id = R.dimen.icon_clickable))
-                    .padding(dimensionResource(id = R.dimen.icon_clickable_padding))
+                    .size(iconClickable)
+                    .padding(iconClickablePadding)
             )
         }
     )
