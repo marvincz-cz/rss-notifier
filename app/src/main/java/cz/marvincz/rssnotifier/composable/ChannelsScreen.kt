@@ -12,18 +12,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cz.marvincz.rssnotifier.R
-import cz.marvincz.rssnotifier.component.IconType
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
+import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.viewmodel.Channels2ViewModel
 import java.time.ZonedDateTime
 
@@ -34,6 +32,7 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
     val (selectedChannelIndex, onChannelSelected) = viewModel.selectedChannelIndex
     val items: List<RssItem> by viewModel.items.observeAsState(InitialList())
     val showSeen: Boolean by viewModel.showSeen.observeAsState(initial = true)
+
     ChannelsScreen(
         channels = channels,
         selectedChannelIndex = selectedChannelIndex,
@@ -48,8 +47,6 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
     )
 }
 
-private class InitialList<T> : ArrayList<T>()
-
 @Composable
 private fun ChannelsScreen(
     channels: List<RssChannel>,
@@ -62,30 +59,40 @@ private fun ChannelsScreen(
 ) {
     MaterialTheme {
         Surface {
-            if (channels.isNotEmpty()) {
-                Column {
-                    ScrollableTabRow(
-                        selectedTabIndex = selectedChannelIndex,
-                        backgroundColor = MaterialTheme.colors.surface
-                    ) {
-                        channels.forEachIndexed { index, channel ->
-                            key(channel.accessUrl) {
-                                Tab(
-                                    selected = index == selectedChannelIndex,
-                                    onClick = { onChannelSelected(index) }) {
-                                    Text(
-                                        modifier = Modifier.padding(dimensionResource(id = R.dimen.default_padding)),
-                                        text = channel.title,
-                                        style = MaterialTheme.typography.body1
-                                    )
-                                }
-                            }
-                        }
-                    }
+            when {
+                channels is InitialList || items is InitialList -> LoadingList()
+                channels.isEmpty() -> EmptyText(R.string.no_channels_message)
+                else -> Column {
+                    ChannelTabs(channels, selectedChannelIndex, onChannelSelected)
                     ItemsList(items, onItemOpen, onItemToggleSeen, showSeen)
                 }
-            } else if (channels !is InitialList) {
-                EmptyText(R.string.no_channels_message)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChannelTabs(
+    channels: List<RssChannel>,
+    selectedChannelIndex: Int,
+    onChannelSelected: (Int) -> Unit
+) {
+    ScrollableTabRow(
+        selectedTabIndex = selectedChannelIndex,
+        backgroundColor = MaterialTheme.colors.surface
+    ) {
+        channels.forEachIndexed { index, channel ->
+            key(channel.accessUrl) {
+                Tab(
+                    selected = index == selectedChannelIndex,
+                    onClick = { onChannelSelected(index) }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.default_padding)),
+                        text = channel.title,
+                        style = MaterialTheme.typography.body1
+                    )
+                }
             }
         }
     }
@@ -99,35 +106,40 @@ fun ItemsList(
     onItemToggleSeen: (RssItem) -> Unit,
     showSeen: Boolean
 ) {
-    if (items.isNotEmpty()) {
+    val shownItems = if (showSeen) items else items.filter { !it.seen }
+
+    if (shownItems.isNotEmpty()) {
         LazyColumn {
-            items(items, key = { it.id }) { item ->
+            items(shownItems, key = { it.id }) { item ->
                 val icon = if (item.seen) R.drawable.ic_check else R.drawable.ic_eye
                 val description =
                     if (item.seen) R.string.action_mark_unread else R.string.action_mark_read
 
-                if (!item.seen || showSeen)
-                    ListItem(
-                        modifier = Modifier.clickable { onItemOpen(item) },
-                        text = { Text(stripHtml(item.title) ?: item.id) },
-                        secondaryText = { Text(stripHtml(item.description) ?: "") },
-                        trailing = {
-                            ActionIcon(
-                                icon,
-                                description
-                            ) { onItemToggleSeen(item) }
-                        })
-            }
-        }
-    } else if (items is InitialList) {
-        Column {
-            repeat(6) {
-                LoadingItem()
+                ListItem(
+                    modifier = Modifier.clickable { onItemOpen(item) },
+                    text = { Text(stripHtml(item.title) ?: item.id) },
+                    secondaryText = { Text(stripHtml(item.description) ?: "") },
+                    trailing = {
+                        ActionIcon(
+                            icon,
+                            description
+                        ) { onItemToggleSeen(item) }
+                    }
+                )
             }
         }
     } else {
-        val emptyText = if (showSeen) R.string.empty_no_items else R.string.empty_no_unseen
+        val emptyText = if (items.isEmpty()) R.string.empty_no_items else R.string.empty_no_unseen
         EmptyText(emptyText)
+    }
+}
+
+@Composable
+private fun LoadingList() {
+    Column {
+        repeat(6) {
+            LoadingItem()
+        }
     }
 }
 
@@ -163,7 +175,8 @@ private fun LoadingItem() {
                     .size(dimensionResource(id = R.dimen.icon_clickable))
                     .padding(dimensionResource(id = R.dimen.icon_clickable_padding))
             )
-        })
+        }
+    )
 }
 
 @Preview
@@ -218,7 +231,7 @@ private fun PreviewNoItems() {
         items = emptyList(),
         onItemOpen = {},
         onItemToggleSeen = {},
-        showSeen = true
+        showSeen = false
     )
 }
 
@@ -229,7 +242,7 @@ private fun PreviewNoUnseenItems() {
         channels = mockChannels,
         selectedChannelIndex = 0,
         onChannelSelected = {},
-        items = emptyList(),
+        items = mockItems.map { it.copy(seen = true) },
         onItemOpen = {},
         onItemToggleSeen = {},
         showSeen = false
