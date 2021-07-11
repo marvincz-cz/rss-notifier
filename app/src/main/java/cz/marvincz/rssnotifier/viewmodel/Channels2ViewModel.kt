@@ -21,6 +21,8 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
 
     val showSeen = PreferenceUtil.observeShowSeen()
 
+    val isRefreshing = mutableStateOf(false)
+
     fun toggle(item: RssItem) {
         viewModelScope.launch {
             repository.updateItem(item.copy(seen = !item.seen))
@@ -37,9 +39,15 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
         refreshAll(forced = false)
     }
 
-    fun refreshAll(forced: Boolean) {
+    fun refreshAll() {
+        isRefreshing.value = true
+        refreshAll(true)
+    }
+
+    private fun refreshAll(forced: Boolean) {
         viewModelScope.launch {
             repository.refreshAll(forced)
+            isRefreshing.value = false
         }
     }
 }

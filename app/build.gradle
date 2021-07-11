@@ -112,6 +112,8 @@ dependencies {
     // Integration with observables
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.13.0"
+
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }

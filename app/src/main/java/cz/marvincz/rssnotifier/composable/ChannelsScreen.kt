@@ -18,6 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
@@ -32,6 +34,7 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
     val (selectedChannelIndex, onChannelSelected) = viewModel.selectedChannelIndex
     val items: List<RssItem> by viewModel.items.observeAsState(InitialList())
     val showSeen: Boolean by viewModel.showSeen.observeAsState(initial = true)
+    val isRefreshing = viewModel.isRefreshing.value
 
     ChannelsScreen(
         channels = channels,
@@ -43,7 +46,9 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
             item.link?.let { onGoToItem(it) }
         },
         onItemToggleSeen = { viewModel.toggle(it) },
-        showSeen = showSeen
+        showSeen = showSeen,
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refreshAll() }
     )
 }
 
@@ -55,7 +60,9 @@ private fun ChannelsScreen(
     items: List<RssItem>,
     onItemOpen: (RssItem) -> Unit,
     onItemToggleSeen: (RssItem) -> Unit,
-    showSeen: Boolean
+    showSeen: Boolean,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit
 ) {
     MaterialTheme {
         Surface {
@@ -64,7 +71,14 @@ private fun ChannelsScreen(
                 channels.isEmpty() -> EmptyText(R.string.no_channels_message)
                 else -> Column {
                     ChannelTabs(channels, selectedChannelIndex, onChannelSelected)
-                    ItemsList(items, onItemOpen, onItemToggleSeen, showSeen)
+                    ItemsList(
+                        items,
+                        onItemOpen,
+                        onItemToggleSeen,
+                        showSeen,
+                        isRefreshing,
+                        onRefresh
+                    )
                 }
             }
         }
@@ -104,28 +118,35 @@ fun ItemsList(
     items: List<RssItem>,
     onItemOpen: (RssItem) -> Unit,
     onItemToggleSeen: (RssItem) -> Unit,
-    showSeen: Boolean
+    showSeen: Boolean,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit
 ) {
     val shownItems = if (showSeen) items else items.filter { !it.seen }
 
     if (shownItems.isNotEmpty()) {
-        LazyColumn {
-            items(shownItems, key = { it.id }) { item ->
-                val icon = if (item.seen) R.drawable.ic_check else R.drawable.ic_eye
-                val description =
-                    if (item.seen) R.string.action_mark_unread else R.string.action_mark_read
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+            onRefresh = onRefresh
+        ) {
+            LazyColumn {
+                items(shownItems, key = { it.id }) { item ->
+                    val icon = if (item.seen) R.drawable.ic_check else R.drawable.ic_eye
+                    val description =
+                        if (item.seen) R.string.action_mark_unread else R.string.action_mark_read
 
-                ListItem(
-                    modifier = Modifier.clickable { onItemOpen(item) },
-                    text = { Text(stripHtml(item.title) ?: item.id) },
-                    secondaryText = { Text(stripHtml(item.description) ?: "") },
-                    trailing = {
-                        ActionIcon(
-                            icon,
-                            description
-                        ) { onItemToggleSeen(item) }
-                    }
-                )
+                    ListItem(
+                        modifier = Modifier.clickable { onItemOpen(item) },
+                        text = { Text(stripHtml(item.title) ?: item.id) },
+                        secondaryText = { Text(stripHtml(item.description) ?: "") },
+                        trailing = {
+                            ActionIcon(
+                                icon,
+                                description
+                            ) { onItemToggleSeen(item) }
+                        }
+                    )
+                }
             }
         }
     } else {
@@ -189,7 +210,9 @@ private fun Preview() {
         items = mockItems,
         onItemOpen = {},
         onItemToggleSeen = {},
-        showSeen = true
+        showSeen = true,
+        isRefreshing = false,
+        onRefresh = {}
     )
 }
 
@@ -203,7 +226,9 @@ private fun PreviewInitial() {
         items = InitialList(),
         onItemOpen = {},
         onItemToggleSeen = {},
-        showSeen = true
+        showSeen = true,
+        isRefreshing = false,
+        onRefresh = {}
     )
 }
 
@@ -217,7 +242,9 @@ private fun PreviewNoChannel() {
         items = emptyList(),
         onItemOpen = {},
         onItemToggleSeen = {},
-        showSeen = true
+        showSeen = true,
+        isRefreshing = false,
+        onRefresh = {}
     )
 }
 
@@ -231,7 +258,9 @@ private fun PreviewNoItems() {
         items = emptyList(),
         onItemOpen = {},
         onItemToggleSeen = {},
-        showSeen = false
+        showSeen = false,
+        isRefreshing = false,
+        onRefresh = {}
     )
 }
 
@@ -245,7 +274,9 @@ private fun PreviewNoUnseenItems() {
         items = mockItems.map { it.copy(seen = true) },
         onItemOpen = {},
         onItemToggleSeen = {},
-        showSeen = false
+        showSeen = false,
+        isRefreshing = false,
+        onRefresh = {}
     )
 }
 
@@ -256,7 +287,9 @@ private fun PreviewItemsListShowSeen() {
         items = mockItems,
         onItemOpen = {},
         onItemToggleSeen = {},
-        showSeen = false
+        showSeen = false,
+        isRefreshing = false,
+        onRefresh = {}
     )
 }
 
