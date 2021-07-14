@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.component.TwoLine
 import cz.marvincz.rssnotifier.model.RssItem
+import cz.marvincz.rssnotifier.util.stripHtml
 
 class ItemAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssItem>>, private val callBack: ItemListCallBack) : BaseAdapter<RssItem>(lifecycleOwner, data) {
     override fun inflateView(parent: ViewGroup, viewType: Int) = TwoLine(parent.context)
@@ -35,15 +36,3 @@ class ItemAdapter(lifecycleOwner: LifecycleOwner, data: LiveData<List<RssItem>>,
         fun open(item: RssItem)
     }
 }
-
-private fun stripHtml(html: String?): String? {
-    if (html == null) {
-        return null
-    }
-    val text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT).toString()
-    return text.replace(OBJECT_PLACEHOLDER_CHARACTER, "")
-            .trim { it <= ' ' }
-            .replace("\n\n", "\n")
-}
-
-private const val OBJECT_PLACEHOLDER_CHARACTER = "￼"

@@ -1,6 +1,5 @@
 package cz.marvincz.rssnotifier.composable
 
-import android.text.Html
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -25,6 +24,7 @@ import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.util.InitialList
+import cz.marvincz.rssnotifier.util.stripHtml
 import cz.marvincz.rssnotifier.viewmodel.Channels2ViewModel
 import java.time.ZonedDateTime
 
@@ -340,15 +340,3 @@ private val mockItems
         RssItem("3", null, null, "So Cool", "An article", true),
         RssItem("4", null, null, "Wonderful", "An article", true),
     )
-
-private fun stripHtml(html: String?): String? {
-    if (html == null) {
-        return null
-    }
-    val text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT).toString()
-    return text.replace(OBJECT_PLACEHOLDER_CHARACTER, "")
-        .trim { it <= ' ' }
-        .replace("\n\n", "\n")
-}
-
-private const val OBJECT_PLACEHOLDER_CHARACTER = "￼"
