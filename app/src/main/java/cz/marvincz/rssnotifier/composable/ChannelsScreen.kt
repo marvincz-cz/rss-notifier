@@ -32,17 +32,17 @@ import java.time.ZonedDateTime
 fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
     val viewModel: Channels2ViewModel = viewModel()
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
-    val (selectedChannelIndex, onChannelSelected) = viewModel.selectedChannelIndex
+    val selectedChannelIndex: Int by viewModel.selectedChannelIndex.observeAsState(0)
     val items: List<RssItem> by viewModel.items.observeAsState(InitialList())
     val showSeen: Boolean by viewModel.showSeen.observeAsState(initial = true)
     val isRefreshing = viewModel.isRefreshing.value
     val addChannelShown = viewModel.addChannelShown.value
-    val (addChannelUrl, onAddChannelUrlChaned) = viewModel.addChannelUrl
+    val (addChannelUrl, onAddChannelUrlChanged) = viewModel.addChannelUrl
 
     ChannelsScreen(
         channels = channels,
         selectedChannelIndex = selectedChannelIndex,
-        onChannelSelected = onChannelSelected,
+        onChannelSelected = { viewModel.onChannelSelected(it) },
         items = items,
         onItemOpen = { item ->
             viewModel.read(item)
@@ -54,7 +54,7 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
         onRefresh = { viewModel.refreshAll() },
         onAddChannelShow = { viewModel.showAddChannel() },
         addChannelUrl = addChannelUrl,
-        onAddChannelUrlChanged = onAddChannelUrlChaned,
+        onAddChannelUrlChanged = onAddChannelUrlChanged,
         onAddChannelConfirm = { viewModel.confirmAddChannel() },
         onAddChannelCancel = { viewModel.dismissAddChannel() },
         addChannelShown = addChannelShown

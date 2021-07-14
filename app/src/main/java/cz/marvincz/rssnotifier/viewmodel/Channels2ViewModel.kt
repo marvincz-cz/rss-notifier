@@ -1,9 +1,8 @@
 package cz.marvincz.rssnotifier.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import cz.marvincz.rssnotifier.extension.combine
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
 import cz.marvincz.rssnotifier.util.PreferenceUtil
@@ -17,11 +16,11 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
     private val repository: Repository = get()
     val channels = repository.getChannels()
 
-    val selectedChannelIndex = mutableStateOf(0)
+    private val _selectedChannelIndex = MutableLiveData(0)
+    val selectedChannelIndex: LiveData<Int> get() = _selectedChannelIndex
 
-    val items = channels.switchMap { channels ->
-        repository.getItems(channels[selectedChannelIndex.value].accessUrl)
-    }
+    val items = channels.combine(selectedChannelIndex) { channels, index -> channels[index] }
+        .switchMap { channel -> repository.getItems(channel.accessUrl) }
 
     val showSeen = PreferenceUtil.observeShowSeen()
 
@@ -29,6 +28,14 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
 
     val addChannelShown = mutableStateOf(false)
     val addChannelUrl = mutableStateOf("")
+
+    init {
+        refreshAll(forced = false)
+    }
+
+    fun onChannelSelected(index: Int) {
+        _selectedChannelIndex.value = index
+    }
 
     fun toggle(item: RssItem) {
         viewModelScope.launch {
@@ -40,10 +47,6 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             repository.updateItem(item.copy(seen = true))
         }
-    }
-
-    init {
-        refreshAll(forced = false)
     }
 
     fun refreshAll() {
@@ -77,11 +80,12 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
     private fun saveChannel(url: String) {
         url.takeIf { isValid(it) }
             ?.let {
-                viewModelScope.launch { repository.download(it, false) }.invokeOnCompletion { cause ->
-                    if (cause is CancellationException) {
-                        // TODO Invalid RSS
+                viewModelScope.launch { repository.download(it, false) }
+                    .invokeOnCompletion { cause ->
+                        if (cause is CancellationException) {
+                            // TODO Invalid RSS
+                        }
                     }
-                }
             } ?: run {} // TODO invalid URI
     }
 
