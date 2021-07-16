@@ -87,14 +87,6 @@ private fun ChannelsScreen(
     onManageChannels: () -> Unit,
     onSettings: () -> Unit
 ) {
-    val (showMenu, setShowMenu) = remember { mutableStateOf(false) }
-    val toggleMenu = { setShowMenu(!showMenu) }
-
-    val markAllSeenAndDismiss = { toggleMenu.invoke(); markAllSeen.invoke() }
-    val toggleShowSeenAndDismiss = { toggleMenu.invoke(); toggleShowSeen.invoke() }
-    val onManageChannelsAndDismiss = { toggleMenu.invoke(); onManageChannels.invoke() }
-    val onSettingsAndDismiss = { toggleMenu.invoke(); onSettings.invoke() }
-
     MaterialTheme(colors = colors(isSystemInDarkTheme())) {
         Surface {
             Scaffold(
@@ -110,32 +102,29 @@ private fun ChannelsScreen(
                     TopAppBar(
                         title = { Text(text = stringResource(R.string.fragment_channels)) },
                         actions = {
-                            IconButton(onClick = toggleMenu) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_more),
-                                    contentDescription = stringResource(R.string.menu)
+                            val showSeenText =
+                                if (showSeen) R.string.menu_hide_seen else R.string.menu_show_seen
+                            val menuItems = mutableListOf(
+                                MenuItem(
+                                    stringResource(showSeenText),
+                                    toggleShowSeen
+                                ),
+                                /*MenuItem(
+                                    stringResource(R.string.menu_sort_channels),
+                                    onManageChannels
+                                ),
+                                MenuItem(
+                                    stringResource(R.string.menu_settings),
+                                    onSettings
+                                )*/
+                            )
+                            if (channels.isNotEmpty()) menuItems.add(0,
+                                MenuItem(
+                                    stringResource(R.string.menu_all_seen),
+                                    markAllSeen
                                 )
-                            }
-                            DropdownMenu(
-                                expanded = showMenu,
-                                onDismissRequest = toggleMenu,
-                                offset = DpOffset(0.dp, -dimen(4))
-                            ) {
-                                if (channels.isNotEmpty())
-                                    DropdownMenuItem(onClick = markAllSeenAndDismiss) {
-                                        Text(text = stringResource(R.string.menu_all_seen))
-                                    }
-                                DropdownMenuItem(onClick = toggleShowSeenAndDismiss) {
-                                    val showSeenText = if (showSeen) R.string.menu_hide_seen else R.string.menu_show_seen
-                                    Text(text = stringResource(showSeenText))
-                                }
-                                DropdownMenuItem(onClick = onManageChannelsAndDismiss) {
-                                    Text(text = stringResource(R.string.menu_sort_channels))
-                                }
-                                DropdownMenuItem(onClick = onSettingsAndDismiss) {
-                                    Text(text = stringResource(R.string.menu_settings))
-                                }
-                            }
+                            )
+                            TopBarMenu(items = menuItems)
                         }
                     )
                 }
