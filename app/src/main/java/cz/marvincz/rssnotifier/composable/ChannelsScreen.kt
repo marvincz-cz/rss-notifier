@@ -7,15 +7,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -58,8 +58,10 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
         onAddChannelConfirm = { viewModel.confirmAddChannel() },
         onAddChannelCancel = { viewModel.dismissAddChannel() },
         addChannelShown = addChannelShown,
-        onToggleShowSeen = { viewModel.toggleShowSeen() },
-        onMarkAllSeen = { viewModel.markAllRead() }
+        toggleShowSeen = { viewModel.toggleShowSeen() },
+        markAllSeen = { viewModel.markAllRead() },
+        onManageChannels = {},
+        onSettings = {}
     )
 }
 
@@ -80,9 +82,19 @@ private fun ChannelsScreen(
     onAddChannelConfirm: () -> Unit,
     onAddChannelCancel: () -> Unit,
     addChannelShown: Boolean,
-    onToggleShowSeen: () -> Unit,
-    onMarkAllSeen: () -> Unit
+    toggleShowSeen: () -> Unit,
+    markAllSeen: () -> Unit,
+    onManageChannels: () -> Unit,
+    onSettings: () -> Unit
 ) {
+    val (showMenu, setShowMenu) = remember { mutableStateOf(false) }
+    val toggleMenu = { setShowMenu(!showMenu) }
+
+    val markAllSeenAndDismiss = { toggleMenu.invoke(); markAllSeen.invoke() }
+    val toggleShowSeenAndDismiss = { toggleMenu.invoke(); toggleShowSeen.invoke() }
+    val onManageChannelsAndDismiss = { toggleMenu.invoke(); onManageChannels.invoke() }
+    val onSettingsAndDismiss = { toggleMenu.invoke(); onSettings.invoke() }
+
     MaterialTheme(colors = colors(isSystemInDarkTheme())) {
         Surface {
             Scaffold(
@@ -98,18 +110,30 @@ private fun ChannelsScreen(
                     TopAppBar(
                         title = { Text(text = stringResource(R.string.fragment_channels)) },
                         actions = {
-                            IconButton(onClick = onToggleShowSeen) {
+                            IconButton(onClick = toggleMenu) {
                                 Icon(
-                                    painter = painterResource(if (showSeen) R.drawable.ic_eye else R.drawable.ic_eye_closed),
-                                    contentDescription = stringResource(R.string.menu_show_seen)
+                                    painter = painterResource(R.drawable.ic_more),
+                                    contentDescription = stringResource(R.string.menu)
                                 )
                             }
-                            if (channels.isNotEmpty()) {
-                                IconButton(onClick = onMarkAllSeen) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_done_all),
-                                        contentDescription = stringResource(R.string.menu_all_seen)
-                                    )
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = toggleMenu,
+                                offset = DpOffset(0.dp, -dimen(4))
+                            ) {
+                                if (channels.isNotEmpty())
+                                    DropdownMenuItem(onClick = markAllSeenAndDismiss) {
+                                        Text(text = stringResource(R.string.menu_all_seen))
+                                    }
+                                DropdownMenuItem(onClick = toggleShowSeenAndDismiss) {
+                                    val showSeenText = if (showSeen) R.string.menu_hide_seen else R.string.menu_show_seen
+                                    Text(text = stringResource(showSeenText))
+                                }
+                                DropdownMenuItem(onClick = onManageChannelsAndDismiss) {
+                                    Text(text = stringResource(R.string.menu_sort_channels))
+                                }
+                                DropdownMenuItem(onClick = onSettingsAndDismiss) {
+                                    Text(text = stringResource(R.string.menu_settings))
                                 }
                             }
                         }
@@ -308,8 +332,11 @@ private fun Preview() {
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
         addChannelShown = false,
-        {}
-    ) {}
+        toggleShowSeen = {},
+        markAllSeen = {},
+        onManageChannels = {},
+        onSettings = {}
+    )
 }
 
 @Preview
@@ -331,8 +358,11 @@ private fun PreviewInitial() {
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
         addChannelShown = false,
-        {}
-    ) {}
+        toggleShowSeen = {},
+        markAllSeen = {},
+        onManageChannels = {},
+        onSettings = {}
+    )
 }
 
 @Preview
@@ -354,8 +384,11 @@ private fun PreviewNoChannel() {
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
         addChannelShown = false,
-        {}
-    ) {}
+        toggleShowSeen = {},
+        markAllSeen = {},
+        onManageChannels = {},
+        onSettings = {}
+    )
 }
 
 @Preview
@@ -377,8 +410,11 @@ private fun PreviewNoItems() {
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
         addChannelShown = false,
-        {}
-    ) {}
+        toggleShowSeen = {},
+        markAllSeen = {},
+        onManageChannels = {},
+        onSettings = {}
+    )
 }
 
 @Preview
@@ -400,8 +436,11 @@ private fun PreviewNoUnseenItems() {
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
         addChannelShown = false,
-        {}
-    ) {}
+        toggleShowSeen = {},
+        markAllSeen = {},
+        onManageChannels = {},
+        onSettings = {}
+    )
 }
 
 @Preview
@@ -423,8 +462,11 @@ private fun PreviewDialog() {
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
         addChannelShown = true,
-        {}
-    ) {}
+        toggleShowSeen = {},
+        markAllSeen = {},
+        onManageChannels = {},
+        onSettings = {}
+    )
 }
 
 @Preview

@@ -12,6 +12,6 @@
     <item
         android:id="@+id/action_show_seen"
         android:orderInCategory="12"
-        android:title="@string/menu_show_seen"
+        android:title="@string/menu_show_hide_seen"
         app:showAsAction="never" />
 </menu>
