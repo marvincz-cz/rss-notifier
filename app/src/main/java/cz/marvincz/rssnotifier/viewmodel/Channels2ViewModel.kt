@@ -19,8 +19,8 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
     private val _selectedChannelIndex = MutableLiveData(0)
     val selectedChannelIndex: LiveData<Int> get() = _selectedChannelIndex
 
-    val items = channels.combine(selectedChannelIndex) { channels, index -> channels[index] }
-        .switchMap { channel -> repository.getItems(channel.accessUrl) }
+    private val channelUrl = channels.combine(selectedChannelIndex) { channels, index -> channels[index].accessUrl }
+    val items = channelUrl.switchMap { channelUrl -> repository.getItems(channelUrl) }
 
     val showSeen = PreferenceUtil.observeShowSeen()
 
@@ -58,6 +58,16 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             repository.refreshAll(forced)
             isRefreshing.value = false
+        }
+    }
+
+    fun toggleShowSeen() {
+        PreferenceUtil.toggleShowSeen()
+    }
+
+    fun markAllRead() {
+        viewModelScope.launch {
+            channelUrl.value?.let { repository.markAllRead(it) }
         }
     }
 

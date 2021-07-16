@@ -57,7 +57,9 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
         onAddChannelUrlChanged = onAddChannelUrlChanged,
         onAddChannelConfirm = { viewModel.confirmAddChannel() },
         onAddChannelCancel = { viewModel.dismissAddChannel() },
-        addChannelShown = addChannelShown
+        addChannelShown = addChannelShown,
+        onToggleShowSeen = { viewModel.toggleShowSeen() },
+        onMarkAllSeen = { viewModel.markAllRead() }
     )
 }
 
@@ -77,7 +79,9 @@ private fun ChannelsScreen(
     onAddChannelUrlChanged: (String) -> Unit,
     onAddChannelConfirm: () -> Unit,
     onAddChannelCancel: () -> Unit,
-    addChannelShown: Boolean
+    addChannelShown: Boolean,
+    onToggleShowSeen: () -> Unit,
+    onMarkAllSeen: () -> Unit
 ) {
     MaterialTheme(colors = colors(isSystemInDarkTheme())) {
         Surface {
@@ -89,6 +93,27 @@ private fun ChannelsScreen(
                             contentDescription = stringResource(R.string.add_channel_title)
                         )
                     }
+                },
+                topBar = {
+                    TopAppBar(
+                        title = { Text(text = stringResource(R.string.fragment_channels)) },
+                        actions = {
+                            IconButton(onClick = onToggleShowSeen) {
+                                Icon(
+                                    painter = painterResource(if (showSeen) R.drawable.ic_eye else R.drawable.ic_eye_closed),
+                                    contentDescription = stringResource(R.string.menu_show_seen)
+                                )
+                            }
+                            if (channels.isNotEmpty()) {
+                                IconButton(onClick = onMarkAllSeen) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_done_all),
+                                        contentDescription = stringResource(R.string.menu_all_seen)
+                                    )
+                                }
+                            }
+                        }
+                    )
                 }
             ) {
                 when {
@@ -107,9 +132,14 @@ private fun ChannelsScreen(
                     }
                 }
             }
+            if (addChannelShown)
+                AddChannel(
+                    addChannelUrl,
+                    onAddChannelUrlChanged,
+                    onAddChannelConfirm,
+                    onAddChannelCancel
+                )
         }
-        if (addChannelShown)
-            AddChannel(addChannelUrl, onAddChannelUrlChanged, onAddChannelConfirm, onAddChannelCancel)
     }
 }
 
@@ -277,8 +307,9 @@ private fun Preview() {
         onAddChannelUrlChanged = {},
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
-        addChannelShown = false
-    )
+        addChannelShown = false,
+        {}
+    ) {}
 }
 
 @Preview
@@ -299,8 +330,9 @@ private fun PreviewInitial() {
         onAddChannelUrlChanged = {},
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
-        addChannelShown = false
-    )
+        addChannelShown = false,
+        {}
+    ) {}
 }
 
 @Preview
@@ -321,8 +353,9 @@ private fun PreviewNoChannel() {
         onAddChannelUrlChanged = {},
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
-        addChannelShown = false
-    )
+        addChannelShown = false,
+        {}
+    ) {}
 }
 
 @Preview
@@ -343,8 +376,9 @@ private fun PreviewNoItems() {
         onAddChannelUrlChanged = {},
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
-        addChannelShown = false
-    )
+        addChannelShown = false,
+        {}
+    ) {}
 }
 
 @Preview
@@ -365,8 +399,9 @@ private fun PreviewNoUnseenItems() {
         onAddChannelUrlChanged = {},
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
-        addChannelShown = false
-    )
+        addChannelShown = false,
+        {}
+    ) {}
 }
 
 @Preview
@@ -387,8 +422,9 @@ private fun PreviewDialog() {
         onAddChannelUrlChanged = {},
         onAddChannelConfirm = {},
         onAddChannelCancel = {},
-        addChannelShown = true
-    )
+        addChannelShown = true,
+        {}
+    ) {}
 }
 
 @Preview
