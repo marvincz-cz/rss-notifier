@@ -61,15 +61,13 @@ fun ActionIcon(
     @StringRes description: Int = 0,
     action: () -> Unit
 ) {
-    Icon(
-        modifier = Modifier
-            .size(iconClickable)
-            .clickable(onClick = action)
-            .padding(iconClickablePadding),
-        painter = painterResource(id = res),
-        tint = iconOnSurface(isSystemInDarkTheme()),
-        contentDescription = stringResource(id = description)
-    )
+    IconButton(onClick = action) {
+        Icon(
+            type = IconType.SMALL,
+            res = res,
+            description = description
+        )
+    }
 }
 
 @Composable
