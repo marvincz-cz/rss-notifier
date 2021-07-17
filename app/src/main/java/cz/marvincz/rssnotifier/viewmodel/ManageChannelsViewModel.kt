@@ -14,4 +14,17 @@ class ManageChannelsViewModel(private val repository: Repository) : ViewModel() 
             repository.deleteChannel(channel)
         }
     }
+
+    fun onDragged(positions: Map<String, Float>) {
+        val list = channels.value ?: return
+        if (!positions.keys.containsAll(list.map { it.accessUrl })) return
+
+        val newOrder = list.sortedBy { positions[it.accessUrl] }
+
+        if (list != newOrder) {
+            viewModelScope.launch {
+                repository.saveChannelOrder(newOrder)
+            }
+        }
+    }
 }

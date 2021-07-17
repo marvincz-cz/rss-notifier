@@ -43,6 +43,7 @@
     <string name="channel_url_hint">Feed URL</string>
 
     <string name="action_delete">Delete</string>
+    <string name="action_reorder">Reorder</string>
 
     <string name="empty_no_items">No items</string>
     <string name="empty_no_unseen">No unread items</string>

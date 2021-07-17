@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import cz.marvincz.rssnotifier.extension.combine
 import cz.marvincz.rssnotifier.extension.showSeen
 import cz.marvincz.rssnotifier.extension.toggleShowSeen
+import cz.marvincz.rssnotifier.extension.validIndex
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
 import kotlinx.coroutines.CancellationException
@@ -115,11 +116,4 @@ class Channels2ViewModel(
     companion object {
         private val acceptedProtocols = listOf("http", "https")
     }
-}
-
-private fun List<*>.validIndex(index: Int) = when {
-    index in indices -> index
-    index < 0 -> 0
-    index > lastIndex -> lastIndex
-    else -> throw IllegalStateException("Unreachable")
 }

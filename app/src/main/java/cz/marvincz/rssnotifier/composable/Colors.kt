@@ -1,8 +1,12 @@
 package cz.marvincz.rssnotifier.composable
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 
 private val Teal200 = Color(0xFF80CBC4)
 private val Teal500 = Color(0xFF009688)
@@ -31,3 +35,6 @@ fun colors(dark: Boolean) = if (dark) darkColors(
     secondary = secondary(dark),
     secondaryVariant = secondary(dark)
 )
+
+@Composable
+fun elevatedBackground() = if (isSystemInDarkTheme()) lerp(MaterialTheme.colors.surface, Color.White, 0.05f) else MaterialTheme.colors.surface

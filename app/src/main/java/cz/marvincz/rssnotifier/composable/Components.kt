@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -42,13 +41,14 @@ private fun OneLinePreview() {
 
 @Composable
 fun Icon(
+    modifier: Modifier = Modifier,
     type: IconType = IconType.SMALL,
     @DrawableRes res: Int = 0,
     @StringRes description: Int = 0
 ) {
     if (type != IconType.NONE)
         Icon(
-            modifier = Modifier.size(dimensionResource(id = type.size)),
+            modifier = modifier.size(dimensionResource(id = type.size)),
             painter = painterResource(id = res),
             tint = iconOnSurface(isSystemInDarkTheme()),
             contentDescription = stringResource(id = description)
