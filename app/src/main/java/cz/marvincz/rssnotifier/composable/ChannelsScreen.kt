@@ -36,7 +36,7 @@ fun ChannelsScreen(navController: NavController) {
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
     val selectedChannelIndex: Int by viewModel.selectedChannelIndex.observeAsState(0)
     val items: List<RssItem> by viewModel.items.observeAsState(InitialList())
-    val showSeen: Boolean by viewModel.showSeen.observeAsState(initial = true)
+    val showSeen: Boolean by viewModel.showSeen.collectAsState(initial = true)
     val isRefreshing = viewModel.isRefreshing.value
     val addChannelShown = viewModel.addChannelShown.value
     val (addChannelUrl, onAddChannelUrlChanged) = viewModel.addChannelUrl
@@ -44,26 +44,26 @@ fun ChannelsScreen(navController: NavController) {
     ChannelsScreen(
         channels = channels,
         selectedChannelIndex = selectedChannelIndex,
-        onChannelSelected = { viewModel.onChannelSelected(it) },
+        onChannelSelected = viewModel::onChannelSelected,
         items = items,
         onItemOpen = {
             viewModel.read(it)
             context.goToLink(it.link)
         },
-        onItemToggleSeen = { viewModel.toggle(it) },
+        onItemToggleSeen = viewModel::toggle,
         showSeen = showSeen,
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refreshAll() },
-        onAddChannelShow = { viewModel.showAddChannel() },
+        onRefresh = viewModel::refreshAll,
+        onAddChannelShow = viewModel::showAddChannel,
         addChannelUrl = addChannelUrl,
         onAddChannelUrlChanged = onAddChannelUrlChanged,
-        onAddChannelConfirm = { viewModel.confirmAddChannel() },
-        onAddChannelCancel = { viewModel.dismissAddChannel() },
+        onAddChannelConfirm = viewModel::confirmAddChannel,
+        onAddChannelCancel = viewModel::dismissAddChannel,
         addChannelShown = addChannelShown,
-        toggleShowSeen = { viewModel.toggleShowSeen() },
-        markAllSeen = { viewModel.markAllRead() },
+        toggleShowSeen = viewModel::toggleShowSeen,
+        markAllSeen = viewModel::markAllRead,
         onManageChannels = { navController.navigate("manageChannels") },
-        onSettings = {}
+        onSettings = { navController.navigate("settings") }
     )
 }
 
@@ -115,10 +115,10 @@ private fun ChannelsScreen(
                                     stringResource(R.string.menu_sort_channels),
                                     onManageChannels
                                 ),
-                                /*MenuItem(
+                                MenuItem(
                                     stringResource(R.string.menu_settings),
                                     onSettings
-                                )*/
+                                )
                             )
                             if (channels.isNotEmpty()) menuItems.add(0,
                                 MenuItem(

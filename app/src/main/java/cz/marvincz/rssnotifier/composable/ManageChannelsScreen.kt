@@ -24,9 +24,9 @@ fun ManageChannelsScreen(navController: NavController) {
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
 
     ManageChannelsScreen(
-        onBack = { navController.popBackStack() },
+        onBack = navController::popBackStack,
         channels = channels,
-        onDeleteChannel = { viewModel.deleteChannel(it) }
+        onDeleteChannel = viewModel::deleteChannel
     )
 }
 

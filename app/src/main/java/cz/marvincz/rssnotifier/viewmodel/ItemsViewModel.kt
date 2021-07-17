@@ -1,15 +1,19 @@
 package cz.marvincz.rssnotifier.viewmodel
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import cz.marvincz.rssnotifier.extension.showSeen
+import cz.marvincz.rssnotifier.extension.toggleShowSeen
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
-import cz.marvincz.rssnotifier.util.PreferenceUtil
 import cz.marvincz.rssnotifier.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.launch
 
-class ItemsViewModel(private val repository: Repository, private val channelUrl: String) : BaseViewModel() {
-    val showSeen = PreferenceUtil.observeShowSeen()
+class ItemsViewModel(private val repository: Repository, private val dataStore: DataStore<Preferences>, private val channelUrl: String) : BaseViewModel() {
+    val showSeen = dataStore.showSeen.asLiveData(viewModelScope.coroutineContext)
 
     val items = showSeen.switchMap { showSeen ->
         repository.getItems(channelUrl, showSeen)
@@ -34,6 +38,8 @@ class ItemsViewModel(private val repository: Repository, private val channelUrl:
     }
 
     fun toggleShowSeen() {
-        PreferenceUtil.toggleShowSeen()
+        viewModelScope.launch {
+            dataStore.toggleShowSeen()
+        }
     }
 }

@@ -1,16 +1,22 @@
 package cz.marvincz.rssnotifier.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.*
 import cz.marvincz.rssnotifier.extension.combine
+import cz.marvincz.rssnotifier.extension.showSeen
+import cz.marvincz.rssnotifier.extension.toggleShowSeen
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
-import cz.marvincz.rssnotifier.util.PreferenceUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import java.net.URL
 
-class Channels2ViewModel(private val repository: Repository) : ViewModel() {
+class Channels2ViewModel(
+    private val repository: Repository,
+    private val dataStore: DataStore<Preferences>
+) : ViewModel() {
     val channels = repository.getChannels()
 
     private val _selectedChannelIndex = MutableLiveData(0)
@@ -23,7 +29,7 @@ class Channels2ViewModel(private val repository: Repository) : ViewModel() {
     }
     val items = channelUrl.switchMap { channelUrl -> repository.getItems(channelUrl) }
 
-    val showSeen = PreferenceUtil.observeShowSeen()
+    val showSeen = dataStore.showSeen
 
     val isRefreshing = mutableStateOf(false)
 
@@ -63,7 +69,9 @@ class Channels2ViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun toggleShowSeen() {
-        PreferenceUtil.toggleShowSeen()
+        viewModelScope.launch {
+            dataStore.toggleShowSeen()
+        }
     }
 
     fun markAllRead() {
