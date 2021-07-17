@@ -11,9 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -25,13 +25,13 @@ import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.navigation.NavigationScreen
 import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.util.stripHtml
-import cz.marvincz.rssnotifier.viewmodel.Channels2ViewModel
+import cz.marvincz.rssnotifier.viewmodel.ChannelsViewModel
 import org.koin.androidx.compose.getViewModel
 import java.time.ZonedDateTime
 
 @Composable
 fun ChannelsScreen(navController: NavController) {
-    val viewModel: Channels2ViewModel = getViewModel()
+    val viewModel: ChannelsViewModel = getViewModel()
     val context = LocalContext.current
 
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
@@ -39,8 +39,6 @@ fun ChannelsScreen(navController: NavController) {
     val items: List<RssItem> by viewModel.items.observeAsState(InitialList())
     val showSeen: Boolean by viewModel.showSeen.collectAsState(initial = true)
     val isRefreshing = viewModel.isRefreshing.value
-    val addChannelShown = viewModel.addChannelShown.value
-    val (addChannelUrl, onAddChannelUrlChanged) = viewModel.addChannelUrl
 
     ChannelsScreen(
         channels = channels,
@@ -55,12 +53,6 @@ fun ChannelsScreen(navController: NavController) {
         showSeen = showSeen,
         isRefreshing = isRefreshing,
         onRefresh = viewModel::refreshAll,
-        onAddChannelShow = viewModel::showAddChannel,
-        addChannelUrl = addChannelUrl,
-        onAddChannelUrlChanged = onAddChannelUrlChanged,
-        onAddChannelConfirm = viewModel::confirmAddChannel,
-        onAddChannelCancel = viewModel::dismissAddChannel,
-        addChannelShown = addChannelShown,
         toggleShowSeen = viewModel::toggleShowSeen,
         markAllSeen = viewModel::markAllRead,
         onManageChannels = { navController.navigate(NavigationScreen.MANAGE_CHANNELS.route) },
@@ -79,28 +71,14 @@ private fun ChannelsScreen(
     showSeen: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onAddChannelShow: () -> Unit,
-    addChannelUrl: String,
-    onAddChannelUrlChanged: (String) -> Unit,
-    onAddChannelConfirm: () -> Unit,
-    onAddChannelCancel: () -> Unit,
-    addChannelShown: Boolean,
     toggleShowSeen: () -> Unit,
     markAllSeen: () -> Unit,
     onManageChannels: () -> Unit,
-    onSettings: () -> Unit
+    onSettings: () -> Unit,
 ) {
     MaterialTheme(colors = colors(isSystemInDarkTheme())) {
         Surface {
             Scaffold(
-                floatingActionButton = {
-                    FloatingActionButton(onClick = onAddChannelShow) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_add),
-                            contentDescription = stringResource(R.string.add_channel_title)
-                        )
-                    }
-                },
                 topBar = {
                     TopAppBar(
                         title = { Text(text = stringResource(R.string.screen_channels)) },
@@ -121,7 +99,8 @@ private fun ChannelsScreen(
                                     onSettings
                                 )
                             )
-                            if (channels.isNotEmpty()) menuItems.add(0,
+                            if (channels.isNotEmpty()) menuItems.add(
+                                0,
                                 MenuItem(
                                     stringResource(R.string.menu_all_seen),
                                     markAllSeen
@@ -148,33 +127,8 @@ private fun ChannelsScreen(
                     }
                 }
             }
-            if (addChannelShown)
-                AddChannel(
-                    addChannelUrl,
-                    onAddChannelUrlChanged,
-                    onAddChannelConfirm,
-                    onAddChannelCancel
-                )
         }
     }
-}
-
-@Composable
-private fun AddChannel(
-    channelUrl: String, onUrlChanged: (String) -> Unit, onConfirm: () -> Unit, onCancel: () -> Unit
-) {
-    AlertDialog(
-        modifier = Modifier.padding(horizontal = defaultPadding),
-        title = { Text(text = stringResource(R.string.add_channel_title)) },
-        onDismissRequest = onCancel,
-        confirmButton = {
-            Button(onClick = onConfirm) { Text(text = stringResource(R.string.action_ok)) }
-        },
-        dismissButton = {
-            Button(onClick = onCancel) { Text(text = stringResource(R.string.action_cancel)) }
-        },
-        text = { TextField(value = channelUrl, onValueChange = onUrlChanged) }
-    )
 }
 
 @Composable
@@ -229,8 +183,20 @@ fun ItemsList(
 
                     ListItem(
                         modifier = Modifier.clickable { onItemOpen(item) },
-                        text = { Text(stripHtml(item.title) ?: item.id) },
-                        secondaryText = { Text(stripHtml(item.description) ?: "") },
+                        text = {
+                            Text(
+                                text = stripHtml(item.title) ?: item.id,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        secondaryText = {
+                            Text(
+                                text = stripHtml(item.description) ?: "",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
                         trailing = {
                             ActionIcon(
                                 icon,
@@ -318,12 +284,6 @@ private fun Preview() {
         showSeen = true,
         isRefreshing = false,
         onRefresh = {},
-        onAddChannelShow = {},
-        addChannelUrl = "",
-        onAddChannelUrlChanged = {},
-        onAddChannelConfirm = {},
-        onAddChannelCancel = {},
-        addChannelShown = false,
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
@@ -344,12 +304,6 @@ private fun PreviewInitial() {
         showSeen = true,
         isRefreshing = false,
         onRefresh = {},
-        onAddChannelShow = {},
-        addChannelUrl = "",
-        onAddChannelUrlChanged = {},
-        onAddChannelConfirm = {},
-        onAddChannelCancel = {},
-        addChannelShown = false,
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
@@ -370,12 +324,6 @@ private fun PreviewNoChannel() {
         showSeen = true,
         isRefreshing = false,
         onRefresh = {},
-        onAddChannelShow = {},
-        addChannelUrl = "",
-        onAddChannelUrlChanged = {},
-        onAddChannelConfirm = {},
-        onAddChannelCancel = {},
-        addChannelShown = false,
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
@@ -396,12 +344,6 @@ private fun PreviewNoItems() {
         showSeen = false,
         isRefreshing = false,
         onRefresh = {},
-        onAddChannelShow = {},
-        addChannelUrl = "",
-        onAddChannelUrlChanged = {},
-        onAddChannelConfirm = {},
-        onAddChannelCancel = {},
-        addChannelShown = false,
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
@@ -422,38 +364,6 @@ private fun PreviewNoUnseenItems() {
         showSeen = false,
         isRefreshing = false,
         onRefresh = {},
-        onAddChannelShow = {},
-        addChannelUrl = "",
-        onAddChannelUrlChanged = {},
-        onAddChannelConfirm = {},
-        onAddChannelCancel = {},
-        addChannelShown = false,
-        toggleShowSeen = {},
-        markAllSeen = {},
-        onManageChannels = {},
-        onSettings = {}
-    )
-}
-
-@Preview
-@Composable
-private fun PreviewDialog() {
-    ChannelsScreen(
-        channels = emptyList(),
-        selectedChannelIndex = 0,
-        onChannelSelected = {},
-        items = emptyList(),
-        onItemOpen = {},
-        onItemToggleSeen = {},
-        showSeen = true,
-        isRefreshing = false,
-        onRefresh = {},
-        onAddChannelShow = {},
-        addChannelUrl = "https://example.com/rss",
-        onAddChannelUrlChanged = {},
-        onAddChannelConfirm = {},
-        onAddChannelCancel = {},
-        addChannelShown = true,
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},

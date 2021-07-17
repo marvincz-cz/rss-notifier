@@ -10,12 +10,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import cz.marvincz.rssnotifier.R
-import cz.marvincz.rssnotifier.viewmodel.Settings2ViewModel
+import cz.marvincz.rssnotifier.viewmodel.SettingsViewModel
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SettingsScreen(navController: NavController) {
-    val viewModel: Settings2ViewModel = getViewModel()
+    val viewModel: SettingsViewModel = getViewModel()
 
     val wifiOnly: Boolean? by viewModel.wifiOnly.collectAsState(null)
 

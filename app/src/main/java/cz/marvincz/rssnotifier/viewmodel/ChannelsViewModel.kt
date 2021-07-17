@@ -10,11 +10,9 @@ import cz.marvincz.rssnotifier.extension.toggleShowSeen
 import cz.marvincz.rssnotifier.extension.validIndex
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.repository.Repository
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
-import java.net.URL
 
-class Channels2ViewModel(
+class ChannelsViewModel(
     private val repository: Repository,
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
@@ -33,9 +31,6 @@ class Channels2ViewModel(
     val showSeen = dataStore.showSeen
 
     val isRefreshing = mutableStateOf(false)
-
-    val addChannelShown = mutableStateOf(false)
-    val addChannelUrl = mutableStateOf("")
 
     init {
         refreshAll(forced = false)
@@ -79,41 +74,5 @@ class Channels2ViewModel(
         viewModelScope.launch {
             channelUrl.value?.let { repository.markAllRead(it) }
         }
-    }
-
-    fun showAddChannel() {
-        addChannelUrl.value = ""
-        addChannelShown.value = true
-    }
-
-    fun dismissAddChannel() {
-        addChannelUrl.value = ""
-        addChannelShown.value = false
-    }
-
-    fun confirmAddChannel() {
-        saveChannel(addChannelUrl.value)
-        addChannelUrl.value = ""
-        addChannelShown.value = false
-    }
-
-    private fun saveChannel(url: String) {
-        url.takeIf { isValid(it) }
-            ?.let {
-                viewModelScope.launch { repository.download(it, false) }
-                    .invokeOnCompletion { cause ->
-                        if (cause is CancellationException) {
-                            // TODO Invalid RSS
-                        }
-                    }
-            } ?: run {} // TODO invalid URI
-    }
-
-    private fun isValid(url: String) = runCatching {
-        URL(url).protocol in acceptedProtocols
-    }.getOrDefault(false)
-
-    companion object {
-        private val acceptedProtocols = listOf("http", "https")
     }
 }

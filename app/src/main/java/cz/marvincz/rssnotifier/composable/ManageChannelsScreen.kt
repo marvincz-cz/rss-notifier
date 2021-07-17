@@ -5,21 +5,25 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -38,12 +42,22 @@ fun ManageChannelsScreen(navController: NavController) {
     val viewModel: ManageChannelsViewModel = getViewModel()
 
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
+    val addChannelShown = viewModel.addChannelShown.value
+    val (addChannelUrl, onAddChannelUrlChanged) = viewModel.addChannelUrl
+    val addChannelError = viewModel.addChannelError.value
 
     ManageChannelsScreen(
         onBack = navController::popBackStack,
         channels = channels,
         onDeleteChannel = viewModel::deleteChannel,
-        onDragged = viewModel::onDragged
+        onDragged = viewModel::onDragged,
+        addChannelShown = addChannelShown,
+        onAddChannelShow = viewModel::showAddChannel,
+        addChannelUrl = addChannelUrl,
+        onAddChannelUrlChanged = onAddChannelUrlChanged,
+        onAddChannelConfirm = viewModel::confirmAddChannel,
+        onAddChannelCancel = viewModel::dismissAddChannel,
+        addChannelError = addChannelError,
     )
 }
 
@@ -53,7 +67,14 @@ fun ManageChannelsScreen(
     onBack: () -> Unit,
     channels: List<RssChannel>,
     onDeleteChannel: (RssChannel) -> Unit,
-    onDragged: (Map<String, Float>) -> Unit
+    onDragged: (Map<String, Float>) -> Unit,
+    addChannelShown: Boolean,
+    onAddChannelShow: () -> Unit,
+    addChannelUrl: String,
+    onAddChannelUrlChanged: (String) -> Unit,
+    onAddChannelConfirm: () -> Unit,
+    onAddChannelCancel: () -> Unit,
+    addChannelError: Int,
 ) {
     MaterialTheme(colors = colors(isSystemInDarkTheme())) {
         Surface {
@@ -70,7 +91,15 @@ fun ManageChannelsScreen(
                             }
                         }
                     )
-                }
+                },
+                floatingActionButton = {
+                    FloatingActionButton(onClick = onAddChannelShow) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_add),
+                            contentDescription = stringResource(R.string.add_channel_title)
+                        )
+                    }
+                },
             ) {
                 var positions by remember { mutableStateOf(mapOf<String, Float>()) }
 
@@ -78,7 +107,8 @@ fun ManageChannelsScreen(
                     items(channels, key = { it.accessUrl }) { channel ->
                         var offset by remember { mutableStateOf(0f) }
                         val elevation = if (offset != 0f) DRAGGED_ELEVATION else 0f
-                        val background = if (offset != 0f) elevatedBackground() else MaterialTheme.colors.surface
+                        val background =
+                            if (offset != 0f) elevatedBackground() else MaterialTheme.colors.surface
 
                         ListItem(
                             modifier = Modifier
@@ -92,7 +122,13 @@ fun ManageChannelsScreen(
                                         coordinates.localToRoot(Offset.Zero).y
                                     )
                                 },
-                            text = { Text(text = stripHtml(channel.title) ?: channel.accessUrl) },
+                            text = {
+                                Text(
+                                    text = stripHtml(channel.title) ?: channel.accessUrl,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
                             icon = {
                                 Icon(
                                     modifier = Modifier
@@ -103,7 +139,7 @@ fun ManageChannelsScreen(
                                                 offset += delta
                                             },
                                             onDragStopped = {
-                                                onDragged.invoke(positions)
+                                                onDragged(positions)
                                                 offset = 0f
                                             }
                                         )
@@ -116,14 +152,73 @@ fun ManageChannelsScreen(
                                 ActionIcon(
                                     R.drawable.ic_delete,
                                     R.string.action_delete
-                                ) { onDeleteChannel.invoke(channel) }
+                                ) { onDeleteChannel(channel) }
                             }
                         )
                     }
                 }
+                if (addChannelShown)
+                    AddChannel(
+                        addChannelUrl,
+                        onAddChannelUrlChanged,
+                        onAddChannelConfirm,
+                        onAddChannelCancel,
+                        addChannelError,
+                    )
             }
         }
     }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+private fun AddChannel(
+    channelUrl: String,
+    onUrlChanged: (String) -> Unit,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+    addChannelError: Int,
+) {
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(key1 = 0) {
+        focusRequester.requestFocus()
+    }
+
+    AlertDialog(
+        modifier = Modifier.padding(horizontal = defaultPadding),
+        title = { Text(text = stringResource(R.string.add_channel_title)) },
+        onDismissRequest = onCancel,
+        confirmButton = {
+            Button(
+                onClick = onConfirm
+            ) { Text(text = stringResource(R.string.action_ok)) }
+        },
+        dismissButton = {
+            Button(onClick = onCancel) { Text(text = stringResource(R.string.action_cancel)) }
+        },
+        text = {
+            Column {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    value = channelUrl,
+                    onValueChange = onUrlChanged,
+                    placeholder = { Text(text = stringResource(R.string.channel_url_hint)) },
+                    singleLine = true,
+                    isError = addChannelError != 0,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { onConfirm() })
+                )
+                if (addChannelError != 0) {
+                    Text(
+                        text = stringResource(id = addChannelError),
+                        color = MaterialTheme.colors.error
+                    )
+                }
+            }
+        }
+    )
 }
 
 private const val DRAGGED_ELEVATION = 8f

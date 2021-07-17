@@ -9,7 +9,7 @@ import cz.marvincz.rssnotifier.extension.setWifiOnly
 import cz.marvincz.rssnotifier.extension.wifiOnly
 import kotlinx.coroutines.launch
 
-class Settings2ViewModel(private val dataStore: DataStore<Preferences>, private val workScheduler: WorkScheduler) : ViewModel() {
+class SettingsViewModel(private val dataStore: DataStore<Preferences>, private val workScheduler: WorkScheduler) : ViewModel() {
     val wifiOnly = dataStore.wifiOnly
 
     fun setWifiOnly(value: Boolean) {

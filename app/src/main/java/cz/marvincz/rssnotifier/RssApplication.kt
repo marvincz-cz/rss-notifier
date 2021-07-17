@@ -52,7 +52,7 @@ private val module = module {
     single { Database.get(androidContext()) }
     single { Repository(get()) }
     single { WorkScheduler(androidContext(), get()) }
-    viewModel { Channels2ViewModel(get(), get()) }
+    viewModel { ChannelsViewModel(get(), get()) }
     viewModel { ManageChannelsViewModel(get()) }
-    viewModel { Settings2ViewModel(get(), get()) }
+    viewModel { SettingsViewModel(get(), get()) }
 }

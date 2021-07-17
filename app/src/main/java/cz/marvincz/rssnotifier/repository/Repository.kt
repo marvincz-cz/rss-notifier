@@ -6,6 +6,7 @@ import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.retrofit.Client
 import cz.marvincz.rssnotifier.room.Database
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -41,7 +42,7 @@ class Repository(private val database: Database) {
                         .associateBy { it.id }
 
                 val rss = runCatching { Client.call().rss(channelUrl) }
-                        .getOrThrow()
+                    .getOrElse { throw CancellationException("Error downloading RSS", it) }
 
                 val newChannel = channel?.copy(
                         link = rss.channel.link,
