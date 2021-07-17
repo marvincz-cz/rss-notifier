@@ -15,7 +15,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -26,11 +25,12 @@ import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.util.stripHtml
 import cz.marvincz.rssnotifier.viewmodel.Channels2ViewModel
+import org.koin.androidx.compose.getViewModel
 import java.time.ZonedDateTime
 
 @Composable
 fun ChannelsScreen(navController: NavController) {
-    val viewModel: Channels2ViewModel = viewModel()
+    val viewModel: Channels2ViewModel = getViewModel()
     val context = LocalContext.current
 
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())

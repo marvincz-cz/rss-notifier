@@ -5,22 +5,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.util.stripHtml
 import cz.marvincz.rssnotifier.viewmodel.ManageChannelsViewModel
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun ManageChannelsScreen(navController: NavController) {
-    val viewModel: ManageChannelsViewModel = viewModel()
+    val viewModel: ManageChannelsViewModel = getViewModel()
 
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
 

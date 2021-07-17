@@ -64,4 +64,6 @@ private val module = module {
     viewModel { AddChannelViewModel(get()) }
     viewModel { SortingViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
+    viewModel { Channels2ViewModel(get()) }
+    viewModel { ManageChannelsViewModel(get()) }
 }

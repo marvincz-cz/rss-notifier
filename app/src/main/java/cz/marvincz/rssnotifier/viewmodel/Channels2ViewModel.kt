@@ -8,12 +8,9 @@ import cz.marvincz.rssnotifier.repository.Repository
 import cz.marvincz.rssnotifier.util.PreferenceUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import java.net.URL
 
-class Channels2ViewModel : ViewModel(), KoinComponent {
-    private val repository: Repository = get()
+class Channels2ViewModel(private val repository: Repository) : ViewModel() {
     val channels = repository.getChannels()
 
     private val _selectedChannelIndex = MutableLiveData(0)
