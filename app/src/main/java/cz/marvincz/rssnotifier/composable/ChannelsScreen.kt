@@ -31,6 +31,7 @@ import java.time.ZonedDateTime
 @Composable
 fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
     val viewModel: Channels2ViewModel = viewModel()
+
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
     val selectedChannelIndex: Int by viewModel.selectedChannelIndex.observeAsState(0)
     val items: List<RssItem> by viewModel.items.observeAsState(InitialList())
@@ -60,7 +61,7 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
         addChannelShown = addChannelShown,
         toggleShowSeen = { viewModel.toggleShowSeen() },
         markAllSeen = { viewModel.markAllRead() },
-        onManageChannels = {},
+        onManageChannels = { navController.navigate("manageChannels") },
         onSettings = {}
     )
 }
@@ -109,11 +110,11 @@ private fun ChannelsScreen(
                                     stringResource(showSeenText),
                                     toggleShowSeen
                                 ),
-                                /*MenuItem(
+                                MenuItem(
                                     stringResource(R.string.menu_sort_channels),
                                     onManageChannels
                                 ),
-                                MenuItem(
+                                /*MenuItem(
                                     stringResource(R.string.menu_settings),
                                     onSettings
                                 )*/

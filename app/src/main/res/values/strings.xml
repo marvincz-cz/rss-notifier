@@ -23,6 +23,7 @@
     <string name="action_ok">OK</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_continue">Continue</string>
+    <string name="action_back">Back</string>
 
     <string name="action_mark_read">Mark read</string>
     <string name="action_mark_unread">Mark unread</string>

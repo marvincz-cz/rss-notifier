@@ -19,7 +19,11 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
     private val _selectedChannelIndex = MutableLiveData(0)
     val selectedChannelIndex: LiveData<Int> get() = _selectedChannelIndex
 
-    private val channelUrl = channels.combine(selectedChannelIndex) { channels, index -> channels[index].accessUrl }
+    private val channelUrl = channels.combine(selectedChannelIndex) { channels, index ->
+        val validIndex = channels.validIndex(index)
+        if (validIndex != index) _selectedChannelIndex.value = validIndex
+        channels[validIndex].accessUrl
+    }
     val items = channelUrl.switchMap { channelUrl -> repository.getItems(channelUrl) }
 
     val showSeen = PreferenceUtil.observeShowSeen()
@@ -106,4 +110,11 @@ class Channels2ViewModel : ViewModel(), KoinComponent {
     companion object {
         private val acceptedProtocols = listOf("http", "https")
     }
+}
+
+private fun List<*>.validIndex(index: Int) = when {
+    index in indices -> index
+    index < 0 -> 0
+    index > lastIndex -> lastIndex
+    else -> throw IllegalStateException("Unreachable")
 }

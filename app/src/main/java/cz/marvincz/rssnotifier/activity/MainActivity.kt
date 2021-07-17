@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cz.marvincz.rssnotifier.background.WorkScheduler
 import cz.marvincz.rssnotifier.composable.ChannelsScreen
+import cz.marvincz.rssnotifier.composable.ManageChannelsScreen
 import org.koin.android.ext.android.getKoin
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "channels") {
                 composable("channels") { ChannelsScreen(navController) { goToLink(it) } }
+                composable("manageChannels") { ManageChannelsScreen(navController) }
             }
         }
 
