@@ -3,7 +3,7 @@
     <!--  MAIN COLORS  -->
     <color name="colorPrimary">@color/teal_200</color>
     <color name="colorPrimaryDark">@color/teal_700</color>
-    <color name="colorAccent">@color/purple_200</color>
+    <color name="colorAccent">@color/purple_200_dark</color>
     <color name="surface">@color/dark_gray</color>
     <color name="error">#CF6679</color>
 

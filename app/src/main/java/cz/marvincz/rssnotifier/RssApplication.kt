@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import com.jakewharton.threetenabp.AndroidThreeTen
 import cz.marvincz.rssnotifier.background.WorkScheduler
 import cz.marvincz.rssnotifier.extension.dataStore
 import cz.marvincz.rssnotifier.repository.Repository
@@ -19,7 +18,6 @@ class RssApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AndroidThreeTen.init(this)
 
         startKoin {
             androidContext(this@RssApplication)
@@ -54,11 +52,6 @@ private val module = module {
     single { Database.get(androidContext()) }
     single { Repository(get()) }
     single { WorkScheduler(androidContext(), get()) }
-    viewModel { ChannelsViewModel(get()) }
-    viewModel { (channelUrl: String) -> ItemsViewModel(get(), get(), channelUrl) }
-    viewModel { AddChannelViewModel(get()) }
-    viewModel { SortingViewModel(get()) }
-    viewModel { SettingsViewModel(get()) }
     viewModel { Channels2ViewModel(get(), get()) }
     viewModel { ManageChannelsViewModel(get()) }
     viewModel { Settings2ViewModel(get(), get()) }

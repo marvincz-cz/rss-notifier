@@ -103,7 +103,7 @@ private fun ChannelsScreen(
                 },
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = stringResource(R.string.fragment_channels)) },
+                        title = { Text(text = stringResource(R.string.screen_channels)) },
                         actions = {
                             val showSeenText =
                                 if (showSeen) R.string.menu_hide_seen else R.string.menu_show_seen
@@ -113,7 +113,7 @@ private fun ChannelsScreen(
                                     toggleShowSeen
                                 ),
                                 MenuItem(
-                                    stringResource(R.string.menu_sort_channels),
+                                    stringResource(R.string.menu_manage_channels),
                                     onManageChannels
                                 ),
                                 MenuItem(

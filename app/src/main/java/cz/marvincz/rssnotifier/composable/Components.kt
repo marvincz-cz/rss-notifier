@@ -17,14 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cz.marvincz.rssnotifier.R
-import cz.marvincz.rssnotifier.component.IconType
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -42,13 +41,13 @@ private fun OneLinePreview() {
 @Composable
 fun Icon(
     modifier: Modifier = Modifier,
-    type: IconType = IconType.SMALL,
+    size: Dp = dimen(3),
     @DrawableRes res: Int = 0,
     @StringRes description: Int = 0
 ) {
-    if (type != IconType.NONE)
+    if (size > 0.dp)
         Icon(
-            modifier = modifier.size(dimensionResource(id = type.size)),
+            modifier = modifier.size(size),
             painter = painterResource(id = res),
             tint = iconOnSurface(isSystemInDarkTheme()),
             contentDescription = stringResource(id = description)
@@ -63,7 +62,6 @@ fun ActionIcon(
 ) {
     IconButton(onClick = action) {
         Icon(
-            type = IconType.SMALL,
             res = res,
             description = description
         )

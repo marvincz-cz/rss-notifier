@@ -38,7 +38,7 @@ fun SettingsScreen(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = stringResource(R.string.fragment_settings)) },
+                        title = { Text(text = stringResource(R.string.screen_settings)) },
                         navigationIcon = {
                             IconButton(onClick = onBack) {
                                 Icon(

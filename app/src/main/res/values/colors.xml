@@ -24,6 +24,7 @@
     <color name="teal_700">#00796B</color>
 
     <color name="purple_200">#CE93D8</color>
+    <color name="purple_200_dark">#9C64A6</color>
 
     <!--  MAIN COLORS  -->
     <color name="colorPrimary">@color/teal_500</color>

@@ -60,7 +60,7 @@ fun ManageChannelsScreen(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = stringResource(R.string.fragment_sorting)) },
+                        title = { Text(text = stringResource(R.string.screen_manage_channels)) },
                         navigationIcon = {
                             IconButton(onClick = onBack) {
                                 Icon(

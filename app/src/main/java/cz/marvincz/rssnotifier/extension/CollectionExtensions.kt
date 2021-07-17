@@ -1,12 +1,5 @@
 package cz.marvincz.rssnotifier.extension
 
-fun <T> MutableList<T>.swap(from: Int, to: Int) {
-    val valFrom = this[from]
-    val valTo = this[to]
-    this[from] = valTo
-    this[to] = valFrom
-}
-
 fun List<*>.validIndex(index: Int) = when {
     index in indices -> index
     index < 0 -> 0
