@@ -22,6 +22,7 @@ import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.extension.goToLink
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
+import cz.marvincz.rssnotifier.navigation.NavigationScreen
 import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.util.stripHtml
 import cz.marvincz.rssnotifier.viewmodel.Channels2ViewModel
@@ -62,8 +63,8 @@ fun ChannelsScreen(navController: NavController) {
         addChannelShown = addChannelShown,
         toggleShowSeen = viewModel::toggleShowSeen,
         markAllSeen = viewModel::markAllRead,
-        onManageChannels = { navController.navigate("manageChannels") },
-        onSettings = { navController.navigate("settings") }
+        onManageChannels = { navController.navigate(NavigationScreen.MANAGE_CHANNELS.route) },
+        onSettings = { navController.navigate(NavigationScreen.SETTINGS.route) }
     )
 }
 

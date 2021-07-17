@@ -11,6 +11,7 @@ import cz.marvincz.rssnotifier.background.WorkScheduler
 import cz.marvincz.rssnotifier.composable.ChannelsScreen
 import cz.marvincz.rssnotifier.composable.ManageChannelsScreen
 import cz.marvincz.rssnotifier.composable.SettingsScreen
+import cz.marvincz.rssnotifier.navigation.NavigationScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.getKoin
@@ -23,13 +24,19 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "channels") {
-                composable("channels") { ChannelsScreen(navController) }
-                composable("manageChannels") { ManageChannelsScreen(navController) }
-                composable("settings") { SettingsScreen(navController) }
+                composable(NavigationScreen.CHANNELS.route) {
+                    ChannelsScreen(navController)
+                }
+                composable(NavigationScreen.MANAGE_CHANNELS.route) {
+                    ManageChannelsScreen(navController)
+                }
+                composable(NavigationScreen.SETTINGS.route) {
+                    SettingsScreen(navController)
+                }
             }
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch {
             scheduleWork()
         }
     }
