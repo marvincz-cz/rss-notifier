@@ -10,17 +10,17 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import cz.marvincz.rssnotifier.R
+import cz.marvincz.rssnotifier.extension.goToLink
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.util.InitialList
@@ -29,8 +29,9 @@ import cz.marvincz.rssnotifier.viewmodel.Channels2ViewModel
 import java.time.ZonedDateTime
 
 @Composable
-fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
+fun ChannelsScreen(navController: NavController) {
     val viewModel: Channels2ViewModel = viewModel()
+    val context = LocalContext.current
 
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
     val selectedChannelIndex: Int by viewModel.selectedChannelIndex.observeAsState(0)
@@ -45,9 +46,9 @@ fun ChannelsScreen(navController: NavController, onGoToItem: (String) -> Unit) {
         selectedChannelIndex = selectedChannelIndex,
         onChannelSelected = { viewModel.onChannelSelected(it) },
         items = items,
-        onItemOpen = { item ->
-            viewModel.read(item)
-            item.link?.let { onGoToItem(it) }
+        onItemOpen = {
+            viewModel.read(it)
+            context.goToLink(it.link)
         },
         onItemToggleSeen = { viewModel.toggle(it) },
         showSeen = showSeen,

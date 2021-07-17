@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
 import cz.marvincz.rssnotifier.BuildConfig
+import cz.marvincz.rssnotifier.extension.goToLink
 import cz.marvincz.rssnotifier.repository.Repository
 import kotlinx.coroutines.runBlocking
 import org.koin.java.KoinJavaComponent
@@ -17,12 +18,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         val itemId = intent.getStringExtra(ITEM_ID) ?: return
 
         if (intent.action == Intent.ACTION_VIEW) {
-            intent.data?.let { uri ->
-                context.startActivity(
-                    Intent(Intent.ACTION_VIEW, uri)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
-            }
+            context.goToLink(intent.data)
         }
 
         runBlocking {

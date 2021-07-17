@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.adapter.ItemAdapter
 import cz.marvincz.rssnotifier.databinding.FragmentItemsBinding
+import cz.marvincz.rssnotifier.extension.goToLink
 import cz.marvincz.rssnotifier.fragment.base.BaseFragment
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.viewmodel.ItemsViewModel
@@ -48,7 +49,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
             override fun open(item: RssItem) {
                 viewModel.read(item)
-                item.link?.let { goToLink(it) }
+                requireContext().goToLink(item.link)
             }
 
         })
@@ -90,11 +91,6 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             }
         }
         return false
-    }
-
-    private fun goToLink(link: String) {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     companion object {

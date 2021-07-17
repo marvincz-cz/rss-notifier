@@ -1,9 +1,11 @@
 package cz.marvincz.rssnotifier.extension
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,3 +61,14 @@ fun Context.colors(@ColorRes stateListRes: Int): ColorStateList? =
  */
 fun Context.inflate(@LayoutRes res: Int, parent: ViewGroup, attachView: Boolean = true): View =
     LayoutInflater.from(this).inflate(res, parent, attachView)
+
+fun Context.goToLink(link: String?) = goToLink(link?.let { Uri.parse(it) })
+
+fun Context.goToLink(link: Uri?) {
+    link?.let {
+        startActivity(
+            Intent(Intent.ACTION_VIEW, it)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+    }
+}
