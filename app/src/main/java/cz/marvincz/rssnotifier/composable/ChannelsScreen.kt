@@ -12,6 +12,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -82,34 +83,13 @@ private fun ChannelsScreen(
         Surface {
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        title = { Text(text = stringResource(R.string.screen_channels)) },
-                        actions = {
-                            val showSeenText =
-                                if (showSeen) R.string.menu_hide_seen else R.string.menu_show_seen
-                            val menuItems = mutableListOf(
-                                MenuItem(
-                                    stringResource(showSeenText),
-                                    toggleShowSeen
-                                ),
-                                MenuItem(
-                                    stringResource(R.string.menu_manage_channels),
-                                    onManageChannels
-                                ),
-                                MenuItem(
-                                    stringResource(R.string.menu_settings),
-                                    onSettings
-                                )
-                            )
-                            if (!channels.isNullOrEmpty()) menuItems.add(
-                                0,
-                                MenuItem(
-                                    stringResource(R.string.menu_all_seen),
-                                    markAllSeen
-                                )
-                            )
-                            TopBarMenu(items = menuItems)
-                        }
+                    AppBar(
+                        showSeen,
+                        toggleShowSeen,
+                        onManageChannels,
+                        onSettings,
+                        channels,
+                        markAllSeen
                     )
                 }
             ) {
@@ -139,6 +119,49 @@ private fun ChannelsScreen(
 }
 
 @Composable
+private fun AppBar(
+    showSeen: Boolean,
+    toggleShowSeen: () -> Unit,
+    onManageChannels: () -> Unit,
+    onSettings: () -> Unit,
+    channels: List<RssChannel>?,
+    markAllSeen: () -> Unit
+) {
+    TopAppBar(
+        title = { Text(text = stringResource(R.string.screen_channels)) },
+        actions = {
+            val showSeenIcon = if (showSeen) R.drawable.ic_eye else R.drawable.ic_eye_closed
+            val showSeenText = if (showSeen) R.string.menu_hide_seen else R.string.menu_show_seen
+            IconButton(onClick = toggleShowSeen) {
+                Icon(
+                    painter = painterResource(showSeenIcon),
+                    contentDescription = stringResource(showSeenText)
+                )
+            }
+            if (!channels.isNullOrEmpty()) {
+                IconButton(onClick = markAllSeen) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_done_all),
+                        contentDescription = stringResource(R.string.menu_all_seen)
+                    )
+                }
+            }
+            val menuItems = listOf(
+                MenuItem(
+                    stringResource(R.string.menu_manage_channels),
+                    onManageChannels
+                ),
+                MenuItem(
+                    stringResource(R.string.menu_settings),
+                    onSettings
+                )
+            )
+            TopBarMenu(items = menuItems)
+        }
+    )
+}
+
+@Composable
 private fun ChannelTabs(
     channels: List<RssChannel>,
     selectedChannelIndex: Int,
@@ -157,7 +180,6 @@ private fun ChannelTabs(
                     Text(
                         modifier = Modifier.padding(all = viewPadding),
                         text = channel.title,
-                        style = MaterialTheme.typography.body1
                     )
                 }
             }
