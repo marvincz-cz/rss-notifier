@@ -53,6 +53,6 @@ private val module = module {
     single { Repository(get()) }
     single { WorkScheduler(androidContext(), get()) }
     viewModel { ChannelsViewModel(get(), get()) }
-    viewModel { ManageChannelsViewModel(get()) }
+    viewModel { parameters -> ManageChannelsViewModel(get(), parameters.get()) }
     viewModel { SettingsViewModel(get(), get()) }
 }

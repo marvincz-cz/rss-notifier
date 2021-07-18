@@ -28,6 +28,9 @@ private fun error(dark: Boolean) = if (dark) ErrorDark else Error
 
 fun iconOnSurface(dark: Boolean) = if (dark) White54 else Black54
 
+@Composable
+fun shimmer() = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
+
 fun colors(dark: Boolean) = if (dark) darkColors(
     primary = primary(dark),
     primaryVariant = primaryVariant(),

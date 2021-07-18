@@ -118,10 +118,11 @@ fun ShimmerItem(
             RepeatMode.Reverse
         )
     )
+    val color = shimmer()
     val shimmerColorShades = listOf(
-        Color.LightGray.copy(0.7f),
-        Color.LightGray.copy(0.2f),
-        Color.LightGray.copy(0.7f)
+        color.copy(0.7f),
+        color.copy(0.2f),
+        color.copy(0.7f)
     )
 
     Spacer(modifier = modifier.background(

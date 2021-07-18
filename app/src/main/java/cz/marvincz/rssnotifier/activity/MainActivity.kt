@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import cz.marvincz.rssnotifier.background.WorkScheduler
 import cz.marvincz.rssnotifier.composable.ChannelsScreen
@@ -27,8 +29,14 @@ class MainActivity : AppCompatActivity() {
                 composable(NavigationScreen.CHANNELS.route) {
                     ChannelsScreen(navController)
                 }
-                composable(NavigationScreen.MANAGE_CHANNELS.route) {
-                    ManageChannelsScreen(navController)
+                composable(
+                    NavigationScreen.MANAGE_CHANNELS.route,
+                    arguments = listOf(navArgument(NavigationScreen.MANAGE_CHANNELS.param!!) {
+                        type = NavType.BoolType
+                        defaultValue = false
+                    })
+                ) { backStackEntry ->
+                    ManageChannelsScreen(navController, backStackEntry.arguments?.getBoolean("addChannel"))
                 }
                 composable(NavigationScreen.SETTINGS.route) {
                     SettingsScreen(navController)

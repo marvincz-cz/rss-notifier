@@ -8,12 +8,13 @@ import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.repository.Repository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import org.koin.core.parameter.parametersOf
 import java.net.URL
 
-class ManageChannelsViewModel(private val repository: Repository) : ViewModel() {
+class ManageChannelsViewModel(private val repository: Repository, addChannel: Boolean?) : ViewModel() {
     val channels = repository.getChannels()
 
-    val addChannelShown = mutableStateOf(false)
+    val addChannelShown = mutableStateOf(addChannel ?: false)
     val addChannelUrl = mutableStateOf("")
     val addChannelError = mutableStateOf(0)
 

@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -34,10 +35,11 @@ fun ChannelsScreen(navController: NavController) {
     val viewModel: ChannelsViewModel = getViewModel()
     val context = LocalContext.current
 
-    val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
+    // FIXME fix initial state
+    val channels: List<RssChannel> by viewModel.channels.observeAsState(emptyList())
     val selectedChannelIndex: Int by viewModel.selectedChannelIndex.observeAsState(0)
-    val items: List<RssItem> by viewModel.items.observeAsState(InitialList())
-    val showSeen: Boolean by viewModel.showSeen.collectAsState(initial = true)
+    val items: List<RssItem> by viewModel.items.observeAsState(emptyList())
+    val showSeen: Boolean by viewModel.showSeen.collectAsState(true)
     val isRefreshing = viewModel.isRefreshing.value
 
     ChannelsScreen(
@@ -56,7 +58,8 @@ fun ChannelsScreen(navController: NavController) {
         toggleShowSeen = viewModel::toggleShowSeen,
         markAllSeen = viewModel::markAllRead,
         onManageChannels = { navController.navigate(NavigationScreen.MANAGE_CHANNELS.route) },
-        onSettings = { navController.navigate(NavigationScreen.SETTINGS.route) }
+        onSettings = { navController.navigate(NavigationScreen.SETTINGS.route) },
+        toAddChannel = { navController.navigate(NavigationScreen.MANAGE_CHANNELS.route(true)) },
     )
 }
 
@@ -75,6 +78,7 @@ private fun ChannelsScreen(
     markAllSeen: () -> Unit,
     onManageChannels: () -> Unit,
     onSettings: () -> Unit,
+    toAddChannel: () -> Unit,
 ) {
     MaterialTheme(colors = colors(isSystemInDarkTheme())) {
         Surface {
@@ -113,7 +117,12 @@ private fun ChannelsScreen(
             ) {
                 when {
                     channels is InitialList || items is InitialList -> LoadingList()
-                    channels.isEmpty() -> EmptyText(R.string.no_channels_message)
+                    channels.isEmpty() -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        EmptyText(R.string.no_channels_message)
+                        Button(onClick = toAddChannel) {
+                            Text(text = stringResource(R.string.action_add_channel))
+                        }
+                    }
                     else -> Column {
                         ChannelTabs(channels, selectedChannelIndex, onChannelSelected)
                         ItemsList(
@@ -287,7 +296,8 @@ private fun Preview() {
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
-        onSettings = {}
+        onSettings = {},
+        toAddChannel = {},
     )
 }
 
@@ -307,7 +317,8 @@ private fun PreviewInitial() {
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
-        onSettings = {}
+        onSettings = {},
+        toAddChannel = {},
     )
 }
 
@@ -327,7 +338,8 @@ private fun PreviewNoChannel() {
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
-        onSettings = {}
+        onSettings = {},
+        toAddChannel = {},
     )
 }
 
@@ -347,7 +359,8 @@ private fun PreviewNoItems() {
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
-        onSettings = {}
+        onSettings = {},
+        toAddChannel = {},
     )
 }
 
@@ -367,7 +380,8 @@ private fun PreviewNoUnseenItems() {
         toggleShowSeen = {},
         markAllSeen = {},
         onManageChannels = {},
-        onSettings = {}
+        onSettings = {},
+        toAddChannel = {},
     )
 }
 

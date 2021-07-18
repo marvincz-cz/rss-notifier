@@ -22,11 +22,13 @@ class ChannelsViewModel(
     val selectedChannelIndex: LiveData<Int> get() = _selectedChannelIndex
 
     private val channelUrl = channels.combine(selectedChannelIndex) { channels, index ->
-        val validIndex = channels.validIndex(index)
-        if (validIndex != index) _selectedChannelIndex.value = validIndex
-        channels[validIndex].accessUrl
+        if (channels.isNotEmpty()) {
+            val validIndex = channels.validIndex(index)
+            if (validIndex != index) _selectedChannelIndex.value = validIndex
+            channels[validIndex].accessUrl
+        } else null
     }
-    val items = channelUrl.switchMap { channelUrl -> repository.getItems(channelUrl) }
+    val items = channelUrl.switchMap { channelUrl -> channelUrl?.let { repository.getItems(it) } ?: MutableLiveData(emptyList()) }
 
     val showSeen = dataStore.showSeen
 

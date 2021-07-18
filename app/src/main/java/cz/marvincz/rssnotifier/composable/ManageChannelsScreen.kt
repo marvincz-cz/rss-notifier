@@ -34,12 +34,15 @@ import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.util.stripHtml
 import cz.marvincz.rssnotifier.viewmodel.ManageChannelsViewModel
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.ParametersHolder
+import org.koin.core.parameter.parametersOf
 import kotlin.math.roundToInt
 
 @Composable
-fun ManageChannelsScreen(navController: NavController) {
-    val viewModel: ManageChannelsViewModel = getViewModel()
+fun ManageChannelsScreen(navController: NavController, addChannel: Boolean?) {
+    val viewModel: ManageChannelsViewModel = getViewModel(parameters = { parametersOf(addChannel) })
 
     val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
     val addChannelShown = viewModel.addChannelShown.value
@@ -181,6 +184,7 @@ private fun AddChannel(
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(key1 = 0) {
+        delay(100)
         focusRequester.requestFocus()
     }
 
