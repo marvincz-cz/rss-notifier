@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import cz.marvincz.rssnotifier.R
@@ -199,6 +200,7 @@ private fun AddChannel(
 
     AlertDialog(
         modifier = Modifier.padding(horizontal = defaultPadding),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
         title = { Text(text = stringResource(R.string.add_channel_title)) },
         onDismissRequest = onCancel,
         confirmButton = {
