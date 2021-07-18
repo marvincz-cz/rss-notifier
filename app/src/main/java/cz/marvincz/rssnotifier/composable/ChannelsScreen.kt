@@ -24,7 +24,6 @@ import cz.marvincz.rssnotifier.extension.goToLink
 import cz.marvincz.rssnotifier.model.RssChannel
 import cz.marvincz.rssnotifier.model.RssItem
 import cz.marvincz.rssnotifier.navigation.NavigationScreen
-import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.util.stripHtml
 import cz.marvincz.rssnotifier.viewmodel.ChannelsViewModel
 import org.koin.androidx.compose.getViewModel
@@ -35,10 +34,9 @@ fun ChannelsScreen(navController: NavController) {
     val viewModel: ChannelsViewModel = getViewModel()
     val context = LocalContext.current
 
-    // FIXME fix initial state
-    val channels: List<RssChannel> by viewModel.channels.observeAsState(emptyList())
+    val channels: List<RssChannel>? by viewModel.channels.observeAsState(null)
     val selectedChannelIndex: Int by viewModel.selectedChannelIndex.observeAsState(0)
-    val items: List<RssItem> by viewModel.items.observeAsState(emptyList())
+    val items: List<RssItem>? by viewModel.items.observeAsState(null)
     val showSeen: Boolean by viewModel.showSeen.collectAsState(true)
     val isRefreshing = viewModel.isRefreshing.value
 
@@ -65,10 +63,10 @@ fun ChannelsScreen(navController: NavController) {
 
 @Composable
 private fun ChannelsScreen(
-    channels: List<RssChannel>,
+    channels: List<RssChannel>?,
     selectedChannelIndex: Int,
     onChannelSelected: (Int) -> Unit,
-    items: List<RssItem>,
+    items: List<RssItem>?,
     onItemOpen: (RssItem) -> Unit,
     onItemToggleSeen: (RssItem) -> Unit,
     showSeen: Boolean,
@@ -103,7 +101,7 @@ private fun ChannelsScreen(
                                     onSettings
                                 )
                             )
-                            if (channels.isNotEmpty()) menuItems.add(
+                            if (!channels.isNullOrEmpty()) menuItems.add(
                                 0,
                                 MenuItem(
                                     stringResource(R.string.menu_all_seen),
@@ -116,7 +114,7 @@ private fun ChannelsScreen(
                 }
             ) {
                 when {
-                    channels is InitialList || items is InitialList -> LoadingList()
+                    channels == null || items == null -> LoadingList()
                     channels.isEmpty() -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         EmptyText(R.string.no_channels_message)
                         Button(onClick = toAddChannel) {
@@ -305,10 +303,10 @@ private fun Preview() {
 @Composable
 private fun PreviewInitial() {
     ChannelsScreen(
-        channels = InitialList(),
+        channels = null,
         selectedChannelIndex = 0,
         onChannelSelected = {},
-        items = InitialList(),
+        items = null,
         onItemOpen = {},
         onItemToggleSeen = {},
         showSeen = true,

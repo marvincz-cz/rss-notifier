@@ -31,12 +31,10 @@ import androidx.navigation.NavController
 import cz.marvincz.rssnotifier.R
 import cz.marvincz.rssnotifier.extension.copyAndPut
 import cz.marvincz.rssnotifier.model.RssChannel
-import cz.marvincz.rssnotifier.util.InitialList
 import cz.marvincz.rssnotifier.util.stripHtml
 import cz.marvincz.rssnotifier.viewmodel.ManageChannelsViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
-import org.koin.core.parameter.ParametersHolder
 import org.koin.core.parameter.parametersOf
 import kotlin.math.roundToInt
 
@@ -44,7 +42,7 @@ import kotlin.math.roundToInt
 fun ManageChannelsScreen(navController: NavController, addChannel: Boolean?) {
     val viewModel: ManageChannelsViewModel = getViewModel(parameters = { parametersOf(addChannel) })
 
-    val channels: List<RssChannel> by viewModel.channels.observeAsState(InitialList())
+    val channels: List<RssChannel>? by viewModel.channels.observeAsState(null)
     val addChannelShown = viewModel.addChannelShown.value
     val (addChannelUrl, onAddChannelUrlChanged) = viewModel.addChannelUrl
     val addChannelError = viewModel.addChannelError.value
@@ -64,11 +62,10 @@ fun ManageChannelsScreen(navController: NavController, addChannel: Boolean?) {
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ManageChannelsScreen(
     onBack: () -> Unit,
-    channels: List<RssChannel>,
+    channels: List<RssChannel>?,
     onDeleteChannel: (RssChannel) -> Unit,
     onDragged: (Map<String, Float>) -> Unit,
     addChannelShown: Boolean,
@@ -104,62 +101,9 @@ fun ManageChannelsScreen(
                     }
                 },
             ) {
-                var positions by remember { mutableStateOf(mapOf<String, Float>()) }
+                if (channels == null) LoadingList()
+                else DraggableList(channels, onDragged, onDeleteChannel)
 
-                LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                    items(channels, key = { it.accessUrl }) { channel ->
-                        var offset by remember { mutableStateOf(0f) }
-                        val elevation = if (offset != 0f) DRAGGED_ELEVATION else 0f
-                        val background =
-                            if (offset != 0f) elevatedBackground() else MaterialTheme.colors.surface
-
-                        ListItem(
-                            modifier = Modifier
-                                .offset { IntOffset(0, offset.roundToInt()) }
-                                .zIndex(elevation)
-                                .shadow(elevation.dp)
-                                .background(background)
-                                .onGloballyPositioned { coordinates ->
-                                    positions = positions.copyAndPut(
-                                        channel.accessUrl,
-                                        coordinates.localToRoot(Offset.Zero).y
-                                    )
-                                },
-                            text = {
-                                Text(
-                                    text = stripHtml(channel.title) ?: channel.accessUrl,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            },
-                            icon = {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(iconClickable)
-                                        .draggable(
-                                            orientation = Orientation.Vertical,
-                                            state = rememberDraggableState { delta ->
-                                                offset += delta
-                                            },
-                                            onDragStopped = {
-                                                onDragged(positions)
-                                                offset = 0f
-                                            }
-                                        )
-                                        .padding(iconClickablePadding),
-                                    painter = painterResource(R.drawable.ic_reorder),
-                                    contentDescription = stringResource(R.string.action_reorder)
-                                )
-                            },
-                            trailing = {
-                                ActionIcon(
-                                    R.drawable.ic_delete,
-                                    R.string.action_delete
-                                ) { onDeleteChannel(channel) }
-                            }
-                        )
-                    }
-                }
                 if (addChannelShown)
                     AddChannel(
                         addChannelUrl,
@@ -169,6 +113,71 @@ fun ManageChannelsScreen(
                         addChannelError,
                     )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun DraggableList(
+    channels: List<RssChannel>,
+    onDragged: (Map<String, Float>) -> Unit,
+    onDeleteChannel: (RssChannel) -> Unit
+) {
+    var positions by remember { mutableStateOf(mapOf<String, Float>()) }
+
+    LazyColumn(modifier = Modifier.fillMaxHeight()) {
+        items(channels, key = { it.accessUrl }) { channel ->
+            var offset by remember { mutableStateOf(0f) }
+            val elevation = if (offset != 0f) DRAGGED_ELEVATION else 0f
+            val background =
+                if (offset != 0f) elevatedBackground() else MaterialTheme.colors.surface
+
+            ListItem(
+                modifier = Modifier
+                    .offset { IntOffset(0, offset.roundToInt()) }
+                    .zIndex(elevation)
+                    .shadow(elevation.dp)
+                    .background(background)
+                    .onGloballyPositioned { coordinates ->
+                        positions = positions.copyAndPut(
+                            channel.accessUrl,
+                            coordinates.localToRoot(Offset.Zero).y
+                        )
+                    },
+                text = {
+                    Text(
+                        text = stripHtml(channel.title) ?: channel.accessUrl,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                icon = {
+                    Icon(
+                        modifier = Modifier
+                            .size(iconClickable)
+                            .draggable(
+                                orientation = Orientation.Vertical,
+                                state = rememberDraggableState { delta ->
+                                    offset += delta
+                                },
+                                onDragStopped = {
+                                    onDragged(positions)
+                                    offset = 0f
+                                }
+                            )
+                            .padding(iconClickablePadding),
+                        painter = painterResource(R.drawable.ic_reorder),
+                        contentDescription = stringResource(R.string.action_reorder)
+                    )
+                },
+                trailing = {
+                    ActionIcon(
+                        R.drawable.ic_delete,
+                        R.string.action_delete
+                    ) { onDeleteChannel(channel) }
+                }
+            )
         }
     }
 }
@@ -221,6 +230,44 @@ private fun AddChannel(
                     )
                 }
             }
+        }
+    )
+}
+
+@Composable
+private fun LoadingList() {
+    Column {
+        repeat(2) {
+            LoadingItem()
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterialApi::class)
+private fun LoadingItem() {
+    ListItem(
+        icon = {
+            ShimmerItem(
+                Modifier
+                    .size(iconClickable)
+                    .padding(iconClickablePadding)
+            )
+        },
+        modifier = Modifier.padding(bottom = viewPadding),
+        text = {
+            ShimmerItem(
+                Modifier
+                    .height(height = dimen(3))
+                    .fillMaxWidth(0.6f)
+            )
+        },
+        trailing = {
+            ShimmerItem(
+                Modifier
+                    .size(iconClickable)
+                    .padding(iconClickablePadding)
+            )
         }
     )
 }

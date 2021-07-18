@@ -19,7 +19,7 @@ class ChannelsViewModel(
     val channels = repository.getChannels()
 
     private val _selectedChannelIndex = MutableLiveData(0)
-    val selectedChannelIndex: LiveData<Int> get() = _selectedChannelIndex
+    val selectedChannelIndex: LiveData<Int> = _selectedChannelIndex
 
     private val channelUrl = channels.combine(selectedChannelIndex) { channels, index ->
         if (channels.isNotEmpty()) {
