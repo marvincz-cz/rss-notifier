@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -102,8 +103,11 @@ fun ManageChannelsScreen(
                     }
                 },
             ) {
-                if (channels == null) LoadingList()
-                else DraggableList(channels, onDragged, onDeleteChannel)
+                when {
+                    channels == null -> LoadingList()
+                    channels.isEmpty() -> EmptyText(stringRes = R.string.no_channels_message)
+                    else -> DraggableList(channels, onDragged, onDeleteChannel)
+                }
 
                 if (addChannelShown)
                     AddChannel(
@@ -271,6 +275,60 @@ private fun LoadingItem() {
                     .padding(iconClickablePadding)
             )
         }
+    )
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    ManageChannelsScreen(
+        onBack = {},
+        channels = mockChannels,
+        onDeleteChannel = {},
+        onDragged = {},
+        addChannelShown = false,
+        onAddChannelShow = {},
+        addChannelUrl = "",
+        onAddChannelUrlChanged = {},
+        onAddChannelConfirm = {},
+        onAddChannelCancel = {},
+        addChannelError = 0
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewEmpty() {
+    ManageChannelsScreen(
+        onBack = {},
+        channels = emptyList(),
+        onDeleteChannel = {},
+        onDragged = {},
+        addChannelShown = false,
+        onAddChannelShow = {},
+        addChannelUrl = "",
+        onAddChannelUrlChanged = {},
+        onAddChannelConfirm = {},
+        onAddChannelCancel = {},
+        addChannelError = 0
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewLoading() {
+    ManageChannelsScreen(
+        onBack = {},
+        channels = null,
+        onDeleteChannel = {},
+        onDragged = {},
+        addChannelShown = false,
+        onAddChannelShow = {},
+        addChannelUrl = "",
+        onAddChannelUrlChanged = {},
+        onAddChannelConfirm = {},
+        onAddChannelCancel = {},
+        addChannelError = 0
     )
 }
 

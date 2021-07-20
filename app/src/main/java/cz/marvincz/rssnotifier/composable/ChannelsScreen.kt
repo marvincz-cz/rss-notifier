@@ -1,6 +1,5 @@
 package cz.marvincz.rssnotifier.composable
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -264,21 +262,6 @@ private fun LoadingList() {
 }
 
 @Composable
-private fun EmptyText(@StringRes stringRes: Int) {
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = defaultPadding,
-                vertical = dimen(6)
-            ),
-        style = MaterialTheme.typography.h6,
-        textAlign = TextAlign.Center,
-        text = stringResource(id = stringRes)
-    )
-}
-
-@Composable
 @OptIn(ExperimentalMaterialApi::class)
 private fun LoadingItem() {
     ListItem(
@@ -426,7 +409,7 @@ fun PreviewLoadingItem() {
     }
 }
 
-private val mockChannels
+val mockChannels
     get() = listOf(
         RssChannel("URL", null, "Webcomic", null, 0, ZonedDateTime.now()),
         RssChannel("URL2", null, "News Site", null, 0, ZonedDateTime.now()),
