@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val navController = rememberNavController()
-            NavHost(navController, startDestination = "channels") {
+            NavHost(navController, startDestination = NavigationScreen.CHANNELS.route) {
                 composable(NavigationScreen.CHANNELS.route) {
                     ChannelsScreen(navController)
                 }
@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                         defaultValue = false
                     })
                 ) { backStackEntry ->
-                    ManageChannelsScreen(navController, backStackEntry.arguments?.getBoolean("addChannel"))
+                    ManageChannelsScreen(navController, backStackEntry.arguments?.getBoolean(NavigationScreen.MANAGE_CHANNELS.param))
                 }
                 composable(NavigationScreen.SETTINGS.route) {
                     SettingsScreen(navController)
