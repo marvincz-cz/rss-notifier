@@ -1,5 +1,7 @@
 package cz.marvincz.rssnotifier.composable
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.*
@@ -30,7 +32,8 @@ import cz.marvincz.rssnotifier.R
 @Composable
 @Preview
 private fun OneLinePreview() {
-    ListItem(text = { Text("403: Hello World") },
+    ListItem(
+        text = { Text("403: Hello World") },
         trailing = {
             ActionIcon(
                 R.drawable.ic_eye,
@@ -150,13 +153,30 @@ fun ShimmerItem(
     ))
 }
 
-@Preview
+@Preview(uiMode = UI_MODE_NIGHT_NO)
 @Composable
 private fun PreviewShimmerItem() {
-    Surface {
-        ShimmerItem(
-            Modifier
-                .padding(36.dp)
-                .size(width = 128.dp, height = 48.dp))
+    MaterialTheme(colors = colors(isSystemInDarkTheme())) {
+        Surface {
+            ShimmerItem(
+                Modifier
+                    .padding(36.dp)
+                    .size(width = 128.dp, height = 48.dp)
+            )
+        }
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun PreviewShimmerItemDark() {
+    MaterialTheme(colors = colors(isSystemInDarkTheme())) {
+        Surface {
+            ShimmerItem(
+                Modifier
+                    .padding(36.dp)
+                    .size(width = 128.dp, height = 48.dp)
+            )
+        }
     }
 }
