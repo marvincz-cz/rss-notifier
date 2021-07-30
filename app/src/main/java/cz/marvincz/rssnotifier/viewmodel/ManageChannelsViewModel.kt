@@ -18,6 +18,8 @@ class ManageChannelsViewModel(private val repository: Repository, addChannel: Bo
     val addChannelUrl = mutableStateOf("")
     val addChannelError = mutableStateOf(0)
 
+    private var lock = false
+
     fun deleteChannel(channel: RssChannel) {
         viewModelScope.launch {
             repository.deleteChannel(channel)
@@ -41,12 +43,14 @@ class ManageChannelsViewModel(private val repository: Repository, addChannel: Bo
         addChannelUrl.value = ""
         addChannelError.value = 0
         addChannelShown.value = true
+        lock = false
     }
 
     fun dismissAddChannel() {
         addChannelUrl.value = ""
         addChannelError.value = 0
         addChannelShown.value = false
+        lock = false
     }
 
     fun confirmAddChannel() {
@@ -54,7 +58,9 @@ class ManageChannelsViewModel(private val repository: Repository, addChannel: Bo
     }
 
     private fun saveChannel(url: String) {
-        // todo UI lock
+        if (lock) return
+        lock = true
+
         url.takeIf { isValid(it) }
             ?.let {
                 viewModelScope.launch {
@@ -64,9 +70,13 @@ class ManageChannelsViewModel(private val repository: Repository, addChannel: Bo
                     .invokeOnCompletion { cause ->
                         if (cause is CancellationException) {
                             addChannelError.value = R.string.validation_rss
+                            lock = false
                         }
                     }
-            } ?: run { addChannelError.value = R.string.validation_url }
+            } ?: run {
+            addChannelError.value = R.string.validation_url
+            lock = false
+        }
     }
 
     private fun isValid(urlString: String) = runCatching {
