@@ -255,9 +255,6 @@ private fun LoadingList() {
                 )
             }
         }
-        repeat(6) {
-            LoadingItem()
-        }
     }
 }
 
